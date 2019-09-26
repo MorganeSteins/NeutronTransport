@@ -15,3 +15,14 @@ double new_x(point p, double sigmat){
     return x+parcourt_x(p, sigma);
 }
 
+list_points::list_points(list_points &list_to_copy) {
+    dim = list_to_copy.dim;
+    val = new point(dim);
+    for (int i=0;i<V.dim;i++) {this->points[i]=list_to_copy.points[i];}
+
+}
+
+list_points::~list_points() {
+    delete points;
+    dim = 0;
+}

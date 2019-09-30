@@ -7,8 +7,9 @@
 using namespace std;
 
 //initialisation des variabales statiques
-double vector_points::sigmaA = 0.1;
-double vector_points::sigmaS = 0.9;
+double point::sigmaA = 1.;
+double point::sigmaS = 0.;
+double point::sigmaT = sigmaA+sigmaS;
 
 //créateur par copie
 vector_points::vector_points(vector_points &vector_to_copy) {
@@ -37,7 +38,6 @@ void vector_points::add_point(point p){
 //affiche le vecteur de points 
 void print_vector(vector_points &v){
     int dim = v.dimension();
-    cout<<3<<endl;
     vector<point> points=v.get_points();
     cout<<"[";
     for (int i=0;i<dim-1;i++){

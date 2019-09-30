@@ -33,5 +33,17 @@ double new_mu() {
     return 2*(static_cast <double> (rand()) / static_cast <double> (RAND_MAX))-1.;
 }
 
+//tirage du points d'arrivée de N particules émises en 0
+vector_points no_absorption_MC(int N, double mu){
+    vector_points selection(N);
+    double xi  = 0.;
+    double mui = 0.;
+    for (int i=0; i<N; i++){
+        mui = new_mu();
+        xi  = deplacement_x(point(0,mui),point::sigmaT);
+        selection.points[i] = point(xi,mui);
+    }
+    return selection;
+}
 
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <math.h>
-#include "MC.hpp"
+#include "points.hpp"
+#include "aleat_tools.hpp"
 #include <vector>
 #include <fstream>
 #include <time.h>
@@ -25,7 +26,7 @@ int main() {
     cout<<"b est de dimension "<<b.dimension()<<endl;
     cout<<"le second mu de b vaut "<<b.get_points()[1].get_mu()<<" et le x "<<b.get_points()[1].get_x()<<endl;
     
-    
-    print_vector(b);
+    cout<<"sigmaT vaut"<<point::sigmaT<<endl;
+ 
     return 0;
 }

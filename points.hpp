@@ -17,16 +17,17 @@ class point {
     double get_mu() const {return mu;}
     double set_x(double x1) {x=x1;}
     double set_mu(double mu1) {mu=mu1;}
-};
-
-class vector_points {
-    int dim;
-    vector<point> points ;
 
     static double sigmaS;
     static double sigmaA;
+    static double sigmaT;
+};
 
+class vector_points {
 public :
+    int dim;
+    vector<point> points ;
+
     vector_points() {dim=0;points= vector<point>(0) ;};
     vector_points(int dimension) ;
     vector_points(vector_points &vector_to_copy) ;
@@ -38,5 +39,7 @@ public :
     void iteration_MC();
 
 };
+
+void print_vector(vector_points &v);
 
 #endif // POINTS_HPP_INCLUDED

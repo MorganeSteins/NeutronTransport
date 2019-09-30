@@ -32,5 +32,5 @@ double density_no_scattering_MC(point p, int N){
 
 //calcul de la solution analytique sans absorption
 double density_no_scattering(point p){
-    if (p.get_mu()==0) {return 1;}
+    if (p.get_mu()==0) {if (p.get_x()==0){return 1;} return 0;}
     return (1/p.get_mu())*exp(-p.sigmaT*p.get_x()/p.get_mu());}

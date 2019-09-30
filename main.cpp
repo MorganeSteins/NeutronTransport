@@ -21,6 +21,6 @@ int main() {
     cout<<"densité réelle mu=0.1  "<<density_no_scattering(point(0.5,0.1))<<endl;
     cout<<"densité réelle mu=0.5  "<<density_no_scattering(point(0.5,0.5))<<endl;
     cout<<"densité réelle mu=1  "<<density_no_scattering(point(0.5,1))<<endl;
-    for (int i=0;i<10;i++){cout<<(float) i/10<<" donne "<<density_no_scattering(point(0.5,(float) i/10))<<endl;}
+    for (int i=0;i<10;i++){cout<<(float) i/10<<" donne "<<density_no_scattering(point(1,(float) i/10))<<endl;}
     return 0;
 }

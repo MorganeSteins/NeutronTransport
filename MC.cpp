@@ -10,7 +10,7 @@ using namespace std;
 vector_points no_scattering_MC(int N, double mu){
     vector_points selection(N);
     for (int i=0; i<N; i++){
-        selection.points[i] = point(parcourt_x(point(0,mu)),mu); //retour au pt de depart du neutron
+        selection.points[i] = point(parcourt_x(point(0,mu)),mu);
     }
     return selection;
 }
@@ -18,7 +18,7 @@ vector_points no_scattering_MC(int N, double mu){
 // calcul de la densité neutronique au point x direction mu avec N tirages
 // avec une source ponctuelle isotrope en 0
 double density_no_scattering_MC(point p, int N){
-    vector_points selection ;
+    vector_points selection(N) ;
     selection = no_scattering_MC(N,p.get_mu());
     double rsl = 0.;
     for (int i=0;i<N;i++){
@@ -27,7 +27,7 @@ double density_no_scattering_MC(point p, int N){
         }
     }
     //print_vector(selection);
-    return rsl/N;
+    return rsl/(N*p.get_mu());
 }
 
 //calcul de la solution analytique sans absorption

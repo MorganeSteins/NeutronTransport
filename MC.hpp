@@ -9,10 +9,22 @@
 
 using namespace std;
 
-vector_points no_scattering_MC(int N, double mu);
+/* Fonctions pour le cas homogène et source ponctuelle*/
 
-double density_no_scattering_MC(point p, int N);
+vector_points no_scattering_homog_point_MC(int N, double mu);
 
-double density_no_scattering(point p); 
+double density_no_scattering_homog_point_MC(point p, int N);
+
+double density_no_scattering_homog_point(point p); 
+
+
+
+/* Fonctions pour le cas homogène et source uniforme */
+
+vector_points no_scattering_homog_point_MC(int N, point p);
+
+double density_no_scattering_homog_unif_MC(point p, int N);
+
+double density_no_scattering_homog_unif(point p);
 
 #endif // MC_HPP_INCLUDED

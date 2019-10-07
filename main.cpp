@@ -13,8 +13,8 @@ int main() {
     srand (static_cast <unsigned> (time(0)));
     
     //print_vector(sol);
-    double x = 1;
-    double mu = 1;
+    double x = 0.5;
+    double mu = 0.5;
     double integrale = 0.;
     cout<<"On travaille à x="<<x<<" et mu="<<mu<<endl;
     /*double density = density_no_scattering_homog_unif_MC(point(x,mu), 100000);

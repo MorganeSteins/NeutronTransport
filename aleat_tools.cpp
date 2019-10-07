@@ -15,10 +15,8 @@ double parcours_x(point p) {
 
 //nouveau point p après déplacement
 point deplacement_x(point p){
-    double new_x =  p.get_x()+p.get_mu()*parcours_x(p);
-    point p2;
-    p2.set_mu(p.get_mu());
-    p2.set_x(new_x);
+    double new_x =  p.get_x()+parcours_x(p);
+    point p2(new_x, p.get_mu());
     return p2;
 }
 

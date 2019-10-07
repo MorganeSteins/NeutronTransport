@@ -5,6 +5,7 @@
 #include <cstdlib>
 
 using namespace std;
+
 /* CAS HOMOGENE SOURCE PONCTUELLE */
 //tirage de départ de neutrons dans un matériau homogène, source ponctuelle en 0.
 vector_points no_scattering_homog_point_MC(int N, double mu){
@@ -18,16 +19,16 @@ vector_points no_scattering_homog_point_MC(int N, double mu){
 // calcul de la densité neutronique au point x direction mu avec N tirages
 // avec une source ponctuelle isotrope en 0 et matériau homogène.
 double density_no_scattering_homog_point_MC(point p, int N){
+    double dx=1./100;
     vector_points selection(N) ;
     selection = no_scattering_homog_point_MC(N,p.get_mu());
     double rsl = 0.;
     for (int i=0;i<N;i++){
-        if (selection.points[i].get_x()>p.get_x()) {
+        if (selection.points[i].get_x()>p.get_x() && selection.points[i].get_x()<dx+p.get_x()) {
             rsl++;
         }
     }
-    //print_vector(selection);
-    return rsl/(N*p.get_mu());
+    return rsl/(N*p.sigmaT*dx);
 }
 
 //calcul de la solution analytique sans scattering, cas homogène 

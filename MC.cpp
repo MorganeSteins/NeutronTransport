@@ -10,7 +10,7 @@ using namespace std;
 vector_points no_scattering_homog_point_MC(int N, double mu){
     vector_points selection(N);
     for (int i=0; i<N; i++){
-        selection.points[i] = point(parcourt_x(point(0,mu)),mu);
+        selection.points[i] = point(parcours_x(point(0,mu)),mu);
     }
     return selection;
 }

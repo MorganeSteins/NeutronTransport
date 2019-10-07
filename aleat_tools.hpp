@@ -8,7 +8,7 @@
 using namespace std;
 
 
-double parcourt_x(point p);
+double parcours_x(point p);
 point deplacement_x(point p);
 double do_I_stop(double sigmaS, double sigmaA);
 double new_mu() ;

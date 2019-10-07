@@ -7,15 +7,15 @@
 
 using namespace std;
 
-//tirage d'une variable aléatoire pour le parcourt entre x_n-1 et x_n
-double parcourt_x(point p) {
+//tirage d'une variable aléatoire pour le parcours entre x_n-1 et x_n
+double parcours_x(point p) {
     double y = static_cast <double> (rand()) / static_cast <double> (RAND_MAX); // loi uniforme sur (0,1)
     return -(p.get_mu()/p.sigmaT)*log(1-y);
 }
 
 //nouveau point p après déplacement
 point deplacement_x(point p){
-    double new_x =  p.get_x()+p.get_mu()*parcourt_x(p);
+    double new_x =  p.get_x()+p.get_mu()*parcours_x(p);
     point p2;
     p2.set_mu(p.get_mu());
     p2.set_x(new_x);

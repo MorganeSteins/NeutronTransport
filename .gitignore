@@ -2,3 +2,8 @@ CMakeLists.txt
 .idea
 cmake-build-debug
 a.out
+*.synctex.gz
+*.log
+*.fdb_latexmk
+*.fls
+*.aux

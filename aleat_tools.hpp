@@ -7,7 +7,7 @@
 
 using namespace std;
 
-
+double new_x();
 double parcours_x(point p);
 point deplacement_x(point p);
 double do_I_stop(double sigmaS, double sigmaA);

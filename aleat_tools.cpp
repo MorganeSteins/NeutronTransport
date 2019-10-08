@@ -7,9 +7,14 @@
 
 using namespace std;
 
+//tirage d'un x uniforme entre 0 et 1
+double new_x() {
+    return (static_cast <double> (rand()) / static_cast <double> (RAND_MAX));
+}
+
 //tirage d'une variable aléatoire pour le parcours entre x_n-1 et x_n
 double parcours_x(point p) {
-    double y = static_cast <double> (rand()) / static_cast <double> (RAND_MAX); // loi uniforme sur (0,1)
+    double y = new_x(); // loi uniforme sur (0,1)
     return -(p.get_mu()/p.sigmaT)*log(1-y);
 }
 
@@ -31,3 +36,5 @@ double do_I_stop(double sigmaS, double sigmaA) {
 double new_mu() {
     return 2*(static_cast <double> (rand()) / static_cast <double> (RAND_MAX))-1.;
 }
+
+

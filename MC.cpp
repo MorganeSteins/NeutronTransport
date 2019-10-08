@@ -19,7 +19,7 @@ vector_points no_scattering_homog_point_MC(int N, double mu){
 // calcul de la densité neutronique au point x direction mu avec N tirages
 // avec une source ponctuelle isotrope en 0 et matériau homogène.
 double density_no_scattering_homog_point_MC(point p, int N){
-    double dx=1./100;
+    double dx=sqrt(1./N);
     vector_points selection(N) ;
     selection = no_scattering_homog_point_MC(N,p.get_mu());
     double rsl = 0.;
@@ -45,7 +45,7 @@ double density_no_scattering_homog_point(point p){
 vector_points no_scattering_homog_unif_MC(int N, point p){
     vector_points selection(N);
     for (int i=0; i<N; i++){
-        selection.points[i] = deplacement_x(point(p.get_x(), -p.get_mu()));
+        selection.points[i] = deplacement_x(point(new_x(), new_mu()));
     }
     return selection;
 }
@@ -55,18 +55,19 @@ vector_points no_scattering_homog_unif_MC(int N, point p){
 double density_no_scattering_homog_unif_MC(point p, int N){
     vector_points selection(N) ;
     selection = no_scattering_homog_unif_MC(N,p);
+    double dx = sqrt(1./N);
     double rsl = 0.;
     for (int i=0;i<N;i++){
-        if (selection.points[i].get_x()>0 && selection.points[i].get_x()<1) {
+        if (selection.points[i].get_x()>p.get_x() && selection.points[i].get_x()<p.get_x()+dx) {
             rsl++;
         }
     }
     //print_vector(selection);
-    return rsl/(N*abs(p.get_mu()));
+    return rsl/(N*p.sigmaT*dx);
 }
 
 //calcul de la solution analytique sans scattering, cas homogène 
 //et source uniforme : disjonction cas sur signe de mu 
 double density_no_scattering_homog_unif(point p){
-    if (p.get_mu()>0) {return 1-exp(-p.sigmaT*p.get_x()/p.get_mu());}
-    return 1-exp(p.sigmaT*(1-p.get_x())/p.get_mu());}
+    if (p.get_mu()>0) {return (exp(p.sigmaT*(1-p.get_x())/p.get_mu())-1)/p.sigmaT;}
+    return (1-exp(-p.sigmaT*p.get_x()/p.get_mu()))/p.sigmaT;}

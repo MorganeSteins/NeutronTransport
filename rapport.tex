@@ -12,6 +12,10 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+\newcommand{\pp}{\varphi}
+\newcommand{\st}{\Sigma_t}
+\newcommand{\into}{\int_{-1}^{1}}
+
 \title{TP1 AMS302 - Modélisation et Simulation du transport de particules neutres}
 \author{Morgane STEINS et Etienne PEILLON}
 \date{Version préliminaire pour le 14/10/2019}
@@ -20,9 +24,55 @@
 \maketitle
 \vspace{0.5cm}
 
+Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'intervalle $[0;1]$ et pour tout $\mu \in [1;1]$
+\begin{equation}
+    \label{eq.transport}
+    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \frac{1}{2} \into \pp(x,\mu')\ d\mu' + S(x,\mu)
+\end{equation}
+
+
+
 \section{Solveur Monte-Carlo}
+
+\subsection{Préliminaires}
+Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une surface efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
+$$P_{\text{interaction}}([x;x+\delta l]) = \Sigma \delta l$$ 
+Lorsque l'on projette cette distance sur l'axe des abscisses, on fait apparaitre le cosinus de l'angle entre le vecteur directeur du déplacement et $\vec{x}$ qui est définit par $\mu$ dans ce TP.
+D'où en 1D $P_{\text{interaction}}(x) = \frac{\Sigma}{\mu} \delta l $
+
+On peut voir le libre parcours du neutron de deux manières différentes. 
+La première est de considérer qu'il s'agit d'une sorte comme un "temps" de survie et utiliser le fait que ce genre de phénomène se modélise avec une loi exponentielle. 
+On peut aussi utiliser faire une démonstration plus physique. 
+On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longeur $dx$ et on considère partir du point 0. 
+La probabilité d'interaction au point $x=idx$ s'obtient en considérant qu'il y a une intercation dans l'intervalle $i$ mais pas dans les précédents ce qui donne
+\begin{equation*}
+    P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}
+\end{equation*}
+
+Le passage à la limite $N \rightarrow \infty$ donne la densité de probabilité d'interagir au point $x$ et pas avant, donc la densité de probabilité du libre parcours $f$:
+$f(x) = \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}x}$
+
+On vérifie immédiatement que $\int_0^{\infty} f(x) \text{d}x = 1$.
+
+Pour échantillonner une variable aléatoire selon une loi, on peut inverser sa fonction de répartition si elle est connue. 
+La fonction de répartition $F$ du libre parcours moyen s'écrit
+\begin{equation*}
+    F(x) = \int_0^x f(t) \text{d}t = \int_0^x \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}t} = 1- e^{-\frac{\Sigma}{\mu}x}
+\end{equation*}
+
+Pour l'inverser on résoud $y = F(x)$
+\begin{equation*}
+    y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = \frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
+\end{equation*}
+
+Pour tirer une variable aléatoire selon la loi $F$, on tire $y$ selon une loi uniforme sur $[0;1]$ et on calcule $F^{-1}(y)$.
+
+\vspace{0.1cm}
+La méthode Monte-Carlo consiste à simuler un grand nombre de trajectoires de neutrons et en déduire le flux neutronique par la loi des grands nombres. 
+
+
+\newpage
 \begin{itemize}
-    \item Faire le calcul du libre parcours
     \item faire l'explication de l'estimateur du flux neutronique
     \item Cas homogène ponctuel
     \item Cas homogène uniforme
@@ -31,6 +81,7 @@
     \item Etudier les temps de calcul
     \item Etudier la convergence ($\sqrt{N}$ théoriquement)
     \item Etudier la complexité ?? 
+    \item blabla 
 \end{itemize}
 
 \end{document}

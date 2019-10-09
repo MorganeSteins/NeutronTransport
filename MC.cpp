@@ -69,5 +69,5 @@ double density_no_scattering_homog_unif_MC(point p, int N){
 //calcul de la solution analytique sans scattering, cas homogène 
 //et source uniforme : disjonction cas sur signe de mu 
 double density_no_scattering_homog_unif(point p){
-    if (p.get_mu()>0) {return (exp(p.sigmaT*(1-p.get_x())/p.get_mu())-1)/p.sigmaT;}
-    return (1-exp(-p.sigmaT*p.get_x()/p.get_mu()))/p.sigmaT;}
+    if (p.get_mu()==0) {return 1;}
+    return (1/p.sigmaT)*(2-exp(-p.sigmaT*p.get_x()/p.get_mu())-exp(p.sigmaT*(p.get_x()-1)/p.get_mu()));}

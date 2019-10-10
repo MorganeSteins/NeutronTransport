@@ -27,4 +27,14 @@ double density_no_scattering_homog_unif_MC(point p, int N);
 
 double density_no_scattering_homog_unif(point p);
 
+
+
+/* Fonctions pour le cas homogène avec scattering et source uniforme*/
+
+vector_points move_scattering(vector_points start);
+
+/* Densité moyennée en mu au point x*/
+double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter=100000, double epsilon = 0.01);
+
+
 #endif // MC_HPP_INCLUDED

@@ -2,6 +2,7 @@
 #include <math.h>
 #include <vector>
 #include <fstream>
+#include <algorithm>
 #include <time.h>
 #include "points.hpp"
 #include "aleat_tools.hpp"
@@ -16,26 +17,42 @@ int main() {
     double x = 0.5;
     double mu = 1;
     double integrale = 0.;
-    cout<<"On travaille à x="<<x<<" et mu="<<mu<<endl;
+    cout<<"On travaille à x="<<x<<" et mu="<<mu<<" avec sigmaT "<<point(0,0).sigmaT<<endl;
 
     // test question 4
-    /*double density = density_no_scattering_homog_point_MC(point(x,mu), 1000000);
+    double density = density_no_scattering_homog_point_MC(point(x,mu), 1000000);
     cout<<"densité par MC "<<density<<endl;
     cout<<"densité réelle "<<density_no_scattering_homog_point(point(x,mu))<<endl<<endl;
-    */
+    
 
     // test question 5
     double density_2 = density_no_scattering_homog_unif_MC(point(x,mu), 1000000);
     cout<<"densité par MC "<<density_2<<endl;
     cout<<"densité réelle "<<density_no_scattering_homog_unif(point(x,mu))<<endl<<endl;
     
+    // tests vecteurs
+    vector_points v1(2);
+    v1.points[0] = point(1,1);
+    v1.points[1] = point(1,2);
+    vector_points v2(1);
+    v2.points[0] = point(1,0);
+    cout<<v1.points.size()<<endl;
+    v1=v2;
+    v1.points.resize(v2.points.size());
+    cout<<v1.points.size()<<endl;
+    cout<<v1.points[1].get_mu()<<endl;
+
+    vector<int> v(1000);
+    generate(v.begin(), v.end(), std::rand);
+    cout<<v[0]<<endl;
+
     //for (int i=0;i<1000;i++) {integrale += (15./1000.)*density_no_scattering_homog_unif(point((float) i*15/1000,mu));}
     //cout<<integrale<<endl;
     //for (int i=0;i<11;i++) {cout<<(float)i/10<<" vaut "<<density_no_scattering_homog_unif_MC(point(float(i)/10,mu),10000)<<endl;}
     /* test du flux non collisionné : intégrale somme à 1*/
 
     // somme des valeurs pour approcher l'intégrale MC : doit faire 1. De -7 à 7.
-    for (int i=0;i<1000;i++) {integrale += (1./1000.)*density_no_scattering_homog_unif(point((float) i*1./1000,mu));}
-    cout<<integrale<<endl;
+    /*for (int i=0;i<1000;i++) {integrale += (1./1000.)*density_no_scattering_homog_unif(point((float) i*1./1000,mu));}
+    cout<<integrale<<endl;*/
     return 0;
 }

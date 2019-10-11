@@ -37,4 +37,9 @@ void move_scattering(vector_points start, vector_points final);
 double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter=100000, double epsilon = 0.01);
 
 
+
+void save_error(int N_max,point p);
+void save_points(int N,int nb_points,double mu, string filename_);
+
+
 #endif // MC_HPP_INCLUDED

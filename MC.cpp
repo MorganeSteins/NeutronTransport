@@ -1,6 +1,7 @@
 #include "MC.hpp"
 #include <math.h>
-#include<iostream>
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include <cstdlib>
 
@@ -141,4 +142,47 @@ double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter, doub
     }
     cout<<"Convergé en "<<step<<" itérations"<<endl;
     return phi;
+}
+
+
+void save_error(int N_max,point p)
+{
+    ofstream fichier("erreurs_q4.txt", ios::out | ios::trunc);
+    double phi_exact = density_no_scattering_homog_point(p);
+    double err=0.;
+    if (fichier) // si l'ouverture a reussi
+    {
+        //on ecrit dans le fichier
+        cout << "Calcul des erreurs pour différents N jusqu'à "<<endl<<N_max << endl;
+        //on écrit les erreurs
+        for (int i = 1; i <= N_max; i=i*10){
+            cout<<"i="<<i<<" et "<<2*i<<endl;
+            err=0.;
+            for (int j=0;j<5;j++){err+=abs(density_no_scattering_homog_point_MC(p,i)-phi_exact);}
+            fichier << err/5<<",";
+            err=0.;
+            for (int j=0;j<5;j++){err+=abs(density_no_scattering_homog_point_MC(p,2*i)-phi_exact);}
+            fichier << err/5<<",";
+        }
+        fichier.close(); // on referme le fichier
+    }
+    else {cerr << "Erreur a l'ouverture !" << endl;}
+}
+
+void save_points(int N,int nb_points,double mu, string filename_)
+{
+    double dx = 1./nb_points;
+    double val=0.;
+    ofstream fichier(filename_, ios::out | ios::trunc);
+    if (fichier) // si l'ouverture a reussi
+    {
+        //on écrit les erreurs
+        for (int i =0; i <nb_points; i++){
+            val=0.;
+            for (int j=0;j<5;j++){val+=density_no_scattering_homog_point_MC(point(i*dx,mu),N);}
+            fichier << val/5<<",";
+        }
+        fichier.close(); // on referme le fichier
+    }
+    else {cerr << "Erreur a l'ouverture !" << endl;}
 }

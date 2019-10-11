@@ -78,42 +78,67 @@ double density_no_scattering_homog_unif(point p){
 /* CAS DIFFUSANT HOMOGENE SOURCE UNIFORME */
 /* Génération des nouveaux points (x_n+1,mu_n) à partir de (x_n,mu_n) 
  Ne conserve que ceux qui restent dans l'intervalle [0,1] */
-vector_points move_scattering(vector_points start){
-    vector_points final(start.points.size());
+/*void move_scattering(vector_points start,vector_points final){
+    cout<<"je commence "<<endl;
     double new_x_;
     int stop=0;
     int count=0;
+    cout<<"La taille du vecteur max est "<<start.points.size()<<endl;
     for (int i=0;i<start.points.size();i++){
         new_x_ = deplacement_x(start.points[i]).get_x();
         stop = do_I_stop(point::sigmaS,point::sigmaA);
         if (new_x_>=0 && new_x_<=1 && stop==1){
-            final.points[i] = point(new_x_,new_mu());
+            final.points.push_back(point(new_x_,new_mu()));
             count ++;
         }
     }
+    cout<< " I y a eu "<<count<<" points non nuls"<<endl;
     final.points.resize(count);
-    return final;
-}
+}*/
 
 
 double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter, double epsilon ){
     vector_points selection(N);
+    vector_points new_selection(N);
     double dx = sqrt(1./N);
     double phi=0.; // valeur de l'estimateur
     double freq = 0.;
     double phi_old = 1.; //ancien phi
     int step = 0;
+    int stop=0; // VA d'arret pour chaque étape et chaque tirage
+    double new_x_=0.;
+    int count=0;
+
+    //initalisation 
+    for (int i=0;i<N;i++) {
+        selection.points[i] = point(new_x(),new_mu());
+    }
+
     while (abs(phi-phi_old)>epsilon && step<max_iter && selection.points.size()>0){
-        phi_old = phi;
-        selection = move_scattering(selection); // resize a eu lieu + sortie et absorbés
+        //cout<<"Phi a l'itération "<<step<<" vaut "<<phi<<endl;
+        new_selection.points.resize(0);
+        count = 0;
+        for (int i=0;i<selection.points.size();i++){
+            stop = do_I_stop(point::sigmaS,point::sigmaA);
+            new_x_ = deplacement_x(selection.points[i]).get_x();
+            //cout<<" Le nouveau x vaut "<<new_x_<<endl;
+            if (new_x_>=0 && new_x_<=1 && stop==1){
+                new_selection.points.push_back(point(new_x_,new_mu()));
+                count ++;
+            }
+        }
+        selection = new_selection;
         for (int i=0;i<selection.points.size();i++) {
             if (selection.points[i].get_x()>x && selection.points[i].get_x()<x+dx){
                 freq ++;
             }
         }
-        phi += (1./(point::sigmaT*dx))*(freq/(float)N);
+        phi_old = phi;
+        phi += (1./(2.*point::sigmaT*dx))*(freq/(float)N);
+        //cout<<phi_old<<" et "<<phi<<endl<<endl;
         freq = 0.;
         step++;
     }
+    cout<<"Convergé en "<<step<<" itérations"<<endl;
     return phi;
 }

@@ -7,8 +7,8 @@
 using namespace std;
 
 //initialisation des variabales statiques
-double point::sigmaA = 1.;
-double point::sigmaS = 0.;
+double point::sigmaA = 0.;
+double point::sigmaS = 1.;
 double point::sigmaT = sigmaA+sigmaS;
 
 //créateur par copie

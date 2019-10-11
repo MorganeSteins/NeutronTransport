@@ -15,6 +15,8 @@
 \newcommand{\pp}{\varphi}
 \newcommand{\PP}{\mathbb{P}}
 \newcommand{\st}{\Sigma_t}
+\newcommand{\sa}{\Sigma_a}
+\newcommand{\Ssss}{\Sigma_s}
 \newcommand{\into}{\int_{-1}^{1}}
 
 \title{TP1 AMS302 - Modélisation et Simulation du transport de particules neutres}
@@ -28,7 +30,7 @@
 Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'intervalle $[0;1]$ et pour tout $\mu \in [1;1]$
 \begin{equation}
     \label{eq.transport}
-    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \frac{1}{2} \into \pp(x,\mu')\ d\mu' + S(x,\mu)
+    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \frac{\Ssss(x)}{2} \into \pp(x,\mu')\ d\mu' + S(x,\mu)
 \end{equation}
 
 
@@ -119,18 +121,20 @@ En approximant la probabilité par la fréquence lors d'un grand nombre de tirag
 \subsubsection{Source uniforme}
 On s'intéresse ensuite au cas d'une source $S$ uniforme et unitaire sur tout l'intervalle $[0,1]$.
 Comme on écrit $S(x) = \int_0^1 S(t) \delta_t(t)dt$ on peut réutiliser l'étude faite avec une source ponctuelle. Cette source peut maintenant être située en tout point de l'intervalle d'étude. 
-Par translation on obtient la solution de l'équation pour une source ponctuelle en $x_0$ 
+Par translation on obtient la solution de l'équation pour une source ponctuelle en $x_0$ pour $\mu>0$
 \begin{equation}
     \label{eq:sol.point.x0}
-    \pp_{x_0}(x,\mu) = \frac{1}{\mu} e^{-\frac{\st |x-x_0|}{\mu}}
+    \pp_{x_0}(x,\mu) = 1_{(x>x_0)}\frac{1}{\mu} e^{-\frac{\st (x-x_0)}{\mu}} 
 \end{equation}
+Par symétrie on trouve la solution pour $\mu<0$ en changeant simplement l'indicatrice $1_{(x<x_0)}$.
 
+\vspace{0.1cm}
 Par linéarité la solution de notre equation pour $S=1$ 
 \begin{equation*}
     \pp(x,\mu) = \int_0^1 \pp_{x_0}(x,\mu)\ dx_0
 \end{equation*} 
 
-Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le poiint de départ selon la loi de probabilité induite par la source. 
+Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le point de départ selon la loi de probabilité induite par la source. 
 Comme la source est constante on tire $x_0$ selon une loi uniforme $\mathcal{U}[0,1]$. 
 On tire $\mu_0$ comme précédemment.
 Pour connaitre la densité $f_{\mu_0}(x_1)$ on utilise la formule de Bayes sur les densités conditionnelles
@@ -159,16 +163,65 @@ Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthod
 \vspace{0.5cm}
 \subsubsection{Matériau non homogène avec source ponctuelle}
 On peut se posee la question de ce qui se passe dans le cas d'un matériau où $\st$ est une fonction de $x$.
+On se place dans le cas d'une source homogène avec un matériau de $\st$
+\begin{equation*}
+\st (x) = \left\{     
+    \begin{aligned}
+    &1 \hspace{1cm}   x \in S_1=[0;0.3],\\
+    &3 \hspace{1cm}   x \in S_2=[0.3;0.7],\\
+    &1 \hspace{1cm}   x \in S_3=[0.7;1],
+\end{aligned}
+    \right.
+\end{equation*}
+et une source ponctuelle en 0.
+
+On commence par résoudre le cette équation sur $[0;0.3]$ avec $\mu>0$ puisqu'il n'y a pas de source autre qu'en 0. 
+La solution est donnée par le calcul de la partie précédente
+\begin{equation*}
+    \tag{S1}
+    \label{eq:sol.S1}
+    \pp_1(x,\mu) = \frac{1}{\mu} e^{-\frac{ x}{\mu}} \hspace{1cm} \forall x \in [0;0.3]
+\end{equation*}
+
+Pour l'intervalle $[0.3;0.7]$ on peut considérer une source ponctuelle en $x=0.3$ 
+\begin{equation*}
+    S_2(x,\mu) = \pp_1(0.3,\mu)\delta_{0.3}(x) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}}\delta_{0.3}(x)
+\end{equation*}
+
+On résoud le problème exactement de la même façon et on obtient
+\begin{equation}
+    \tag{S2}
+    \label{eq:sol.S2}
+    \pp_2(x,\mu) = S_2(0.3,\mu) \frac{1}{\mu} e^{-\frac{3 (x-0.3)}{\mu}} = \frac{1}{\mu^2} e^{-\frac{0.3}{\mu}} e^{-\frac{3(x-0.3)}{\mu}}
+\end{equation}
+
+Le même raisonnement donne
+\begin{equation}
+    \tag{S3}
+    \label{eq:sol.S3}
+    \pp_3(x,\mu) = \frac{1}{\mu^3} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
+\end{equation}
+
+\vspace{0.5cm}
+\subsection{Matériau diffusant}
+Nous abandonnons maintenant l'hypothèse d'un matériau purement absorbant et considérons les collisions ($\Ssss \neq 0$).
+Nous utilisons la suite des flux $n$ fois collisionnés $\pp^n$ et les différences entre deux itérations $\epsilon = \pp^n-\pp^{n-1}$ avec $\epsilon^0 = \pp^0$.
+Les flux collisionnés vérifient l'équation
+\begin{equation}
+    \label{eq:diffusion}
+    \mu \frac{\partial \pp^n}{\partial x} (x,\mu) + \st \pp^n(x,\mu) = \sa S(x,\mu) + \frac{\Ssss}{2} \into \pp^{n-1}(x,\mu')\ d\mu' 
+\end{equation}
+
+Pour simplifier l'étude on considère ici que l'absorbtion est négligeable, i.e. $\st = \Ssss$.
+Ceci entraine immédiatement que les $\epsilon^n$ sont solution de la même équation que les $\pp^n$.
 
 \vspace{5cm}
-\subsection{Matériau diffusant}
-
 \begin{itemize}
     \item faire l'explication de l'estimateur du flux neutronique
     \item Cas homogène ponctuel : faire des plots et erreurs
     \item Cas homogène uniforme : faire des plots et erreurs
     \item Cas non homogène : pas de simulation : juste faire le calcul (je l'ai fait c'est dégueu mais izi)
-    \item Cas scattering : le plus dur il faut coder les $n$ rebonds des particules
+    \item Cas scattering : le plus dur il faut coder les $n$ rebonds des particules : fait mais des questions sur la théorie
     \item Etudier les temps de calcul
     \item Etudier la convergence ($\sqrt{N}$ théoriquement)
     \item Etudier la complexité ?? 

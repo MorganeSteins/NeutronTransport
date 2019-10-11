@@ -6,75 +6,139 @@
 
 using namespace std;
 
-//initialisation des variabales statiques
-double vector_points::sigmaA = 0.1;
-double vector_points::sigmaS = 0.9;
-
-//créateur par copie
-vector_points::vector_points(vector_points &vector_to_copy) {
-    dim = vector_to_copy.dimension();
-    vector<point> points(dim);
-    for (int i=0;i<dim;i++) {this->points[i]=vector_to_copy.points[i];}
-
-}
-
-//createur d'un vecteur de points initialisés à (0,0)
-vector_points::vector_points(int dimension) {
-    //if (dimension<0) {throw length_error{"Vector::Vector"}}; //jsp comment faire
-    dim = dimension;
-    points = vector<point>(dimension) ;
-    for (int i=0;i<dimension;i++){
-        points[i] = point(0.,0.);
+/* CAS ABSORBANT HOMOGENE SOURCE PONCTUELLE */
+//tirage de départ de neutrons dans un matériau homogène, source ponctuelle en 0.
+vector_points no_scattering_homog_point_MC(int N, double mu){
+    vector_points selection(N);
+    for (int i=0; i<N; i++){
+        selection.points[i] = point(parcours_x(point(0,mu)),mu);
     }
+    return selection;
 }
 
-//Push_Back nouveau point à la fin du vecteur et change la dimension
-void vector_points::add_point(point p){
-    dim++;
-    points.push_back(p);
-}
-
-//affiche le vecteur de points 
-void print_vector(vector_points &v){
-    int dim = v.dimension();
-    cout<<3<<endl;
-    vector<point> points=v.get_points();
-    cout<<"[";
-    for (int i=0;i<dim-1;i++){
-        cout<<"("<<points[i].get_x()<<" , "<<points[i].get_mu()<<");"<<endl;
+// calcul de la densité neutronique au point x direction mu avec N tirages
+// avec une source ponctuelle isotrope en 0 et matériau homogène.
+double density_no_scattering_homog_point_MC(point p, int N){
+    double dx=sqrt(1./N);
+    vector_points selection(N) ;
+    selection = no_scattering_homog_point_MC(N,p.get_mu());
+    double rsl = 0.;
+    for (int i=0;i<N;i++){
+        if (selection.points[i].get_x()>p.get_x() && selection.points[i].get_x()<dx+p.get_x()) {
+            rsl++;
+        }
     }
-    cout<<"("<<points[dim-1].get_x()<<" , "<<points[dim-1].get_mu()<<")";
-    cout<<"]"<<endl;
+    return rsl/(N*p.sigmaT*dx);
 }
 
-//FOCNTIONS AUXILIAIRES
+//calcul de la solution analytique sans scattering, cas homogène 
+//et source ponctuelle
+double density_no_scattering_homog_point(point p){
+    if (p.get_mu()==0) {if (p.get_x()==0){return 1;} return 0;}
+    return (1/p.get_mu())*exp(-p.sigmaT*p.get_x()/p.get_mu());}
 
-//tirage d'une variable aléatoire pour le parcourt entre x_n-1 et x_n
-double parcourt_x(point p, double sigmaT) {
-    double y = static_cast <double> (rand()) / static_cast <double> (RAND_MAX); // loi uniforme sur (0,1)
-    return -(p.get_mu()/sigmaT)*log(1-y);
+
+
+/* CAS ABSORBANT HOMOGENE SOURCE UNIFORME */ 
+//tirage de départ de neutrons dans un matériau homogène, source uniforme 
+//arrivés en (x,mu).
+vector_points no_scattering_homog_unif_MC(int N, point p){
+    vector_points selection(N);
+    for (int i=0; i<N; i++){
+        selection.points[i] = deplacement_x(point(new_x(), p.get_mu()));
+    }
+    return selection;
 }
 
-//nouveau point p après déplacement
-point deplacement_x(point p, double sigmaT){
-    double new_x =  p.get_x()+p.get_mu()*parcourt_x(p, sigmaT);
-    point p2;
-    p2.set_mu(p.get_mu());
-    p2.set_x(new_x);
-    return p2;
+// calcul de la densité neutronique au point x direction mu avec N tirages
+// avec une source isotrope uniforme et matériau homogène.
+double density_no_scattering_homog_unif_MC(point p, int N){
+    vector_points selection(N) ;
+    selection = no_scattering_homog_unif_MC(N,p);
+    double dx = sqrt(1./N);
+    double rsl = 0.;
+    for (int i=0;i<N;i++){
+        if (selection.points[i].get_x()>p.get_x() && selection.points[i].get_x()<p.get_x()+dx) {
+            rsl++;
+        }
+    }
+    //print_vector(selection);
+    return rsl/(N*p.sigmaT*dx);
 }
 
-//tirage d'une variable aléatoire pour la continuation de la marche 0 arret, 1 continuer
-double do_I_stop(double sigmaS, double sigmaA) {
-    double y = (static_cast <double> (rand()) / static_cast <double> (RAND_MAX))*(sigmaA+sigmaS); 
-    if (y<sigmaA) {return 0;}
-    else {return 1;}
+//calcul de la solution analytique sans scattering, cas homogène 
+//et source uniforme : disjonction cas sur signe de mu 
+double density_no_scattering_homog_unif(point p){
+    if (p.get_mu()==0) {return 1;}
+    if (p.get_mu()<0) {return (1./ p.sigmaT)*(1-exp(-p.sigmaT*(p.get_x()-1)/p.get_mu()));}
+    return (1./ p.sigmaT)*(1-exp(-p.sigmaT*p.get_x()/p.get_mu()));}
+
+
+
+/* CAS DIFFUSANT HOMOGENE SOURCE UNIFORME */
+/* Génération des nouveaux points (x_n+1,mu_n) à partir de (x_n,mu_n) 
+ Ne conserve que ceux qui restent dans l'intervalle [0,1] */
+/*void move_scattering(vector_points start,vector_points final){
+    cout<<"je commence "<<endl;
+    double new_x_;
+    int stop=0;
+    int count=0;
+    cout<<"La taille du vecteur max est "<<start.points.size()<<endl;
+    for (int i=0;i<start.points.size();i++){
+        new_x_ = deplacement_x(start.points[i]).get_x();
+        stop = do_I_stop(point::sigmaS,point::sigmaA);
+        if (new_x_>=0 && new_x_<=1 && stop==1){
+            final.points.push_back(point(new_x_,new_mu()));
+            count ++;
+        }
+    }
+    cout<< " I y a eu "<<count<<" points non nuls"<<endl;
+    final.points.resize(count);
+}*/
+
+
+double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter, double epsilon ){
+    vector_points selection(N);
+    vector_points new_selection(N);
+    double dx = sqrt(1./N);
+    double phi=0.; // valeur de l'estimateur
+    double freq = 0.;
+    double phi_old = 1.; //ancien phi
+    int step = 0;
+    int stop=0; // VA d'arret pour chaque étape et chaque tirage
+    double new_x_=0.;
+    int count=0;
+
+    //initalisation 
+    for (int i=0;i<N;i++) {
+        selection.points[i] = point(new_x(),new_mu());
+    }
+
+    while (abs(phi-phi_old)>epsilon && step<max_iter && selection.points.size()>0){
+        //cout<<"Phi a l'itération "<<step<<" vaut "<<phi<<endl;
+        new_selection.points.resize(0);
+        count = 0;
+        for (int i=0;i<selection.points.size();i++){
+            stop = do_I_stop(point::sigmaS,point::sigmaA);
+            new_x_ = deplacement_x(selection.points[i]).get_x();
+            //cout<<" Le nouveau x vaut "<<new_x_<<endl;
+            if (new_x_>=0 && new_x_<=1 && stop==1){
+                new_selection.points.push_back(point(new_x_,new_mu()));
+                count ++;
+            }
+        }
+        selection = new_selection;
+        for (int i=0;i<selection.points.size();i++) {
+            if (selection.points[i].get_x()>x && selection.points[i].get_x()<x+dx){
+                freq ++;
+            }
+        }
+        phi_old = phi;
+        phi += (1./(2.*point::sigmaT*dx))*(freq/(float)N);
+        //cout<<phi_old<<" et "<<phi<<endl<<endl;
+        freq = 0.;
+        step++;
+    }
+    cout<<"Convergé en "<<step<<" itérations"<<endl;
+    return phi;
 }
-
-//tirage d'un cos(angle) uniforme entre -1 et 1
-double new_mu() {
-    return 2*(static_cast <double> (rand()) / static_cast <double> (RAND_MAX))-1.;
-}
-
-
-

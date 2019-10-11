@@ -1,0 +1,177 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[top=2.5cm, bottom=2.8cm, left=2.7cm, right=2.7cm]{geometry} 
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts,stmaryrd}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{natbib}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\newcommand{\pp}{\varphi}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\st}{\Sigma_t}
+\newcommand{\into}{\int_{-1}^{1}}
+
+\title{TP1 AMS302 - Modélisation et Simulation du transport de particules neutres}
+\author{Morgane STEINS et Etienne PEILLON}
+\date{Version préliminaire pour le 14/10/2019}
+
+\begin{document}
+\maketitle
+\vspace{0.5cm}
+
+Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'intervalle $[0;1]$ et pour tout $\mu \in [1;1]$
+\begin{equation}
+    \label{eq.transport}
+    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \frac{1}{2} \into \pp(x,\mu')\ d\mu' + S(x,\mu)
+\end{equation}
+
+
+
+\section{Solveur Monte-Carlo}
+
+\subsection{Préliminaires}
+Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une surface efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
+$$P_{\text{interaction}}([x;x+\delta l]) = \Sigma \delta l$$ 
+Lorsque l'on projette cette distance sur l'axe des abscisses, on fait apparaitre le cosinus de l'angle entre le vecteur directeur du déplacement et $\vec{x}$ qui est définit par $\mu$ dans ce TP.
+D'où en 1D $P_{\text{interaction}}(x) = \frac{\Sigma}{\mu} \delta l $
+
+On peut voir le libre parcours du neutron de deux manières différentes. 
+La première est de considérer qu'il s'agit d'une sorte comme un "temps" de survie et utiliser le fait que ce genre de phénomène se modélise avec une loi exponentielle. 
+On peut aussi utiliser faire une démonstration plus physique. 
+On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longeur $dx$ et on considère partir du point 0. 
+La probabilité d'interaction au point $x=idx$ s'obtient en considérant qu'il y a une intercation dans l'intervalle $i$ mais pas dans les précédents ce qui donne
+\begin{equation*}
+    P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}
+\end{equation*}
+
+Le passage à la limite $N \rightarrow \infty$ donne la densité de probabilité d'interagir au point $x$ et pas avant, donc la densité de probabilité du libre parcours $f$:
+$f(x) = \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}x}$
+
+On vérifie immédiatement que $\int_0^{\infty} f(x) \text{d}x = 1$.
+
+Pour échantillonner une variable aléatoire selon une loi, on peut inverser sa fonction de répartition si elle est connue. 
+La fonction de répartition $F$ du libre parcours moyen s'écrit
+\begin{equation*}
+    F(x) = \int_0^x f(t) \text{d}t = \int_0^x \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}t} = 1- e^{-\frac{\Sigma}{\mu}x}
+\end{equation*}
+
+Pour l'inverser on résoud $y = F(x)$
+\begin{equation*}
+    y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = \frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
+\end{equation*}
+
+Pour tirer une variable aléatoire selon la loi $F$, on tire $y$ selon une loi uniforme sur $[0;1]$ et on calcule $F^{-1}(y)$.
+
+\vspace{0.1cm}
+La méthode Monte-Carlo consiste à simuler un grand nombre de trajectoires de neutrons et en déduire le flux neutronique par la loi des grands nombres. 
+
+\vspace{0.2cm}
+\subsection{Matériau purement absorbant}
+\subsubsection{Source ponctuelle}
+On commence avec le cas particulièrement simple $\Sigma_s = 0$. 
+Il n'y a pas de scattering, les neutrons émis par une source avec une direction $\mu$ continuent simplement dans cette direction jusqu'à être absorbés.
+
+Le cas le plus simple est celui d'une source ponctuelle en $0$. L'équation devient 
+\begin{equation}
+    \label{eq.homog.point}
+    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \delta_0(x)
+\end{equation}
+avec pour condition aux limites un flux entrant nul, c'est à dire 
+$$ \pp(0,\mu >0) = \pp(1,\mu<0) = 0 $$ 
+
+Pour trouver la solution plaçons nous à $\mu>0$ puisque pour $\mu<0$ les neutrons émis en $0$ sortent immédiatement du domaine, le flux est nul en tout point.
+On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et $x$
+
+\begin{align*}
+    \int_0^x \left( \mu \frac{\partial \pp}{\partial x} (t,\mu)  + \st
+    \pp(t,\mu)\right) e^\frac{\st t}{\mu} dt &= \int_0^x \delta_0(t) dt \\
+    \iff  \mu \pp(x,\mu) e^{\frac{\st x}{\mu}} &= \mu \pp(0,\mu) + 1 \\
+    \iff  \pp(x,\mu) &= \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
+\end{align*}
+
+
+Pour simuler ce flux neutronique avec un solveur Monte-Carlo on commence par tirer une direction de départ $\mu_0$ avec une loi uniforme $\mathcal{U}[-1,1]$.
+Le point de départ est $x_0 = 0$ puisque la seule source se trouve en ce point. Puis on tire la distance parcourue par ce neutron selon la loi du libre parcours établie précédemment. 
+Le neutron finit sa trajectoire au point $x_1$ avec toujours la direction $\mu_0$. 
+Ceci donne alors une distributions de neutrons avec une densité $f$ égale au libre parcours.
+
+\begin{equation*}
+    f(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \pp(x_1,\mu)
+\end{equation*}
+
+La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est donc donnée par l'intégrale de $\pp$ sur cet interval à un facteur $\st$ près.
+En prenant un intervalle de longueur $dx$ négligable devant $1$ (la taille de notre intervalle d'étude) on obtient
+
+\begin{equation}
+    \pp(x,\mu) = \frac{\PP(x_1 \in [x,x+dx])}{\st dx}
+\end{equation}
+
+En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\pp(x,\mu)$ pour tout $x$.
+
+
+\vspace{0.5cm}
+\subsubsection{Source uniforme}
+On s'intéresse ensuite au cas d'une source $S$ uniforme et unitaire sur tout l'intervalle $[0,1]$.
+Comme on écrit $S(x) = \int_0^1 S(t) \delta_t(t)dt$ on peut réutiliser l'étude faite avec une source ponctuelle. Cette source peut maintenant être située en tout point de l'intervalle d'étude. 
+Par translation on obtient la solution de l'équation pour une source ponctuelle en $x_0$ 
+\begin{equation}
+    \label{eq:sol.point.x0}
+    \pp_{x_0}(x,\mu) = \frac{1}{\mu} e^{-\frac{\st |x-x_0|}{\mu}}
+\end{equation}
+
+Par linéarité la solution de notre equation pour $S=1$ 
+\begin{equation*}
+    \pp(x,\mu) = \int_0^1 \pp_{x_0}(x,\mu)\ dx_0
+\end{equation*} 
+
+Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le poiint de départ selon la loi de probabilité induite par la source. 
+Comme la source est constante on tire $x_0$ selon une loi uniforme $\mathcal{U}[0,1]$. 
+On tire $\mu_0$ comme précédemment.
+Pour connaitre la densité $f_{\mu_0}(x_1)$ on utilise la formule de Bayes sur les densités conditionnelles
+\begin{equation*}
+    f_{\mu_0}(x_1) = \int_0^1 f_{\mu_0}(x_1|x_0)f_{\mu_0}(x_0)\ dx_0
+\end{equation*}
+
+$f_{\mu_0}(x_1|x_0)$ est donnée par la solution (\ref{eq:sol.point.x0}) qui est le libre parcours depuis $x_0$ à $\st$ près et $f_{\mu_0}(x_0)$ par la densité de la source, ici $1$.
+On obtient la densité $f(x_1)$
+$$ f_{\mu_0}(x_1) = \st \int_0^1 \pp_{x_0}(x,\mu) \ dx  = \st \pp(x,\mu)$$
+
+\vspace{0.1cm}
+Pour obtenir la densité de neutrons totale en un point $x$ indépendemment de leur direction $\mu$, il faut considérer les probabilités conditionnelles selon $\mu$ également.
+Comme le tirage de $\mu$ est uniforme entre $-1$ et $1$, sa densité est $\frac{1}{2}$. 
+On intègre sur $\mu$ pour obtenir la densité moyenne $ \tilde{\pp}(x) = \into \pp(x,\mu) \ d\mu $.
+On a alors
+$$ f(x_1) = \frac{1}{2} \into f_{\mu_0}(x_1) \ d\mu = \frac{\st}{2} \into \pp(x_1,\mu) \ d\mu  = \frac{\st}{2} \tilde{\pp}(x) $$
+
+Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthode Monte-Carlo
+
+\begin{equation}
+    \pp(x,\mu) = \frac{\PP(x_1 \in [x,x+dx]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x,x+dx])}{2 \st dx}
+\end{equation}
+
+
+\vspace{0.5cm}
+\subsubsection{Matériau non homogène avec source ponctuelle}
+On peut se posee la question de ce qui se passe dans le cas d'un matériau où $\st$ est une fonction de $x$.
+
+\vspace{5cm}
+\subsection{Matériau diffusant}
+
+\begin{itemize}
+    \item faire l'explication de l'estimateur du flux neutronique
+    \item Cas homogène ponctuel : faire des plots et erreurs
+    \item Cas homogène uniforme : faire des plots et erreurs
+    \item Cas non homogène : pas de simulation : juste faire le calcul (je l'ai fait c'est dégueu mais izi)
+    \item Cas scattering : le plus dur il faut coder les $n$ rebonds des particules
+    \item Etudier les temps de calcul
+    \item Etudier la convergence ($\sqrt{N}$ théoriquement)
+    \item Etudier la complexité ?? 
+\end{itemize}
+
+\end{document}

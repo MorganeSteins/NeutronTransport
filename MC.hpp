@@ -2,50 +2,39 @@
 #define MC_HPP_INCLUDED
 
 #include <vector>
+#include <math.h>
 #include <iostream>
+#include "points.hpp"
+#include "aleat_tools.hpp"
 
 using namespace std;
 
-class point {
-    double x;
-    double mu;
+/* Fonctions pour le cas homogène et source ponctuelle*/
 
-    public :
-    point() {x=0;mu=0;}
-    point(double newx, double newmu) {x=newx;mu=newmu;}
-    double get_x() const {return x;}
-    double get_mu() const {return mu;}
-    double set_x(double x1) {x=x1;}
-    double set_mu(double mu1) {mu=mu1;}
-};
+vector_points no_scattering_homog_point_MC(int N, double mu);
 
-class vector_points {
-    int dim;
-    vector<point> points ;
+double density_no_scattering_homog_point_MC(point p, int N);
 
-    static double sigmaS;
-    static double sigmaA;
-
-public :
-    vector_points() {dim=0;points= vector<point>(0) ;};
-    vector_points(int dimension) ;
-    vector_points(vector_points &vector_to_copy) ;
-
-    int dimension() const {return dim;}
-    vector<point> get_points() const {return points;}
-    void set_points(int i, point p)  { if (i>dim-1){dim=i+1;points.resize(dim, point());} points[i]=p;}
-    void add_point(point p);
-    void iteration_MC();
-
-};
+double density_no_scattering_homog_point(point p); 
 
 
 
-void print_vector(vector_points &v);
-double parcourt_x(point p, double sigmat);
-point deplacement_x(point p, double sigmat);
-double do_I_stop(double sigmaS, double sigmaA);
-double new_mu() ;
+/* Fonctions pour le cas homogène et source uniforme */
+
+vector_points no_scattering_homog_point_MC(int N, point p);
+
+double density_no_scattering_homog_unif_MC(point p, int N);
+
+double density_no_scattering_homog_unif(point p);
+
+
+
+/* Fonctions pour le cas homogène avec scattering et source uniforme*/
+
+void move_scattering(vector_points start, vector_points final);
+
+/* Densité moyennée en mu au point x*/
+double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter=100000, double epsilon = 0.01);
 
 
 #endif // MC_HPP_INCLUDED

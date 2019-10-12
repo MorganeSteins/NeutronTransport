@@ -159,6 +159,54 @@ double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter, doub
     return phi;
 }
 
+double density_scattering_homg_unif_MC(int N, point p, int max_iter, double epsilon ){
+    vector_points selection(N);
+    vector_points new_selection(N);
+    double dx = 1./100;
+    double dmu = sqrt(2./N); // discrétisation des angles
+    double phi=0.; // valeur de l'estimateur
+    double freq = 0.;
+    double phi_old = 1.; //ancien phi
+    int step = 0;
+    int stop=0; // VA d'arret pour chaque étape et chaque tirage
+    double new_x_=0.;
+    int count=0;
+
+    //initalisation 
+    for (int i=0;i<N;i++) {
+        selection.points[i] = point(new_x(),new_mu());
+    }
+
+    while (abs(phi-phi_old)>epsilon && step<max_iter && selection.points.size()>0){
+        //cout<<"Phi a l'itération "<<step<<" vaut "<<phi<<endl;
+        new_selection.points.resize(0);
+        count = 0;
+        for (int i=0;i<selection.points.size();i++){
+            stop = do_I_stop(point::sigmaS,point::sigmaA);
+            new_x_ = deplacement_x(selection.points[i]).get_x();
+            //cout<<" Le nouveau x vaut "<<new_x_<<endl;
+            if (stop==1 && new_x_>=0 && new_x_<=1){
+                new_selection.points.push_back(point(new_x_,new_mu()));
+                count ++;
+            }
+        }
+        selection = new_selection;
+        for (int i=0;i<selection.points.size();i++) {
+            if (selection.points[i].get_x()>p.get_x() && selection.points[i].get_x()<p.get_x()+dx && selection.points[i].get_mu()>p.get_mu() && selection.points[i].get_mu()<p.get_mu()+dmu){
+                freq ++;
+            }
+        }
+        cout<<"Iteration "<<step<<" il reste "<<selection.points.size()<<" il ya eu "<<freq<<endl;
+        phi_old = phi;
+        phi += (1./(2.*point::sigmaT*dx*dmu))*(freq/(float)N);
+        freq = 0.;
+        step++;
+        
+    }
+    cout<<"Convergé en "<<step<<" itérations"<<endl;
+    return phi;
+}
+
 
 void save_error(int N_max,point p)
 {

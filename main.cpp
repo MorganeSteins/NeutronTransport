@@ -29,11 +29,11 @@ int main() {
    string filename_;
    int nb_points = 25;
    int N = 1000000;
-   for (int i=1;i<=N;i=i*10){
-        filename_ = "Data/points_mu01_q5_"+to_string(i)+".txt";
-        cout<<"Je calcule pour "<<i<<" points"<<endl;
-        save_points(i,nb_points,mu,filename_);
-   }
+//    for (int i=1;i<=N;i=i*10){
+//         filename_ = "Data/points_mu01_q5_"+to_string(i)+".txt";
+//         cout<<"Je calcule pour "<<i<<" points"<<endl;
+//         save_points(i,nb_points,mu,filename_);
+//    }
 
 
     // test question 5
@@ -59,8 +59,8 @@ int main() {
     cout<<v[0]<<endl;*/
 
     // test question 8
-    //double density_scattering = density_tilda_scattering_homg_unif_MC(1000000,x,10000, 0.0001);
-    //cout<<" Densité MC "<<density_scattering<<endl;
+    double density_scattering = density_scattering_homg_unif_MC(50000000,point(x,mu),100, 0.00001);
+    cout<<" Densité MC "<<density_scattering<<endl;
     /*vector_points vp(2);
     vp.points[0] = point(0.5,0.5);
     vp.points[1] = point(0.2,0.2);

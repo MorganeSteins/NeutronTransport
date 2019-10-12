@@ -38,7 +38,7 @@ void move_scattering(vector_points start, vector_points final);
 /* Densité moyennée en mu au point x*/
 double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter=100000, double epsilon = 0.01);
 
-
+double density_scattering_homg_unif_MC(int N, point p, int max_iter, double epsilon );
 
 void save_error(int N_max,point p);
 void save_points(int N,int nb_points,double mu, string filename_);

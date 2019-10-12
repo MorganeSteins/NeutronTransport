@@ -13,6 +13,7 @@
 \usepackage{subcaption}
 
 \newcommand{\pp}{\varphi}
+\newcommand{\ppt}{\tilde{\varphi}}
 \newcommand{\PP}{\mathbb{P}}
 \newcommand{\st}{\Sigma_t}
 \newcommand{\sa}{\Sigma_a}
@@ -82,39 +83,41 @@ Il n'y a pas de scattering, les neutrons émis par une source avec une direction
 Le cas le plus simple est celui d'une source ponctuelle en $0$. L'équation devient 
 \begin{equation}
     \label{eq.homog.point}
-    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \delta_0(x)
+    \mu \frac{\partial \psi}{\partial x} (x,\mu) + \st \psi(x,\mu) = \delta_0(x)
 \end{equation}
 avec pour condition aux limites un flux entrant nul, c'est à dire 
-$$ \pp(0,\mu >0) = \pp(1,\mu<0) = 0 $$ 
+$$ \psi(0,\mu >0) = \psi(1,\mu<0) = 0 $$ 
+On note la solution de ce problème $\psi$ car elle nous sera utile dans la suite pour des cas plus complexes. 
+Il s'agit de la solution élémentaire.
 
 Pour trouver la solution plaçons nous à $\mu>0$ puisque pour $\mu<0$ les neutrons émis en $0$ sortent immédiatement du domaine, le flux est nul en tout point.
 On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et $x$
 
 \begin{align*}
-    \int_0^x \left( \mu \frac{\partial \pp}{\partial x} (t,\mu)  + \st
-    \pp(t,\mu)\right) e^\frac{\st t}{\mu} dt &= \int_0^x \delta_0(t) dt \\
-    \iff  \mu \pp(x,\mu) e^{\frac{\st x}{\mu}} &= \mu \pp(0,\mu) + 1 \\
-    \iff  \pp(x,\mu) &= \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
+    \int_0^x \left( \mu \frac{\partial \psi}{\partial x} (t,\mu)  + \st
+    \psi(t,\mu)\right) e^\frac{\st t}{\mu} dt &= \int_0^x \delta_0(t) dt \\
+    \iff  \mu \psi(x,\mu) e^{\frac{\st x}{\mu}} &= \mu \psi(0,\mu) + 1 \\
+    \iff  \psi(x,\mu) &= \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
 \end{align*}
 
 
 Pour simuler ce flux neutronique avec un solveur Monte-Carlo on commence par tirer une direction de départ $\mu_0$ avec une loi uniforme $\mathcal{U}[-1,1]$.
 Le point de départ est $x_0 = 0$ puisque la seule source se trouve en ce point. Puis on tire la distance parcourue par ce neutron selon la loi du libre parcours établie précédemment. 
 Le neutron finit sa trajectoire au point $x_1$ avec toujours la direction $\mu_0$. 
-Ceci donne alors une distributions de neutrons avec une densité $f$ égale au libre parcours.
+Ceci donne alors une distributions de neutrons avec une densité $f_{psi}$ égale au libre parcours.
 
 \begin{equation*}
-    f(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \pp(x_1,\mu)
+    f_{\psi}(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \psi(x_1,\mu)
 \end{equation*}
 
 La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est donc donnée par l'intégrale de $\pp$ sur cet interval à un facteur $\st$ près.
 En prenant un intervalle de longueur $dx$ négligable devant $1$ (la taille de notre intervalle d'étude) on obtient
 
 \begin{equation}
-    \pp(x,\mu) = \frac{\PP(x_1 \in [x,x+dx])}{\st dx}
+    \psi(x,\mu) = \frac{\PP(x_1 \in [x,x+dx])}{\st dx}
 \end{equation}
 
-En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\pp(x,\mu)$ pour tout $x$.
+En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\psi(x,\mu)$ pour tout $x$.
 
 
 \vspace{0.5cm}
@@ -124,14 +127,14 @@ Comme on écrit $S(x) = \int_0^1 S(t) \delta_t(t)dt$ on peut réutiliser l'étud
 Par translation on obtient la solution de l'équation pour une source ponctuelle en $x_0$ pour $\mu>0$
 \begin{equation}
     \label{eq:sol.point.x0}
-    \pp_{x_0}(x,\mu) = 1_{(x>x_0)}\frac{1}{\mu} e^{-\frac{\st (x-x_0)}{\mu}} 
+    \psi_{x_0}(x,\mu) = 1_{(x>x_0)}\frac{1}{\mu} e^{-\frac{\st (x-x_0)}{\mu}} 
 \end{equation}
 Par symétrie on trouve la solution pour $\mu<0$ en changeant simplement l'indicatrice $1_{(x<x_0)}$.
 
 \vspace{0.1cm}
 Par linéarité la solution de notre equation pour $S=1$ 
 \begin{equation*}
-    \pp(x,\mu) = \int_0^1 \pp_{x_0}(x,\mu)\ dx_0
+    \pp(x,\mu) = \int_0^1 \psi_{x_0}(x,\mu)\ dx_0
 \end{equation*} 
 
 Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le point de départ selon la loi de probabilité induite par la source. 
@@ -139,12 +142,12 @@ Comme la source est constante on tire $x_0$ selon une loi uniforme $\mathcal{U}[
 On tire $\mu_0$ comme précédemment.
 Pour connaitre la densité $f_{\mu_0}(x_1)$ on utilise la formule de Bayes sur les densités conditionnelles
 \begin{equation*}
-    f_{\mu_0}(x_1) = \int_0^1 f_{\mu_0}(x_1|x_0)f_{\mu_0}(x_0)\ dx_0
+    f_{\mu_0}(x_1) = \int_0^1 f_{\mu_0}(x_1|x_0)f_{\psi,\mu_0}(x_0)\ dx_0
 \end{equation*}
 
 $f_{\mu_0}(x_1|x_0)$ est donnée par la solution (\ref{eq:sol.point.x0}) qui est le libre parcours depuis $x_0$ à $\st$ près et $f_{\mu_0}(x_0)$ par la densité de la source, ici $1$.
 On obtient la densité $f(x_1)$
-$$ f_{\mu_0}(x_1) = \st \int_0^1 \pp_{x_0}(x,\mu) \ dx  = \st \pp(x,\mu)$$
+$$ f_{\mu_0}(x_1) = \st \int_0^1 \psi_{x_0}(x,\mu) \ dx  = \st \pp(x,\mu)$$
 
 \vspace{0.1cm}
 Pour obtenir la densité de neutrons totale en un point $x$ indépendemment de leur direction $\mu$, il faut considérer les probabilités conditionnelles selon $\mu$ également.
@@ -156,6 +159,7 @@ $$ f(x_1) = \frac{1}{2} \into f_{\mu_0}(x_1) \ d\mu = \frac{\st}{2} \into \pp(x_
 Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthode Monte-Carlo
 
 \begin{equation}
+    \label{eq:sol.unif}
     \pp(x,\mu) = \frac{\PP(x_1 \in [x,x+dx]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x,x+dx])}{2 \st dx}
 \end{equation}
 
@@ -206,14 +210,33 @@ Le même raisonnement donne
 \subsection{Matériau diffusant}
 Nous abandonnons maintenant l'hypothèse d'un matériau purement absorbant et considérons les collisions ($\Ssss \neq 0$).
 Nous utilisons la suite des flux $n$ fois collisionnés $\pp^n$ et les différences entre deux itérations $\epsilon = \pp^n-\pp^{n-1}$ avec $\epsilon^0 = \pp^0$.
-Les flux collisionnés vérifient l'équation
+Les flux collisionnés vérifient le système
 \begin{equation}
     \label{eq:diffusion}
-    \mu \frac{\partial \pp^n}{\partial x} (x,\mu) + \st \pp^n(x,\mu) = \sa S(x,\mu) + \frac{\Ssss}{2} \into \pp^{n-1}(x,\mu')\ d\mu' 
+    \left\{ \begin{aligned}
+        \mu \frac{\partial \pp^0}{\partial x} (x,\mu) + \st \pp^0(x,\mu) &= \sa S(x,\mu)  \\
+        \mu \frac{\partial \pp^n}{\partial x} (x,\mu) + \st \pp^n(x,\mu) &= \sa S(x,\mu) + \frac{\Ssss}{2} \into \pp^{n-1}(x,\mu')\ d\mu' \hspace{1cm} \forall n \geqslant 1
+    \end{aligned}
+    \right.
 \end{equation}
 
-Pour simplifier l'étude on considère ici que l'absorbtion est négligeable, i.e. $\st = \Ssss$.
+Pour simplifier l'étude on considère ici que l'absorbtion est négligeable, i.e. $\st = \Ssss$ et $\sa = 0$.
 Ceci entraine immédiatement que les $\epsilon^n$ sont solution de la même équation que les $\pp^n$.
+
+Nous n'allons ici considérer que le flux moyenné en $\mu$, fonction uniquement de l'espace $\tilde{\pp}(x)$.
+Le flux non collisinné $\ppt^0$ est donné par la partie précédente équation (\ref{eq:sol.unif}).
+
+Nous cherchons maintenant à estimer $\ppt^1$, c'est à dire trouver la densité de probabilité d'un point $x_2$ après une collision et 2 libres parcours.
+On utilise la formule de Bayes avec les densités qui donne (en notant $f(0\rightarrow 1)$ la densité de probabilité de continuer entre l'état 0 et l'état 1)
+\begin{align*}
+    \tilde{f_{x}}(x_2) &= f(0\rightarrow 1)\into f_{\mu}(\mu_1) \int_{-1}^1 f_x(x_2|x_1,\mu_1)\tilde{f_x}(x_1)\  dx_1 d\mu_1 \\
+    &=\frac{\Ssss}{\st}\into \frac{1}{2} \int_{-1}^1 \frac{\st}{2}\ppt^0(x_1)
+\end{align*}
+
+
+
+
+
 
 \vspace{5cm}
 \begin{itemize}

@@ -15,7 +15,7 @@ int main() {
     
     //print_vector(sol);
     double x = 0.5;
-    double mu = 1;
+    double mu = 0.1;
     double integrale = 0.;
     cout<<"On travaille à x="<<x<<" et mu="<<mu<<" avec sigmaT "<<point(0,0).sigmaT<<endl;
 
@@ -30,7 +30,7 @@ int main() {
    int nb_points = 25;
    int N = 1000000;
    for (int i=1;i<=N;i=i*10){
-        filename_ = "Data/points_q4_"+to_string(i)+".txt";
+        filename_ = "Data/points_mu01_q5_"+to_string(i)+".txt";
         cout<<"Je calcule pour "<<i<<" points"<<endl;
         save_points(i,nb_points,mu,filename_);
    }

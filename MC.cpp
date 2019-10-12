@@ -32,6 +32,21 @@ double density_no_scattering_homog_point_MC(point p, int N){
     return rsl/(N*p.sigmaT*dx);
 }
 
+// calcul de la densité neutronique au point x moyennée en mu avec N tirages
+// avec une source ponctuelle isotrope en 0 et matériau homogène.
+double density_tilda_no_scattering_homog_point_MC(point p, int N){
+    double dx=sqrt(1./N);
+    vector_points selection(N) ;
+    selection = no_scattering_homog_point_MC(N,new_mu());
+    double rsl = 0.;
+    for (int i=0;i<N;i++){
+        if (selection.points[i].get_x()>p.get_x() && selection.points[i].get_x()<dx+p.get_x()) {
+            rsl++;
+        }
+    }
+    return rsl/(2*N*p.sigmaT*dx);
+}
+
 //calcul de la solution analytique sans scattering, cas homogène 
 //et source ponctuelle
 double density_no_scattering_homog_point(point p){
@@ -179,7 +194,7 @@ void save_points(int N,int nb_points,double mu, string filename_)
         //on écrit les erreurs
         for (int i =0; i <nb_points; i++){
             val=0.;
-            for (int j=0;j<5;j++){val+=density_no_scattering_homog_point_MC(point(i*dx,mu),N);}
+            for (int j=0;j<5;j++){val+=density_no_scattering_homog_unif_MC(point(i*dx,mu),N);}
             fichier << val/5<<",";
         }
         fichier.close(); // on referme le fichier

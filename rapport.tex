@@ -120,6 +120,41 @@ En prenant un intervalle de longueur $dx$ négligable devant $1$ (la taille de n
 
 En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\psi(x,\mu)$ pour tout $x$.
 
+Maintenant que nous avons un algorithme nous pouvons nous concentrer sur l'implémentation.
+Commençons par étudier l'allure de la solution $\psi$ pour différentes valeurs de $\mu$.
+\begin{figure}[htp!]
+    \centering
+    \includegraphics[scale=0.45]{Figures/Q3_fx_solution.png}
+    \caption{$\psi(x,\mu)$}
+    \label{fig:q3.allures}
+\end{figure}
+Plus $\mu$ se rapproche de $0$ plus sa densité est centrée sur 0. 
+La limite pour $\mu=0$ est le dirac en 0. 
+En effet si le neutron part à la verticale il sera aussi absorbé à $x=0$.
+
+Il s'agit maintenant de comparer ses densités théoriques aux résultats de notre simulation.
+Une question pratique se pose : quelle valeur donner à $dx$ ? 
+En effet ce paramètre n'est en rien déterminé par le problème physique ou la méthode Monte-Carlo.
+Empiriquement, s'il est trop grand l'approximation de l'intégrale est fausse et s'il est trop petit il n'y aura aucune trajectoire qui mène à l'intervalle $[x;x+dx]$.
+Nous avons choisit ici de prendre $dx=\frac{1}{\sqrt(N)}$ après quelques essais.
+
+\begin{figure}[htp!]
+    \centering
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/sol4_et_simulations_moyennes.png}
+        \caption{Solution et simulations pour $\mu=1$}
+        \label{fig:q4.sol}
+    \end{subfigure}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/Q3_vitessesL2_Linfty_cv_025.png}
+        \caption{Vitesses de convergence}
+        \label{fig:q4.cv}
+    \end{subfigure}
+    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
+    \label{fig:q4}
+\end{figure}
 
 
 

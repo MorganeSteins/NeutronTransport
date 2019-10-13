@@ -155,7 +155,7 @@ double density_tilda_scattering_homg_unif_MC(int N, double x, int max_iter, doub
         freq = 0.;
         step++;
     }
-    cout<<"Convergé en "<<step<<" itérations"<<endl;
+    //cout<<"Convergé en "<<step<<" itérations"<<endl;
     return phi;
 }
 
@@ -242,7 +242,9 @@ void save_points(int N,int nb_points,double mu, string filename_)
         //on écrit les erreurs
         for (int i =0; i <nb_points; i++){
             val=0.;
-            for (int j=0;j<5;j++){val+=density_no_scattering_homog_unif_MC(point(i*dx,mu),N);}
+            cout<<"Je commence le calcul de x= "<<i*dx<<endl;
+            //for (int j=0;j<5;j++){val+=density_no_scattering_homog_unif_MC(point(i*dx,mu),N);}
+            for (int j=0;j<5;j++){val+=density_tilda_scattering_homg_unif_MC(N,i*dx);}
             fichier << val/5<<",";
         }
         fichier.close(); // on referme le fichier

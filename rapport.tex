@@ -202,6 +202,36 @@ Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthod
     \pp(x,\mu_0) = \frac{\PP(x_1 \in [x,x+dx]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x,x+dx])}{2 \st dx}
 \end{equation}
 
+\vspace{0.2cm}
+Comme pour le cas de la source ponctuelle on regarde d'abord l'allure de la solution en fonction de $\mu>0$ (figure (\ref{fig:q5.allures})). 
+Pour $\mu<0$ le cas est symétrique par rapport au centre de l'intervalle.
+
+\begin{figure}[htp!]
+    \centering
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/Q5_fx_solution.png}
+        \caption{Allures de $\pp(x,\mu)$}
+        \label{fig:q5.allures}
+    \end{subfigure}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/Q5_vitessesL2_Linfty_cv_025.png}
+        \caption{Vitesses de convergence}
+        \label{fig:q5.cv}
+    \end{subfigure}
+    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
+    \label{fig:q5}
+\end{figure}
+
+La solution est toujours nulle en $x=0$ comme imposé par la condition de flux entrant nul.
+La limite quand $\mu \rightarrow $ est un flux constant égal à $1$ sur tout l'intervalle et nul en $0$.
+
+On regarde ensuite les résultats de la simulation Monte-Carlo et encore une fois la vitesse de convergence en focntion du nombre de simulations sur la figure (\ref{fig:q5.cv}).
+
+
+
+
 
 \vspace{0.5cm}
 \subsubsection{Matériau non homogène avec source ponctuelle}
@@ -245,8 +275,13 @@ Le même raisonnement donne
     \pp_3(x,\mu) = \frac{1}{\mu^3} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
 \end{equation}
 
+
+
+
+
 \vspace{0.5cm}
 \subsection{Matériau diffusant}
+\subsubsection{Calcul de l'estimateur de $\pp$}
 Nous abandonnons maintenant l'hypothèse d'un matériau purement absorbant et considérons les collisions ($\Ssss \neq 0$).
 Nous utilisons la suite des flux $n$ fois collisionnés $\pp^n$ et les différences entre deux itérations $\epsilon^n = \pp^n-\pp^{n-1}$ avec $\epsilon^0 = \pp^0$.
 Les flux collisionnés vérifient le système
@@ -308,17 +343,36 @@ En intégrant sur un petit intervalle autour de $x$ on obtient une formule expli
 \end{equation}
 L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'itération $k$ et $x_{k+1}$ sa position d'arrivée. 
 
+\subsubsection{Résultats}
+Contrairement aux cas précédents on ne connait pas la solution analytique.
+
+\begin{figure}[htp!]
+    \centering
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/Q8_N10e7.png}
+        \caption{Simulation de $\pp(x,\mu)$ pour $N=10^7$ tirages}
+        \label{fig:q8.allure}
+    \end{subfigure}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/Q8_cv_pr_N10e7.png}
+        \caption{Vitesses de convergence}
+        \label{fig:q5=8.cv}
+    \end{subfigure}
+    \caption{Etude de la simulation de $\ppt(x)$}
+    \label{fig:q8}
+\end{figure}
+ 
+
+ 
 
 \vspace{5cm}
 \begin{itemize}
     \item faire l'explication de l'estimateur du flux neutronique
-    \item Cas homogène ponctuel : faire des plots et erreurs
-    \item Cas homogène uniforme : faire des plots et erreurs
-    \item Cas non homogène : pas de simulation : juste faire le calcul (je l'ai fait c'est dégueu mais izi)
-    \item Cas scattering : le plus dur il faut coder les $n$ rebonds des particules : fait mais des questions sur la théorie
+    \item Cas scattering : fait mais des questions sur la théorie
     \item Etudier les temps de calcul
-    \item Etudier la convergence ($\sqrt{N}$ théoriquement) : en quelle norme ? J'ai 1/4 pour l'instant en norme L2.
-    \item Etudier la complexité ?? 
+    \item Etudier la convergence ($\sqrt{N}$ théoriquement) : en quelle norme ? J'ai 1/4 pour l'instant en norme L2 et $L^\infty$.
 \end{itemize}
 
 \end{document}

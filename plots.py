@@ -58,48 +58,48 @@ x = np.linspace(0,1,25)
 # plt.title("Tirages moyennés sur 5 simulations")
 # plt.show()
 
-# N = [1,10,100,1000,10000,100000,1000000]
-# erreur_L2 = np.zeros(len(N))
-# erreur_inf = np.zeros(len(N))
-# for i in range(len(N)) :
-#     text_file = open("Data/points_q4_"+str(N[i])+".txt", "r")
-#     lines = text_file.read().split(',')
-#     lines.pop()
-#     lines = np.asarray(lines).astype(np.float)
-#     phi_exact = [density_no_scattering_homog_point(x[i],1,sigmaT) for i in range(len(x))]
-#     erreur_L2[i] = np.linalg.norm(lines-phi_exact)
-#     erreur_inf[i] = max(abs(lines-phi_exact))
+N = [1,10,100,1000,10000,100000,1000000]
+erreur_L2 = np.zeros(len(N))
+erreur_inf = np.zeros(len(N))
+for i in range(len(N)) :
+    text_file = open("Data/points_q4_"+str(N[i])+".txt", "r")
+    lines = text_file.read().split(',')
+    lines.pop()
+    lines = np.asarray(lines).astype(np.float)
+    phi_exact = [density_no_scattering_homog_point(x[i],1,sigmaT) for i in range(len(x))]
+    erreur_L2[i] = 0.04*np.linalg.norm(lines-phi_exact)
+    erreur_inf[i] = max(abs(lines-phi_exact))
 
-# plt.scatter(np.log10(N),np.log10(erreur_L2), label="Erreur L2")
-# plt.scatter(np.log10(N),np.log10(erreur_inf),label="Erreur L infini")
-# plt.plot(np.log10(N),-0.25*np.log10(N)+0.2, label= 'O(N^{-1/4})')
-# plt.xlabel('Nombre de points en échelle log10')
-# plt.ylabel("Erreur en échelle log")
-# plt.legend()
-# plt.title("Erreur en fonction du nombre de trajectoires - Source ponctuelle")
-# plt.show()
+plt.scatter(np.log10(N),np.log10(erreur_L2), label="Erreur $L^2$")
+plt.scatter(np.log10(N),np.log10(erreur_inf),label="Erreur $L^\infty$")
+plt.plot(np.log10(N),-0.25*np.log10(N)-1, label= 'O($N^{-1/4}$)')
+plt.xlabel('Nombre de points en échelle log10')
+plt.ylabel("Erreur en échelle log")
+plt.legend()
+plt.title("Erreur en fonction du nombre de trajectoires - Source ponctuelle")
+plt.show()
 
-# mu=1.
-# N = [1,10,100,1000,10000,100000,1000000]
-# erreur_L2 = np.zeros(len(N))
-# erreur_inf = np.zeros(len(N))
-# for i in range(len(N)) :
-#     text_file = open("Data/points_mu01_q5_"+str(N[i])+".txt", "r")
-#     lines = text_file.read().split(',')
-#     lines.pop()
-#     lines = np.asarray(lines).astype(np.float)
-#     phi_exact = [density_no_scattering_homog_unif(x[i],mu,sigmaT) for i in range(len(x))]
-#     erreur_L2[i] = np.linalg.norm(lines-phi_exact)
-#     erreur_inf[i] = max(abs(lines-phi_exact))
+mu=0.1
+N = [1,10,100,1000,10000,100000,1000000]
+erreur_L2 = np.zeros(len(N))
+erreur_inf = np.zeros(len(N))
+for i in range(len(N)) :
+    text_file = open("Data/points_mu01_q5_"+str(N[i])+".txt", "r")
+    lines = text_file.read().split(',')
+    lines.pop()
+    lines = np.asarray(lines).astype(np.float)
+    phi_exact = [density_no_scattering_homog_unif(x[i],mu,sigmaT) for i in range(len(x))]
+    erreur_L2[i] = 0.04*np.linalg.norm(lines-phi_exact)
+    erreur_inf[i] = max(abs(lines-phi_exact))
 
-# plt.scatter(np.log10(N),np.log10(erreur_L2), label="Erreur L2")
-# plt.scatter(np.log10(N),np.log10(erreur_inf),label="Erreur L infini")
-# plt.plot(np.log10(N),-0.25*np.log10(N)+0.2, label= 'O($N^{-1/4}$)')
-# plt.xlabel('Nombre de points en échelle log10')
-# plt.ylabel("Erreur en échelle log")
-# plt.legend()
-# plt.title("Erreur en fonction du nombre de trajectoires - Source uniforme")
-# plt.show()
+plt.scatter(np.log10(N),np.log10(erreur_L2), label="Erreur $L^2$")
+plt.scatter(np.log10(N),np.log10(erreur_inf),label="Erreur $L^\infty$")
+plt.plot(np.log10(N),-0.25*np.log10(N)-1, label= 'O($N^{-1/4}$)')
+plt.xlabel('Nombre de points en échelle log10')
+plt.ylabel("Erreur en échelle log")
+plt.legend()
+plt.title("Erreur en fonction du nombre de trajectoires - Source uniforme")
+plt.show()
 
 # liste_x = np.linspace(0,1,100)
 # plt.plot(liste_x,[density_no_scattering_homog_unif(liste_x[i],1,sigmaT) for i in range(len(liste_x))], label='mu=1')
@@ -108,3 +108,33 @@ x = np.linspace(0,1,25)
 # plt.legend()
 # plt.title("Solution pour différents mu positifs")
 # plt.show()
+
+# # Question 8 plot de la solution pour N=10000000
+text_file = open("Data/points_q8_"+str(10000000)+".txt", "r")
+sol = text_file.read().split(',')
+sol.pop()
+sol = np.array(sol).astype(float)
+# plt.scatter(x,np.array(lines).astype(float),label="Simulations")
+# plt.legend()
+# plt.title("Calcul Monte-Carlo pour $N=10^7$")
+# plt.show()
+# print(np.sum(0.04*np.array(sol).astype(float)))
+
+N = [1,10,100,1000,10000,100000,1000000]
+erreur_L2 = np.zeros(len(N))
+erreur_inf = np.zeros(len(N))
+for i in range(len(N)) :
+    text_file = open("Data/points_q8_"+str(N[i])+".txt", "r")
+    lines = text_file.read().split(',')
+    lines.pop()
+    lines = np.asarray(lines).astype(np.float)
+    erreur_L2[i] = 0.04*np.linalg.norm(lines-sol)
+    erreur_inf[i] = max(abs(lines-sol))
+plt.scatter(np.log10(N),np.log10(erreur_L2), label="Erreur $L^2$")
+plt.scatter(np.log10(N),np.log10(erreur_inf),label="Erreur $L^\infty$")
+plt.plot(np.log10(N),-0.25*np.log10(N)-1, label= 'O($N^{-1/4}$)')
+plt.xlabel('Nombre de points en échelle log10')
+plt.ylabel("Erreur en échelle log p/r à $N=10^7$")
+plt.legend()
+plt.title("Erreur en fonction du nombre de trajectoires - Cas diffusant")
+plt.show()

@@ -1,12 +1,14 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+\usepackage[french]{babel}
 \usepackage[top=2.5cm, bottom=2.8cm, left=2.7cm, right=2.7cm]{geometry} 
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage{amsfonts,stmaryrd}
 \usepackage{amsthm}
 \usepackage{amssymb}
-\usepackage{natbib}
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -38,6 +40,62 @@ Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'int
 
 
 \section{Solveur Monte-Carlo}
+
+% \subsection{Méthode Monte-Carlo}
+
+% Le principe de la méthode de Monte-Carlo pourrait être résumé par le tirage de
+% variable aléatoire. Dire cela n'est clairement pas suffisant, et c'est ce que
+% nous allons voir.
+
+% \subsubsection{Calcul d'une intégrale simple}
+
+% La première étape d'un solveur Monte-Carlo consiste à simplement approximer une
+% intégrale. Ainsi, on va considérer \og l'équation \fg intégrale :
+% \begin{equation*}
+%     \chi(x) = \int_\Omega \psi(x,y) \cdot f_y (y) dy
+% \end{equation*}
+
+% Le principe de calcul de cette intégrale est le suivant :
+% \begin{itemize}
+% \item on tire un nombre $N$ de point aléatoire $y_i$ dans $\Omega$ suivant la
+% loi $f_y$,
+% \item on approxime l'intégrale par $\chi_{approx}(x) = \dfrac{1}{N}
+% \sum\limits_{i=1}^N \psi(x,y_i)$.
+% \end{itemize}
+
+% La convergence est assurée par la loi des grands nombres. Il faut cependant une
+% précision sur le calcul de l'intégrale. Pour cela, on se sert d'un intervale de
+% confiance à $95$ \%, calculé via le théorème central limite.
+
+% {\huge Rajouter l'intervale de de confiance}
+
+% \subsubsection{Calcul de la solution d'une équation intégrale}
+
+% On souhaite à présent calculer la solution de l'équation intégrale
+% \begin{equation*}
+%     \chi (x) = S(x) + \int_\Omega K(x,y) \chi(y) dy 
+% \end{equation*}
+
+% Une solution formelle du problème consiste à écrire que $\chi (x) = \sum_{n\geq
+% 1} \chi^n(x)$ où $\chi^0(x) = S(x)$ et $\chi^n(x) = \int_\Omega K(x,y)
+% \chi^{n-1}(x)$.
+
+% Pour calculer cette somme, la méthode de Monte-Carlo utilise des marches aléatoires.
+% Pour ce faire, on prends $N$ particules Monte-Carlo et on les fait \og marcher
+% \fg de la manière qui suit :
+% \begin{itemize}
+% \item La position initiale est tirée suivant la densité $S(y)/\int_\Omega S(x)dx$. Cela
+% nous permet de calculer $\chi^0(x)$. Ce premier pas représente les positions
+% initiales des particules Monte-Carlo.
+% \item \dots
+% \end{itemize}
+
+% \subsubsection{Simulation à partir des trajectoires d'une population neutronique}
+
+% On suppose qu'on a à disposition $N$ neutron ou particules Monte-Carlo
+% $(x_n^t)$. Le flux neutroniq
+
+
 
 \subsection{Préliminaires}
 Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une surface efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
@@ -115,11 +173,27 @@ La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est don
 En prenant un intervalle de longueur $dx$ négligable devant $1$ (la taille de notre intervalle d'étude) on obtient
 
 \begin{equation}
-    \psi(x,\mu) = \frac{\PP(x_1 \in [x,x+dx])}{\st dx}
+    \psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x,x+dx] | \mu)}{\st dx}
 \end{equation}
 
-En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\psi(x,\mu)$ pour tout $x$.
+Pour approcher numériquement $\psi$, on commence par discrétiser l'intervale
+$[0,1]$ en sous-intervalles $[x_i,x_{i+1}]$, de longueur $h$. Puis on simule un grand nombre de particule
+Monte-Carlo, suivant le principe suivant :
+\begin{enumerate}
+    \item toutes les particules Monte-carlo ont pour position initiale $x=0$,
+\item pour chaque particule, on tire une distance de libre parcours suivant la
+loi $f_\psi$ et on note la position d'arrivée de chaque particule,
+\item on retient $C_0^i$ égal au nombre de particule dans
+l'intervalle $[x_i,x_{i+1}]$,
+\item on relance les particules encore dans l'intervalle, puis on compte à
+nouveau le nombre de particule dans chaque intervalle, qu'on retiens dans
+$C_1^i$ et ainsi de suite\dots
+\end{enumerate}
+Finalement, la fréquence totale est $freq^i = \frac{1}{N} \sum_n C_n^i$.
+On peut ainsi approximer $\psi(x_{i+1/2},\mu)$ par $\frac{1}{\Sigma_t h} freq^i$.
 
+% En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\psi(x,\mu)$ pour tout $x$.
+\medskip
 Maintenant que nous avons un algorithme nous pouvons nous concentrer sur l'implémentation.
 Commençons par étudier l'allure de la solution $\psi$ pour différentes valeurs de $\mu$.
 \begin{figure}[htp!]
@@ -179,7 +253,7 @@ Par linéarité la solution de notre equation pour $S=1$ s'écrit
 Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le point de départ selon la loi de probabilité induite par la source. 
 Comme la source est constante on tire $x_0$ selon une loi uniforme $\mathcal{U}[0,1]$. 
 On tire $\mu_0$ comme précédemment.
-Pour connaitre la densité $f_{\mu_0}(x_1)$ on utilise la formule de Bayes sur les densités conditionnelles
+Pour connaître la densité $f_{\mu_0}(x_1)$ on utilise la formule de Bayes sur les densités conditionnelles
 \begin{equation*}
     f(x_1|\mu_0) = \int_0^1 f_{\psi}(x_1|x_0,\mu_0)f_{\mu_0}(x_0)\ dx_0
 \end{equation*}
@@ -189,7 +263,7 @@ On obtient la densité $f(x_1)$
 $$ f(x_1|\mu_0) = \st \int_0^1 \psi_{x_0}(x,\mu) \ dx  = \st \pp(x,\mu)$$
 
 \vspace{0.1cm}
-Pour obtenir la densité de neutrons totale en un point $x$ indépendemment de leur direction $\mu$, il faut considérer les probabilités conditionnelles selon $\mu$ également.
+Pour obtenir la densité de neutrons totale en un point $x$ indépendamment de leur direction $\mu$, il faut considérer les probabilités conditionnelles selon $\mu$ également.
 Comme le tirage de $\mu$ est uniforme entre $-1$ et $1$, sa densité est $\frac{1}{2}$. 
 On intègre sur $\mu$ pour obtenir la densité moyenne $ \tilde{\pp}(x) = \into \pp(x,\mu) \ d\mu $.
 On a alors

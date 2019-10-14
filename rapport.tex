@@ -233,6 +233,28 @@ On a représenté sur la figure (\ref{fig:q4.simul}) l'allure de la solution par
 
 Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est invisible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}$. Les points donnent toutefois l'impression d'être compris dedans ou très proches. Nous avons tracé l'intervalle de confiance à $95\%$ pour une gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérence.
 
+\vspace{0.1cm}
+Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
+\begin{figure}[htp!]
+    \centering
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/q4_ic_n1e4_nb10.png}
+        \caption{$10$ intervalles}
+        \label{fig:q4.nb10}
+    \end{subfigure}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.45]{Figures/q4_ic_n1e4_nb25.png}
+        \caption{$25$ intervalles}
+        \label{fig:q4.nb25}
+    \end{subfigure}
+    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
+    \label{fig:q4.nb_points}
+\end{figure}
+
+Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de l'intervalle de confiance. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages.
+
 
 
 \vspace{0.5cm}
@@ -292,18 +314,18 @@ Pour $\mu<0$ le cas est symétrique par rapport au centre de l'intervalle.
     \end{subfigure}
     \begin{subfigure}{.49\textwidth}
         \centering
-        \includegraphics[scale=0.45]{Figures/Q5_vitessesL2_Linfty_cv_025.png}
-        \caption{Vitesses de convergence}
-        \label{fig:q5.cv}
+        \includegraphics[scale=0.45]{Figures/q5__ic_n1e5_nb25.png}
+        \caption{Simulation et intervalle de confiance }
+        \label{fig:q5.ic}
     \end{subfigure}
     \caption{Etude de la simulation de $\psi(x,\mu=1)$}
     \label{fig:q5}
 \end{figure}
 
 La solution est toujours nulle en $x=0$ comme imposé par la condition de flux entrant nul.
-La limite quand $\mu \rightarrow $ est un flux constant égal à $1$ sur tout l'intervalle et nul en $0$.
+La limite quand $\mu \rightarrow 0$ est un flux constant égal à $1$ sur tout l'intervalle et nul en $0$. Encore une fois la situation est symétrique et $\mu<0$.
 
-On regarde ensuite les résultats de la simulation Monte-Carlo et encore une fois la vitesse de convergence en focntion du nombre de simulations sur la figure (\ref{fig:q5.cv}).
+On regarde ensuite les résultats de la simulation Monte-Carlo et encore une fois l'intervalle de confiance (\ref{fig:q5.ic}). Comme l'intervalle de confiance fait apparaître l'estimation de $\pp(x,\mu)$, quand cette valeur est petite l'intervalle de confiance l'est également. C'est ce qu'on remarque sur cette figure : pour $x$ proche de $1$ l'intervalle de confiance est plus large et la variance des points plus grande. 
 
 
 
@@ -419,36 +441,23 @@ En intégrant sur un petit intervalle autour de $x$ on obtient une formule expli
 \end{equation}
 L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'itération $k$ et $x_{k+1}$ sa position d'arrivée. 
 
+\vspace{0.2cm}
 \subsubsection{Résultats}
-Contrairement aux cas précédents on ne connait pas la solution analytique.
+Contrairement aux cas précédents on ne connait pas la solution analytique, mais on sait que la solution doit etre symétrique par rapport à $x=1/2$. Il serait possible de tester que notre code fonctionne bien en prenant une solution manufacturée. Il faut alors déterminer la source à l'origine de ce flux neutronique puis tirer les particules de départ selon la densité de cette source et enfin comparer les résultats. Nous avons cependant manqué de temps pour ce rapport préliminaire pour mettre en oeuvre cette méthode.
 
 \begin{figure}[htp!]
     \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/Q8_N10e7.png}
-        \caption{Simulation de $\pp(x,\mu)$ pour $N=10^7$ tirages}
-        \label{fig:q8.allure}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/Q8_cv_pr_N10e7.png}
-        \caption{Vitesses de convergence}
-        \label{fig:q5=8.cv}
-    \end{subfigure}
-    \caption{Etude de la simulation de $\ppt(x)$}
+    \includegraphics[scale=0.6]{Figures/Q8_N10e7_cst_morceaux.png}
+    \caption{Simulation de $\pp(x,\mu)$ pour $N=10^7$ tirages}
     \label{fig:q8}
 \end{figure}
- 
+La figure (\ref{fig:q8}) montre la simulation pour $N=10^7$ tirages et $100$ intervalles. Elle est bien symétrique et régulière (sans sursaut lié à un point abérrant).
 
- 
+\section*{Conclusion préliminaire}
+Nous avons mis en oeuvre la méthode Monte-Carlo et testé sur les cas où nous connaissons une solution analytique qu'elle donne les bons résultats. 
+Nous souhaiterons également vérifier dans le cas avec diffusion que notre solveur donne des résultats corrects, ce que nous ferons ultérieurement.
 
-\vspace{5cm}
-\begin{itemize}
-    \item faire l'explication de l'estimateur du flux neutronique
-    \item Cas scattering : fait mais des questions sur la théorie
-    \item Etudier les temps de calcul
-    \item Etudier la convergence ($\sqrt{N}$ théoriquement) : en quelle norme ? J'ai 1/4 pour l'instant en norme L2 et $L^\infty$.
-\end{itemize}
+Il aurait aussi était intéressant de regarder l'impact de $\mu$ sur la précision de la méthode : comme la largeur de l'intervalle de confiance dépend de la valeur de $\pp$, on s'attends à ce que faire diminuer $\mu$ modifie la précision de la méthode.
+
 
 \end{document}

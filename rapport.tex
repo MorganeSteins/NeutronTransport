@@ -173,7 +173,7 @@ La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est don
 En prenant un intervalle de longueur $dx$ négligable devant $1$ (la taille de notre intervalle d'étude) on obtient
 
 \begin{equation}
-    \psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x,x+dx] | \mu)}{\st dx}
+    \psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x-dx/2,x+dx/2] | \mu)}{\st dx}
 \end{equation}
 
 Pour approcher numériquement $\psi$, on commence par discrétiser l'intervale
@@ -209,27 +209,29 @@ En effet si le neutron part à la verticale il sera aussi absorbé à $x=0$.
 Il s'agit maintenant de comparer ses densités théoriques aux résultats de notre simulation.
 Une question pratique se pose : quelle valeur donner à $dx$ ? 
 En effet ce paramètre n'est en rien déterminé par le problème physique ou la méthode Monte-Carlo.
-Empiriquement, s'il est trop grand l'approximation de l'intégrale est fausse et s'il est trop petit il n'y aura aucune trajectoire qui mène à l'intervalle $[x;x+dx]$.
-Nous avons choisit ici de prendre $dx=\frac{1}{\sqrt(N)}$ après quelques essais.
+Empiriquement, s'il est trop grand l'approximation de l'intégrale est fausse et s'il est trop petit il n'y aura aucune trajectoire qui mène à l'intervalle $[x-dx/2;x+dx/2]$.
+Nous voulons limiter le nombre d'intervalles de calcul pour représenter les solutions de manière visible et feront ici 25 intervalles.
 
 \begin{figure}[htp!]
     \centering
     \begin{subfigure}{.49\textwidth}
         \centering
-        \includegraphics[scale=0.45]{Figures/sol4_et_simulations_moyennes.png}
+        \includegraphics[scale=0.45]{Figures/Q4_simulation.png}
         \caption{Solution et simulations pour $\mu=1$}
-        \label{fig:q4.sol}
+        \label{fig:q4.simul}
     \end{subfigure}
     \begin{subfigure}{.49\textwidth}
         \centering
-        \includegraphics[scale=0.45]{Figures/Q3_vitessesL2_Linfty_cv_025.png}
-        \caption{Vitesses de convergence}
-        \label{fig:q4.cv}
+        \includegraphics[scale=0.45]{Figures/q4__ic_n1e6_nb25.png}
+        \caption{Intervalle de confiance $N=10^6$}
+        \label{fig:q4.ic}
     \end{subfigure}
     \caption{Etude de la simulation de $\psi(x,\mu=1)$}
     \label{fig:q4}
 \end{figure}
+On a représenté sur la figure (\ref{fig:q4.simul}) l'allure de la solution par simulation Monte-Carlo. Elle est constante par morceaux pour chaque intervalle d'approximation où la valeur moyenne est assimilée à l'intégrale.
 
+Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est invisible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}$. Les points donnent toutefois l'impression d'être compris dedans ou très proches. Nous avons tracé l'intervalle de confiance à $95\%$ pour une gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérence.
 
 
 
@@ -273,7 +275,7 @@ Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthod
 
 \begin{equation}
     \label{eq:sol.unif}
-    \pp(x,\mu_0) = \frac{\PP(x_1 \in [x,x+dx]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x,x+dx])}{2 \st dx}
+    \pp(x,\mu_0) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2])}{2 \st dx}
 \end{equation}
 
 \vspace{0.2cm}

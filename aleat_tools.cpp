@@ -48,3 +48,28 @@ double new_mu()
 {
     return 2 * (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) - 1.;
 }
+
+//maximum d'un vecteur de double
+double vector_max(vector<double> v){
+    double maxi = 0.;
+    for(int i=0;i<v.size();i++){
+        if(maxi<=v[i]) {
+            maxi=v[i];
+        }
+    }
+    return maxi;
+}
+
+//norme infini de la différence de deux vecteurs
+double compare_vect(vector<double> v1, vector<double> v2){
+    if (v1.size()!= v2.size()) {return 0;}
+    else {
+        double maxi=0.;
+        for(int i=0;i<v1.size();i++){
+            if(maxi<=abs(v1[i]-v2[i])) {
+            maxi=abs(v1[i]-v2[i]);
+            }
+        }
+        return maxi;
+    }
+}

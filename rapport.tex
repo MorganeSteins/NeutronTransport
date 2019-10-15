@@ -210,7 +210,18 @@ Il s'agit maintenant de comparer ses densités théoriques aux résultats de not
 Une question pratique se pose : quelle valeur donner à $dx$ ? 
 En effet ce paramètre n'est en rien déterminé par le problème physique ou la méthode Monte-Carlo.
 Empiriquement, s'il est trop grand l'approximation de l'intégrale est fausse et s'il est trop petit il n'y aura aucune trajectoire qui mène à l'intervalle $[x-dx/2;x+dx/2]$.
-Nous voulons limiter le nombre d'intervalles de calcul pour représenter les solutions de manière visible et feront ici 25 intervalles.
+Nous voulons limiter le nombre d'intervalles de calcul pour représenter les
+solutions de manière visible et feront ici 25 intervalles.
+
+Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
+on va procéder par intervalle de confiance à 95\%. La variance de notre résultat
+est donné par l'estimateur $Var_i\frac{freq^i (1-freq^i)}{N}$. Par ailleurs, on
+connaît la solution exacte de notre problème, donc on va centrer l'intervalle
+autour de la solution exacte. Cela nous donne un intervalle de confiance de la
+forme :
+\begin{equation*}
+    I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
+\end{equation*}
 
 \begin{figure}[htp!]
     \centering

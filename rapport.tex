@@ -93,21 +93,21 @@ Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'int
 % \subsubsection{Simulation à partir des trajectoires d'une population neutronique}
 
 % On suppose qu'on a à disposition $N$ neutron ou particules Monte-Carlo
-% $(x_n^t)$. Le flux neutroniq
+% $(x_n^t)$. Le flux neutronique
 
 
 
 \subsection{Préliminaires}
 Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une surface efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
 $$P_{\text{interaction}}([x;x+\delta l]) = \Sigma \delta l$$ 
-Lorsque l'on projette cette distance sur l'axe des abscisses, on fait apparaitre le cosinus de l'angle entre le vecteur directeur du déplacement et $\vec{x}$ qui est définit par $\mu$ dans ce TP.
+Lorsque l'on projette cette distance sur l'axe des abscisses, on fait apparaître le cosinus de l'angle entre le vecteur directeur du déplacement et $\vec{x}$ qui est définit par $\mu$ dans ce TP.
 D'où en 1D $P_{\text{interaction}}(x) = \frac{\Sigma}{\mu} \delta l $
 
 On peut voir le libre parcours du neutron de deux manières différentes. 
 La première est de considérer qu'il s'agit d'une sorte comme un "temps" de survie et utiliser le fait que ce genre de phénomène se modélise avec une loi exponentielle. 
 On peut aussi utiliser faire une démonstration plus physique. 
-On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longeur $dx$ et on considère partir du point 0. 
-La probabilité d'interaction au point $x=idx$ s'obtient en considérant qu'il y a une intercation dans l'intervalle $i$ mais pas dans les précédents ce qui donne
+On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longueur $dx$ et on considère partir du point 0. 
+La probabilité d'interaction au point $x=idx$ s'obtient en considérant qu'il y a une interaction dans l'intervalle $i$ mais pas dans les précédents ce qui donne
 \begin{equation*}
     P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}
 \end{equation*}
@@ -123,7 +123,7 @@ La fonction de répartition $F$ du libre parcours moyen s'écrit
     F(x) = \int_0^x f(t) \text{d}t = \int_0^x \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}t} = 1- e^{-\frac{\Sigma}{\mu}x}
 \end{equation*}
 
-Pour l'inverser on résoud $y = F(x)$
+Pour l'inverser on résout $y = F(x)$
 \begin{equation*}
     y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = \frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
 \end{equation*}
@@ -170,7 +170,7 @@ Ceci donne alors une distributions de neutrons avec une densité $f_{\psi}$ éga
 \end{equation*}
 
 La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est donc donnée par l'intégrale de $\pp$ sur cet interval à un facteur $\st$ près.
-En prenant un intervalle de longueur $dx$ négligable devant $1$ (la taille de notre intervalle d'étude) on obtient
+En prenant un intervalle de longueur $dx$ négligeable devant $1$ (la taille de notre intervalle d'étude) on obtient
 
 \begin{equation}
     \psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x-dx/2,x+dx/2] | \mu)}{\st dx}
@@ -242,7 +242,7 @@ forme :
 \end{figure}
 On a représenté sur la figure (\ref{fig:q4.simul}) l'allure de la solution par simulation Monte-Carlo. Elle est constante par morceaux pour chaque intervalle d'approximation où la valeur moyenne est assimilée à l'intégrale.
 
-Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est invisible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}$. Les points donnent toutefois l'impression d'être compris dedans ou très proches. Nous avons tracé l'intervalle de confiance à $95\%$ pour une gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérence.
+Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est invisible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}$. Les points donnent toutefois l'impression d'être compris dedans ou très proches. Nous avons tracé l'intervalle de confiance à $95\%$ pour une gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérance.
 
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
@@ -344,7 +344,7 @@ On regarde ensuite les résultats de la simulation Monte-Carlo et encore une foi
 
 \vspace{0.5cm}
 \subsubsection{Matériau non homogène avec source ponctuelle}
-On peut se posee la question de ce qui se passe dans le cas d'un matériau où $\st$ est une fonction de $x$.
+On peut se pose la question de ce qui se passe dans le cas d'un matériau où $\st$ est une fonction de $x$.
 On se place dans le cas d'une source homogène avec un matériau de $\st$
 \begin{equation*}
 \st (x) = \left\{     
@@ -357,7 +357,8 @@ On se place dans le cas d'une source homogène avec un matériau de $\st$
 \end{equation*}
 et une source ponctuelle en 0.
 
-On commence par résoudre le cette équation sur $[0;0.3]$ avec $\mu>0$ puisqu'il n'y a pas de source autre qu'en 0. 
+On commence par résoudre le cette équation sur $[0;0.3]$ avec $\mu>0$ puisque il
+n'y a pas de source autre qu'en 0. 
 La solution est donnée par le calcul de la partie précédente
 \begin{equation*}
     \tag{S1}
@@ -370,7 +371,7 @@ Pour l'intervalle $[0.3;0.7]$ on peut considérer une source ponctuelle en $x=0.
     S_2(x,\mu) = \pp_1(0.3,\mu)\delta_{0.3}(x) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}}\delta_{0.3}(x)
 \end{equation*}
 
-On résoud le problème exactement de la même façon et on obtient
+On résout le problème exactement de la même façon et on obtient
 \begin{equation}
     \tag{S2}
     \label{eq:sol.S2}
@@ -404,11 +405,11 @@ Les flux collisionnés vérifient le système
 \end{equation}
 et les $\epsilon^n$ le même système sans source.
 
-Pour simplifier l'étude on considère ici que l'absorbtion est négligeable, i.e. $\st = \Ssss$ et $\sa = 0$.
-%Ceci entraine immédiatement que les $\epsilon^n$ sont solution de la même équation que les $\pp^n$.
+Pour simplifier l'étude on considère ici que l'absorption est négligeable, i.e. $\st = \Ssss$ et $\sa = 0$.
+%Ceci entraîne immédiatement que les $\epsilon^n$ sont solution de la même équation que les $\pp^n$.
 
 Nous n'allons ici considérer que le flux moyenné en $\mu$, fonction uniquement de l'espace $\tilde{\pp}(x)$.
-Le flux non collisinné $\ppt^0$ est donné par la partie précédente équation (\ref{eq:sol.unif}).
+Le flux non collisionné $\ppt^0$ est donné par la partie précédente équation (\ref{eq:sol.unif}).
 
 Nous cherchons maintenant à estimer $\ppt^1$, c'est à dire trouver la densité de probabilité d'un point $x_2$ après une collision et 2 libres parcours.
 $\epsilon^1$ est solution de 
@@ -433,16 +434,16 @@ On utilise la formule de Bayes avec les densités qui donne (en notant $f(0\righ
 \end{align*}
 
 Comme $\tilde{\epsilon}^1 = \ppt^1 - \ppt^0$, on peut directement calculer $\ppt^1$ dès qu'on a tiré les trajectoires.
-On itère pour tout $n$ et le calcul est identique puisqu'il s'agit d'un processus Markovien, l'état $n$ ne dépend que de l'état $n-1$.
+On itère pour tout $n$ et le calcul est identique puisque il s'agit d'un processus Markovien, l'état $n$ ne dépend que de l'état $n-1$.
 On a
 $$\ppt^n = \epst^n + \ppt^{n-1} = \sum_{k=1}^n \epst^k + \ppt^0 $$
 
-On peut donc calculer tous les flux collisinnés. Comme la solution de l'équation de transport neutronique est donnée par la limite des flux quand $n \rightarrow \infty$
+On peut donc calculer tous les flux collisionnés. Comme la solution de l'équation de transport neutronique est donnée par la limite des flux quand $n \rightarrow \infty$
 on a 
 $$\ppt(x) = \sum_{k=1}^\infty \epst^k + \ppt^0$$
 
 Dans la pratique on détermine un critère d'arrêt à $n=m$ dès que deux contributions sont 
-"suffisemment proches", i.e. dès que $\epst^m< \eta$ où $\eta$ est un paramètre 
+"suffisamment proches", i.e. dès que $\epst^m< \eta$ où $\eta$ est un paramètre 
 fixé à l'avance qui caractérise la précision de notre simulation.
 
 En intégrant sur un petit intervalle autour de $x$ on obtient une formule explicite pour calculer $\ppt$ avec une simulation Monte-Carlo
@@ -454,7 +455,7 @@ L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'it�
 
 \vspace{0.2cm}
 \subsubsection{Résultats}
-Contrairement aux cas précédents on ne connait pas la solution analytique, mais on sait que la solution doit etre symétrique par rapport à $x=1/2$. Il serait possible de tester que notre code fonctionne bien en prenant une solution manufacturée. Il faut alors déterminer la source à l'origine de ce flux neutronique puis tirer les particules de départ selon la densité de cette source et enfin comparer les résultats. Nous avons cependant manqué de temps pour ce rapport préliminaire pour mettre en oeuvre cette méthode.
+Contrairement aux cas précédents on ne connaît pas la solution analytique, mais on sait que la solution doit être symétrique par rapport à $x=1/2$. Il serait possible de tester que notre code fonctionne bien en prenant une solution manufacturée. Il faut alors déterminer la source à l'origine de ce flux neutronique puis tirer les particules de départ selon la densité de cette source et enfin comparer les résultats. Nous avons cependant manqué de temps pour ce rapport préliminaire pour mettre en oeuvre cette méthode.
 
 \begin{figure}[htp!]
     \centering

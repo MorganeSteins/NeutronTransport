@@ -25,16 +25,13 @@ class point {
 
 class vector_points {
 public :
-    int dim;
     vector<point> points ;
 
-    vector_points() {dim=0;points= vector<point>(0) ;};
+    vector_points() {points= vector<point>(0) ;};
     vector_points(int dimension) ;
     vector_points(vector_points &vector_to_copy) ;
 
-    int dimension() const {return dim;}
     vector<point> get_points() const {return points;}
-    void set_points(int i, point p)  { if (i>dim-1){dim=i+1;points.resize(dim, point());} points[i]=p;}
     void add_point(point p);
     void iteration_MC();
 

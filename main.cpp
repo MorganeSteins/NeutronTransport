@@ -13,16 +13,6 @@ using namespace std;
 int main() {
     srand (static_cast <unsigned> (time(0)));
     
-<<<<<<< HEAD
-    //print_vector(sol);
-    double x = 0.5;
-    double mu = 0.5;
-    double integrale = 0.;
-    cout<<"On travaille à x="<<x<<" et mu="<<mu<<endl;
-    /*double density = density_no_scattering_homog_unif_MC(point(x,mu), 100000);
-    cout<<"densité par MC "<<density<<endl;
-    cout<<"densité réelle "<<density_no_scattering_homog_unif(point(x,mu))<<endl<<endl;
-=======
     // Point où on travaille
     double x = 1;
     double mu = 1;
@@ -54,19 +44,17 @@ int main() {
     // N = 1e5;
     // cout<<"N = "<<N<<" et on étudie "<<nb_points<<" intervalles."<<endl<<endl;
     // density_segment_no_scattering_homog_unif_MC(N,nb_points,p);
->>>>>>> 949b27fff1ebd383a015677029c878ec5d583de3
     
 
 
     // QUESTION 8
     //Cette fois ci on ne calcule que le flux moyenné en mu
-    nb_points = 25;
-    N = 1e5;
-    int max_iter = 1e5;
-    double epsilon = 1e-10;
+    nb_points = 100;
+    N = 1e7;
+    int max_iter = 1000;
 
     //density_scattering_homog_unif_MC(1e7,p,max_iter,epsilon);
-    density_tilda_segment_scattering_homg_unif_MC(N,nb_points, max_iter, epsilon);
+    density_tilda_segment_scattering_homg_unif_MC(N,nb_points, max_iter);
 
 
 

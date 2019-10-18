@@ -171,7 +171,7 @@ double density_no_scattering_homog_unif(point p){
 /* CAS DIFFUSANT HOMOGENE SOURCE UNIFORME */
 
 //Calcul de la densité neutronique moyennée en mu sur un maillage de nb_points points
-vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_intervalles, int max_iter, double epsilon ){
+vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_intervalles, int max_iter){
 
     vector_points selection(N);
     vector_points new_selection(N);
@@ -192,7 +192,7 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
         selection.points[i] = point(new_x(),new_mu());
     }
 
-    while (compare_vect(phi,phi_old)>epsilon && step<max_iter && selection.points.size()>0){
+    while (step<max_iter && selection.points.size()>0){
         //mise à jour pour la nouvelle itération
         new_selection.points.resize(0);
         count = 0;
@@ -226,7 +226,7 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
     cout<<"Convergé en "<<step<<" itérations"<<endl;
 
     //sauver la valeur de phi dans un fichier txt
-    ofstream fichier("Data/phi_q8_"+to_string(N)+".txt", ios::out | ios::trunc);
+    ofstream fichier("Data/phi_q8_test_"+to_string(N)+".txt", ios::out | ios::trunc);
     for (int i=0;i<phi.size();i++){
         fichier<<phi[i]<<",";
     }

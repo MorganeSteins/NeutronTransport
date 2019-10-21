@@ -213,7 +213,7 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
         //calcul de la valeur de ce flux sur chaucn des intervalles
         for (int i=0;i<selection.points.size();i++) {
             indice = floor(selection.points[i].get_x()/dx); //indice de l'intervalle où se trouve la particule
-            freq[indice]+=(1./(2.*point::sigmaT*dx))*(1./(float)N) ;
+            freq[indice]+=(1./(point::sigmaT*dx))*(1./(float)N) ;
         }
 
         //mise à jour de phi

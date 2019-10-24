@@ -39,4 +39,6 @@ public :
 
 void print_vector(vector_points &v);
 
+double sigmaT_non_cst(point);
+
 #endif // POINTS_HPP_INCLUDED

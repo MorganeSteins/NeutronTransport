@@ -10,7 +10,8 @@ using namespace std;
 double new_x();
 double parcours_x(point p);
 point deplacement_x(point p);
-double do_I_stop(double sigmaS, double sigmaA);
+int do_I_stop(double sigmaS, double sigmaA);
+int do_I_stop_woodcock(double sigmaTmax, double sigmaS, double sigmaT);
 double new_mu() ;
 
 double vector_max(vector<double> v);

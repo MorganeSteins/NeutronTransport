@@ -17,10 +17,10 @@ def density_no_scattering_homog_unif(x,mu,sigmaT):
 
 
 sigmaT = 1
-n=25
+n=50
 dx=1/n
 sigmaT = 1
-N = 100000
+N = 100000000
 text_file = open("Data/phi_q8_"+str(N)+".txt", "r")
 lines = text_file.read().split(',')
 lines.pop()

@@ -10,31 +10,30 @@
 #include "deterministe.hpp"
 
 int main(int argc, char *argv[]) {
-    double x,mu;
+    int Nx,Nmu;
     if (argc != 3)
     {
-        printf("You need to input 2 variables:x and mu, we are using default value 0,1 \n");
-        x  = 0;
-        mu = 1.;
+        printf("You need to input 2 variables:Nx and Nmu (EVEN NUMBER!!), we are using default value 5 and 2 \n");
+        Nx  = 5;
+        Nmu = 2;
     }
 
     else {
-        x  = atof(argv[1]);
-        mu = atof(argv[2]);
+        Nx  = atof(argv[1]);
+        Nmu = atof(argv[2]);
     }
-    cout<<argv[1]<<"  "<<argv[2]<<endl;
-    int Nx=5;
-    int Nmu = 2;
+
     double dx = 1./Nx;
     vector<double> Q(Nx);
     vector<double> sigmaT(Nx);
     for (int i=0;i<Nx;i++){
-        Q[i] = 0;
-        if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
-        else {sigmaT[i]=1;}
+        Q[i] = 1;
+        sigmaT[i] = 1;
+        // if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
+        // else {sigmaT[i]=1;}
     }
 
-    vector<double> phi = IS(Nx,Nmu,0.01,100, Q,sigmaT);
+    vector<double> phi = IS(Nx,Nmu,0.01,5, Q,sigmaT);
     // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx<<" "<<sigmaT[i]<<endl;}
     return 0;
 }

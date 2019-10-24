@@ -12,7 +12,7 @@ template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
-vector<double> solveur(int Nx, double mu, double source, vector<double> Q,vector<double> sigmaT);
-
+vector<double> IS_iteration(int Nx, double mu, double source, vector<double> Q,vector<double> sigmaT);
+vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT);
 
 #endif // DETERMINISTE_INCLUDED

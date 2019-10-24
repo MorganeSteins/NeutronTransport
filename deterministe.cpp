@@ -12,25 +12,31 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
     double phi_plus;
     int sign_mu = sgn(mu); //signe de mu
 
-    int debut = Nx * (1 - sign_mu) / 2;
-    int fin = Nx * (1 + sign_mu) / 2;
-
+ 
     double phi_moins = abs(flux_entrant);
 
-    for (int i = debut; i != fin; i += sign_mu)
-    {
-        phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
-        phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
-        phi_moins = phi_plus;
-        cout << "i=" << i << "  " << phi_t[i] << endl;
+    if (sign_mu>0){
+        for (int i = 0; i <Nx; i ++)
+        {
+            phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
+            phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
+            // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
+            phi_moins = phi_plus;
+            // cout << "i=" << i << "  " << phi_t[i] << endl;
+        }
+    }
+    else {
+        for (int i = Nx-1; i >=0; i --)
+        {
+            phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
+            phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
+            // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
+            phi_moins = phi_plus;
+            // cout << "i=" << i << "  " << phi_t[i] << endl;
+        }
     }
 
-    ofstream fichier("Data/phi_t_q11_" + to_string(Nx) + "_" + to_string(abs((mu))) + ".txt", ios::out | ios::trunc);
-    for (int i = 0; i < phi_t.size(); i++)
-    {
-        fichier << phi_t[i] << ",";
-    }
-    fichier.close();
+
     return phi_t;
 }
 
@@ -49,11 +55,13 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
     for (int i = 0; i <= Nx; i++)
         X[i] = i * dx;
 
+
     //initialisation de MU
     double dmu = 2. / Nmu;
-    double w = dx; //poids de quadrature constant
+    double w = dmu; //poids de quadrature constant
     for (int i = 0; i < Nmu; i++)
-        MU[i] = i * dx - 1 + dx / 2;
+        MU[i] = i * dmu - 1 + dmu / 2;
+
 
     //initialisation de Q
     for (int i = 0; i < Nx; i++)
@@ -64,11 +72,14 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
 
     double err = 1.; // erreur que l'on initialise grande
     int n_iter = 0;  //compteur itération
-    while (err > epsilon && n_iter < iter_max)
+    while (sqrt(err) > epsilon && n_iter < iter_max)
     {
         for (int n = 0; n < Nmu; n++)
         {
-            phi = IS_iteration(Nx, MU[n], 1. / MU[n], Q, sigmaT); // ATTENTION FLUX ENTRANT
+            phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
+            for (int i=0;i<Nx;i++)
+                cout<<phi[i]<<" , ";
+            cout<<endl;
             for (int i = 0; i < Nx; i++)
                 Q2[i] += (1. / 2) * w * phi[i];
         }
@@ -81,10 +92,12 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
             err += tmp*tmp;
             Q[i] = Q2[i] + S[i];
         }
+        cout<<" difference entre 2 itérations "<<sqrt(err)<<endl;
         Q2.clear();
         n_iter++;
     }
-    return phi_t;
+
+    return phi;
 }
 
 // vector<double> IS_iteration_phi(int Nx, double mu, double flux_entrant, vector<double> Q,vector<double> sigmaT){

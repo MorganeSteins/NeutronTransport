@@ -5,33 +5,114 @@
 #include <cmath>
 #include "deterministe.hpp"
 
-vector<double> solveur(int Nx, double mu, double source, vector<double> Q,vector<double> sigmaT){
-    vector<double> X(Nx+1);
-    vector<double> phi(Nx+1);
-    double dx = 1./Nx;
+vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<double> Q, vector<double> sigmaT)
+{
+    vector<double> phi_t(Nx);
+    double dx = 1. / Nx;
+    double phi_plus;
     int sign_mu = sgn(mu); //signe de mu
 
-    //initialisation de x et Q
-    for (int i=0;i<=Nx;i++){
-        X[i] = i*dx;
+    int debut = Nx * (1 - sign_mu) / 2;
+    int fin = Nx * (1 + sign_mu) / 2;
+
+    double phi_moins = abs(flux_entrant);
+
+    for (int i = debut; i != fin; i += sign_mu)
+    {
+        phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
+        phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
+        phi_moins = phi_plus;
+        cout << "i=" << i << "  " << phi_t[i] << endl;
     }
 
-    int debut = Nx*(1-sign_mu)/2;
-    int fin = Nx*(1+sign_mu)/2;
-
-    phi[debut] = abs(source);
-    cout<<debut<<" a "<<fin<<endl;
-
-    for (int i=debut;i!=fin;i+=sign_mu){
-        phi[i+sign_mu] = (2*dx*Q[i]+(2*abs(mu)-dx*sigmaT[i])*phi[i])/(2*abs(mu)+dx*sigmaT[i]);
-        // cout<<"i="<<i<<"  "<<phi[i+sign_mu]<<endl;
-    }
-
-
-    ofstream fichier("Data/phi_q11_"+to_string(Nx)+"_"+to_string(abs((mu)))+".txt", ios::out | ios::trunc);
-    for (int i=0;i<phi.size();i++){
-        fichier<<phi[i]<<",";
+    ofstream fichier("Data/phi_t_q11_" + to_string(Nx) + "_" + to_string(abs((mu))) + ".txt", ios::out | ios::trunc);
+    for (int i = 0; i < phi_t.size(); i++)
+    {
+        fichier << phi_t[i] << ",";
     }
     fichier.close();
-    return phi;
+    return phi_t;
 }
+
+//solveur IS
+vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT)
+{
+    vector<double> Q(Nx);           //source à initialiser selon le pb
+    vector<double> phi_t(Nx * Nmu); // pb
+    vector<double> X(Nx + 1);
+    vector<double> MU(Nmu);
+    vector<double> phi(Nx);
+    vector<double> Q2(Nx);
+
+    //initialisation de X
+    double dx = 1. / Nx;
+    for (int i = 0; i <= Nx; i++)
+        X[i] = i * dx;
+
+    //initialisation de MU
+    double dmu = 2. / Nmu;
+    double w = dx; //poids de quadrature constant
+    for (int i = 0; i < Nmu; i++)
+        MU[i] = i * dx - 1 + dx / 2;
+
+    //initialisation de Q
+    for (int i = 0; i < Nx; i++)
+    {
+        Q[i] = S[i];
+        Q2[i] = 0;
+    }
+
+    double err = 1.; // erreur que l'on initialise grande
+    int n_iter = 0;  //compteur itération
+    while (err > epsilon && n_iter < iter_max)
+    {
+        for (int n = 0; n < Nmu; n++)
+        {
+            phi = IS_iteration(Nx, MU[n], 1. / MU[n], Q, sigmaT); // ATTENTION FLUX ENTRANT
+            for (int i = 0; i < Nx; i++)
+                Q2[i] += (1. / 2) * w * phi[i];
+        }
+
+        err = 0.;
+
+        for (int i = 0; i < Nx; i++)
+        {
+            auto tmp = (Q[i]-Q2[i]);
+            err += tmp*tmp;
+            Q[i] = Q2[i] + S[i];
+        }
+        Q2.clear();
+        n_iter++;
+    }
+    return phi_t;
+}
+
+// vector<double> IS_iteration_phi(int Nx, double mu, double flux_entrant, vector<double> Q,vector<double> sigmaT){
+//     vector<double> X(Nx+1);
+//     vector<double> phi(Nx+1);
+//     double dx = 1./Nx;
+//     int sign_mu = sgn(mu); //signe de mu
+
+//     //initialisation de x et Q
+//     for (int i=0;i<=Nx;i++){
+//         X[i] = i*dx;
+//     }
+
+//     int debut = Nx*(1-sign_mu)/2;
+//     int fin = Nx*(1+sign_mu)/2;
+
+//     phi[debut] = abs(flux_entrant);
+//     cout<<debut<<" a "<<fin<<endl;
+
+//     for (int i=debut;i!=fin;i+=sign_mu){
+//         phi[i+sign_mu] = (2*dx*Q[i]+(2*abs(mu)-dx*sigmaT[i])*phi[i])/(2*abs(mu)+dx*sigmaT[i]);
+//         // cout<<"i="<<i<<"  "<<phi[i+sign_mu]<<endl;
+//     }
+
+//     ofstream fichier("Data/phi_q11_"+to_string(Nx)+"_"+to_string(abs((mu)))+".txt", ios::out | ios::trunc);
+//     for (int i=0;i<phi.size();i++){
+//         fichier<<phi[i]<<",";
+//     }
+//     fichier.close();
+//     return phi;
+// }

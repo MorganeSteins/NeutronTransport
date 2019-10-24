@@ -23,7 +23,8 @@ int main(int argc, char *argv[]) {
         mu = atof(argv[2]);
     }
     cout<<argv[1]<<"  "<<argv[2]<<endl;
-    int Nx=50;
+    int Nx=5;
+    int Nmu = 2;
     double dx = 1./Nx;
     vector<double> Q(Nx);
     vector<double> sigmaT(Nx);
@@ -33,7 +34,7 @@ int main(int argc, char *argv[]) {
         else {sigmaT[i]=1;}
     }
 
-    vector<double> phi = solveur(Nx,mu,1./mu, Q,sigmaT);
-    for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx<<" "<<sigmaT[i]<<endl;}
+    vector<double> phi = IS(Nx,Nmu,0.01,100, Q,sigmaT);
+    // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx<<" "<<sigmaT[i]<<endl;}
     return 0;
 }

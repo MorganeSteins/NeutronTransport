@@ -36,7 +36,7 @@ mu=1
 # MC.pop()
 # MC = np.asarray(MC).astype(np.float)
 
-deter = open("Data/phi_q11_"+str(n_deter)+"_1.000000.txt", "r")
+deter = open("Data/phi_t_q11_"+str(n_deter)+"_1.000000.txt", "r")
 # deter = open("Data/phi_q10_"+str(n_deter)+".txt", "r")
 deter = deter.read().split(',')
 deter.pop()
@@ -44,15 +44,15 @@ deter = np.asarray(deter).astype(np.float)
 
 #file_2 = open("Data/phi_q9_"+str(N)+".txt", "r")
 
-# x = np.linspace(0,1-1/n,n)
-# x = np.concatenate((np.array([0]),np.repeat(np.linspace(1/n,1-1/n,n-1),2),np.array([1])),axis=0)
+# x = np.linspace(0,1-1/n_deter,n_deter)
+x_cst = np.concatenate((np.array([0]),np.repeat(np.linspace(1/n_deter,1-1/n_deter,n_deter-1),2),np.array([1])),axis=0)
 
 x = np.linspace(0,1,n_deter+1)
 phi_exact = np.array([density_no_scattering_non_homog(x[i],1) for i in range(len(x))])
 # var = np.sqrt(lines*dx*sigmaT*(1-lines*dx*sigmaT)/(N*dx))
 #var = np.sqrt(phi_exact*dx*sigmaT*(1-phi_exact*dx*sigmaT)/(N*dx))
-
-plt.scatter(x,deter, label='déterministe '+str(n_deter)+' intervalles', linewidth=0.01)
+plt.plot(x_cst,np.repeat(deter,2), label='déterministe '+str(n_deter)+' intervalles', linewidth=1)
+# plt.scatter(x_cst,np.repeat(deter,2), label='déterministe '+str(n_deter)+' intervalles', linewidth=0.01)
 plt.plot(x,phi_exact, label="solution theorique")
 
 # x = np.linspace(0,1-1/n_MC,n_MC)
@@ -67,6 +67,6 @@ plt.plot(x,phi_exact, label="solution theorique")
 # plt.plot(x+dx/2,lines-1.96*var,'r',label='intervalle de confiance')
 # plt.plot(x+dx/2,lines+1.96*var,'r')
 plt.legend()
-# plt.title("Simulation sur "+str(n)+" intervalles avec N="+str(N)+"particules")
+# plt.title("Simulation sur "+str(n_deter)+" intervalles avec N="+str(N)+"particules")
 plt.title("Solution sans scattering et courant entrant unitaire")
 plt.show()

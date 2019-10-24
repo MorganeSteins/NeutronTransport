@@ -37,7 +37,7 @@ vector<double> density_segment_no_scattering_homog_unif_MC(int N, int nb_points,
 
 /* Fonctions pour le cas homogène avec scattering et source uniforme*/
 
-double density_scattering_homog_unif_MC(int N, point p, int max_iter=100000, double epsilon = 0.0001);
+double density_scattering_homog_unif_MC(int N, point p, int max_iter=10000);
 
 vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_points,int max_iter=100000, double epsilon = 0.0001);
 

@@ -213,17 +213,18 @@ Empiriquement, s'il est trop grand l'approximation de l'intégrale est fausse et
 Nous voulons limiter le nombre d'intervalles de calcul pour représenter les
 solutions de manière visible et feront ici 25 intervalles.
 
+\vspace{0.2cm}
 Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
-on va procéder par intervalle de confiance à 95\%. La variance de notre résultat
-est donné par l'estimateur $Var_i\frac{freq^i (1-freq^i)}{N}$. Par ailleurs, on
-connaît la solution exacte de notre problème, donc on va centrer l'intervalle
-autour de la solution exacte. Cela nous donne un intervalle de confiance de la
-forme :
+on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vrai.
+
+Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré sur ce point sur lequelle on approxime la solution par sa valeur en $x$. On peut considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de particules
+
+La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i (1-freq^i)}{N}$. Par ailleurs, on connaît la solution exacte de notre problème, donc on va centrer l'intervalle autour de la solution exacte. Cela nous donne un intervalle de confiance de la forme :
 \begin{equation*}
     I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
 \end{equation*}
 
-\begin{figure}[htp!]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}{.49\textwidth}
         \centering
@@ -246,7 +247,7 @@ Pour la représentation des intervalles de confiance, on remarque que pour $N=10
 
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
-\begin{figure}[htp!]
+\begin{figure}[ht!]
     \centering
     \begin{subfigure}{.49\textwidth}
         \centering

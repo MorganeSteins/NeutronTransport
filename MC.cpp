@@ -292,8 +292,7 @@ vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_i
         selection.points[i] = point(new_x(), new_mu());
     }
 
-    while (compare_vect(phi, phi_old) > epsilon && step < max_iter && selection.points.size() > 0)
-    {
+    while (step<max_iter && selection.points.size()>0){
         //mise à jour pour la nouvelle itération
         new_selection.points.resize(0);
         count = 0;

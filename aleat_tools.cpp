@@ -30,7 +30,7 @@ point deplacement_x(point p)
 }
 
 //tirage d'une variable aléatoire pour la continuation de la marche 0 arret, 1 continuer
-double do_I_stop(double sigmaS, double sigmaA)
+int do_I_stop(double sigmaS, double sigmaA)
 {
     double y = (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) * (sigmaA + sigmaS);
     if (y < sigmaA)
@@ -43,6 +43,25 @@ double do_I_stop(double sigmaS, double sigmaA)
     }
 }
 
+// tirage d'une variable aléatoire pour la continuation de la marche 0 arret, 1
+// continuer (diffusion isotrope), 2 continuer (pas de changement de direction)
+int do_I_stop_woodcock(double sigmaTmax, double sigmaS, double sigmaT)
+{
+    double y = (static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) * sigmaTmax;
+    if (y < sigmaS)
+    {
+        return 1;
+    }
+    else if (y + sigmaT < sigmaTmax + sigmaS)
+    {
+        return 2.;
+    }
+    else
+    {
+        return 0.;
+    }
+}
+
 //tirage d'un cos(angle) uniforme entre -1 et 1
 double new_mu()
 {
@@ -50,24 +69,34 @@ double new_mu()
 }
 
 //maximum d'un vecteur de double
-double vector_max(vector<double> v){
+double vector_max(vector<double> v)
+{
     double maxi = 0.;
-    for(int i=0;i<v.size();i++){
-        if(maxi<=v[i]) {
-            maxi=v[i];
+    for (int i = 0; i < v.size(); i++)
+    {
+        if (maxi <= v[i])
+        {
+            maxi = v[i];
         }
     }
     return maxi;
 }
 
 //norme infini de la différence de deux vecteurs
-double compare_vect(vector<double> v1, vector<double> v2){
-    if (v1.size()!= v2.size()) {return 0;}
-    else {
-        double maxi=0.;
-        for(int i=0;i<v1.size();i++){
-            if(maxi<=abs(v1[i]-v2[i])) {
-            maxi=abs(v1[i]-v2[i]);
+double compare_vect(vector<double> v1, vector<double> v2)
+{
+    if (v1.size() != v2.size())
+    {
+        return 0;
+    }
+    else
+    {
+        double maxi = 0.;
+        for (int i = 0; i < v1.size(); i++)
+        {
+            if (maxi <= abs(v1[i] - v2[i]))
+            {
+                maxi = abs(v1[i] - v2[i]);
             }
         }
         return maxi;

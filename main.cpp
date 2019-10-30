@@ -47,14 +47,13 @@ int main()
 
     // QUESTION 8
     //Cette fois ci on ne calcule que le flux moyenné en mu
-    nb_points = 50;
+    nb_points = 100;
     N = 1e8;
     int max_iter = 100;
-    double epsilon = 1e-10;
 
     //density_scattering_homog_unif_MC(1e7,p,max_iter,epsilon);
-    // density_tilda_segment_scattering_homg_unif_MC(N,nb_points, max_iter, epsilon);
-    density_tilda_segment_scattering_woodcock_unif_MC(N, nb_points, max_iter, epsilon);
+    density_tilda_segment_scattering_homg_unif_MC(N,nb_points, max_iter);
+    // density_tilda_segment_scattering_woodcock_unif_MC(N, nb_points, max_iter, epsilon);
     
 
     return 0;

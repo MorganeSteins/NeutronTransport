@@ -33,7 +33,10 @@ int main(int argc, char *argv[]) {
         // else {sigmaT[i]=1;}
     }
 
-    vector<double> phi = IS(Nx,Nmu,0.01,5, Q,sigmaT);
-    // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx<<" "<<sigmaT[i]<<endl;}
+    double mu = 1.;
+    double epsilon=1e-7;
+    // vector<double> phi = IS_iteration(Nx,mu,0,Q,sigmaT);
+    vector<double> phi = IS(Nx,Nmu,epsilon,1000, Q,sigmaT);
+    // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx+dx/2<<" "<<phi[i]<<endl;}
     return 0;
 }

@@ -57,7 +57,7 @@ vector<double> density_segment_no_scattering_homog_point_MC(int N, int nb_points
     }
 
     // enregistrement des valeurs de phi
-    ofstream fichier("Data/phi_q4_" + to_string(N) + ".txt", ios::out | ios::trunc);
+    ofstream fichier("Data/phi_q4_" + to_string(N) + "_"+to_string(nb_points)+".txt", ios::out | ios::trunc);
     for (int i = 0; i < freq.size(); i++)
     {
         fichier << freq[i] << ",";
@@ -65,13 +65,13 @@ vector<double> density_segment_no_scattering_homog_point_MC(int N, int nb_points
     fichier.close();
 
     // enregistrement des valeurs de fréquence pour les intervalles de confiance
-    ofstream fichier2("Data/freq_q4_" + to_string(N) + ".txt", ios::out | ios::trunc);
-    for (int i = 0; i < freq.size(); i++)
-    {
-        fichier2 << freq[i] * N * point::sigmaT * dx << ",";
-    }
-    fichier2.close();
-    cout << "Data/phi_q4_" + to_string(N) + ".txt" << endl;
+    // ofstream fichier2("Data/freq_q4_" + to_string(N) + ".txt", ios::out | ios::trunc);
+    // for (int i = 0; i < freq.size(); i++)
+    // {
+    //     fichier2 << freq[i] * N * point::sigmaT * dx << ",";
+    // }
+    // fichier2.close();
+    // cout << "Data/phi_q4_" + to_string(N) + ".txt" << endl;
     return freq;
 }
 
@@ -198,7 +198,7 @@ double density_no_scattering_homog_unif(point p)
 /* CAS DIFFUSANT HOMOGENE SOURCE UNIFORME */
 
 //Calcul de la densité neutronique moyennée en mu sur un maillage de nb_points points
-vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_intervalles, int max_iter, double epsilon)
+vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_intervalles, int max_iter)
 {
 
     vector_points selection(N);
@@ -221,7 +221,7 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
         selection.points[i] = point(new_x(), new_mu());
     }
 
-    while (compare_vect(phi, phi_old) > epsilon && step < max_iter && selection.points.size() > 0)
+    while (step < max_iter && selection.points.size() > 0)
     {
         //mise à jour pour la nouvelle itération
         new_selection.points.resize(0);
@@ -246,7 +246,7 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
         for (int i = 0; i < selection.points.size(); i++)
         {
             indice = floor(selection.points[i].get_x() / dx); //indice de l'intervalle où se trouve la particule
-            freq[indice] += (1. / (2. * point::sigmaT * dx)) * (1. / (float)N);
+            freq[indice] += (1. / (point::sigmaT * dx)) * (1. / (float)N);
         }
 
         //mise à jour de phi
@@ -269,7 +269,10 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
     return phi;
 }
 
-vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_intervalles, int max_iter, double epsilon)
+
+
+
+vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_intervalles, int max_iter)
 {
 
     vector_points selection(N);
@@ -319,7 +322,7 @@ vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_i
         for (int i = 0; i < selection.points.size(); i++)
         {
             indice = floor(selection.points[i].get_x() / dx); //indice de l'intervalle où se trouve la particule
-            freq[indice] += (1. / (2. * point::sigmaT * dx)) * (1. / (float)N);
+            freq[indice] += (1. / (point::sigmaT * dx)) * (1. / (float)N);
         }
 
         //mise à jour de phi
@@ -343,7 +346,7 @@ vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_i
 }
 
 // Calcul de la densité avec discrétisation en x et en mu : demande de tirer beaucoup de points si on veut en avoir dans l'intervalle considéré. Non utilisé.
-double density_scattering_homog_unif_MC(int N, point p, int max_iter, double epsilon)
+double density_scattering_homog_unif_MC(int N, point p, int max_iter)
 {
     vector_points selection(N);
     vector_points new_selection(N);
@@ -363,7 +366,7 @@ double density_scattering_homog_unif_MC(int N, point p, int max_iter, double eps
         selection.points[i] = point(new_x(), new_mu());
     }
 
-    while (abs(phi - phi_old) > epsilon && step < max_iter && selection.points.size() > 0)
+    while (step < max_iter && selection.points.size() > 0)
     {
         new_selection.points.resize(0);
         count = 0;
@@ -389,7 +392,7 @@ double density_scattering_homog_unif_MC(int N, point p, int max_iter, double eps
         }
 
         phi_old = phi;
-        phi += (1. / (2. * point::sigmaT * dx * dmu)) * (freq / (float)N);
+        phi += (1. / (point::sigmaT * dx * dmu)) * (freq / (float)N);
         freq = 0.;
         step++;
     }

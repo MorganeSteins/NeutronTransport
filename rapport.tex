@@ -98,7 +98,7 @@ Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'int
 
 
 \subsection{Préliminaires}
-Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une surface efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
+Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une section efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
 $$P_{\text{interaction}}([x;x+\delta l]) = \Sigma \delta l$$ 
 Lorsque l'on projette cette distance sur l'axe des abscisses, on fait apparaître le cosinus de l'angle entre le vecteur directeur du déplacement et $\vec{x}$ qui est définit par $\mu$ dans ce TP.
 D'où en 1D $P_{\text{interaction}}(x) = \frac{\Sigma}{\mu} \delta l $
@@ -109,7 +109,7 @@ On peut aussi utiliser faire une démonstration plus physique.
 On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longueur $dx$ et on considère partir du point 0. 
 La probabilité d'interaction au point $x=idx$ s'obtient en considérant qu'il y a une interaction dans l'intervalle $i$ mais pas dans les précédents ce qui donne
 \begin{equation*}
-    P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}
+    P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}dx
 \end{equation*}
 
 Le passage à la limite $N \rightarrow \infty$ donne la densité de probabilité d'interagir au point $x$ et pas avant, donc la densité de probabilité du libre parcours $f$:
@@ -125,7 +125,7 @@ La fonction de répartition $F$ du libre parcours moyen s'écrit
 
 Pour l'inverser on résout $y = F(x)$
 \begin{equation*}
-    y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = \frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
+    y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = -\frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
 \end{equation*}
 
 Pour tirer une variable aléatoire selon la loi $F$, on tire $y$ selon une loi uniforme sur $[0;1]$ et on calcule $F^{-1}(y)$.
@@ -154,7 +154,7 @@ On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et
 
 \begin{align*}
     \int_0^x \left( \mu \frac{\partial \psi}{\partial x} (t,\mu)  + \st
-    \psi(t,\mu)\right) e^\frac{\st t}{\mu} dt &= \int_0^x \delta_0(t) dt \\
+    \psi(t,\mu)\right) e^\frac{\st t}{\mu} dt &= \int_0^x \delta_0(t)e^\frac{\st t}{\mu} dt \\
     \iff  \mu \psi(x,\mu) e^{\frac{\st x}{\mu}} &= \mu \psi(0,\mu) + 1 \\
     \iff  \psi(x,\mu) &= \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
 \end{align*}
@@ -376,14 +376,14 @@ On résout le problème exactement de la même façon et on obtient
 \begin{equation}
     \tag{S2}
     \label{eq:sol.S2}
-    \pp_2(x,\mu) = S_2(0.3,\mu) \frac{1}{\mu} e^{-\frac{3 (x-0.3)}{\mu}} = \frac{1}{\mu^2} e^{-\frac{0.3}{\mu}} e^{-\frac{3(x-0.3)}{\mu}}
+    \pp_2(x,\mu) = S_2(0.3,\mu)e^{-\frac{3 (x-0.3)}{\mu}} = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(x-0.3)}{\mu}}
 \end{equation}
 
 Le même raisonnement donne
 \begin{equation}
     \tag{S3}
     \label{eq:sol.S3}
-    \pp_3(x,\mu) = \frac{1}{\mu^3} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
+    \pp_3(x,\mu) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
 \end{equation}
 
 

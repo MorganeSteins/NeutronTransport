@@ -251,13 +251,13 @@ Il est intéressant de regarder à $N$ fixé comment évolue la précision de no
     \centering
     \begin{subfigure}{.49\textwidth}
         \centering
-        \includegraphics[scale=0.45]{Figures/q4_ic_n1e4_nb10.png}
+        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb10_2.png}
         \caption{$10$ intervalles}
         \label{fig:q4.nb10}
     \end{subfigure}
     \begin{subfigure}{.49\textwidth}
         \centering
-        \includegraphics[scale=0.45]{Figures/q4_ic_n1e4_nb25.png}
+        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25_2.png}
         \caption{$25$ intervalles}
         \label{fig:q4.nb25}
     \end{subfigure}
@@ -265,7 +265,7 @@ Il est intéressant de regarder à $N$ fixé comment évolue la précision de no
     \label{fig:q4.nb_points}
 \end{figure}
 
-Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de l'intervalle de confiance. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages.
+Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de la solution exacte. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages. C'est pour cette raison que la taille de l'intervalle de fluctuation dépend de la taille des intervalles $dx$. 
 
 
 
@@ -303,13 +303,13 @@ Pour obtenir la densité de neutrons totale en un point $x$ indépendamment de l
 Comme le tirage de $\mu$ est uniforme entre $-1$ et $1$, sa densité est $\frac{1}{2}$. 
 On intègre sur $\mu$ pour obtenir la densité moyenne $ \tilde{\pp}(x) = \into \pp(x,\mu) \ d\mu $.
 On a alors
-$$ f(x_1) = \frac{1}{2} \into f(x_1|\mu_0) \ d\mu_0 = \frac{\st}{2} \into \pp(x_1,\mu) \ d\mu  = \frac{\st}{2} \tilde{\pp}(x) $$
+$$ f(x_1) = \frac{1}{2} \into f(x_1|\mu_0) \ d\mu_0 = \frac{\st}{2} \into \pp(x_1,\mu) \ d\mu  = \st\tilde{\pp}(x) $$
 
 Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthode Monte-Carlo
 
 \begin{equation}
     \label{eq:sol.unif}
-    \pp(x,\mu_0) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2])}{2 \st dx}
+    \pp(x,\mu_0) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2])}{\st dx}
 \end{equation}
 
 \vspace{0.2cm}
@@ -414,7 +414,7 @@ Le flux non collisionné $\ppt^0$ est donné par la partie précédente équatio
 
 Nous cherchons maintenant à estimer $\ppt^1$, c'est à dire trouver la densité de probabilité d'un point $x_2$ après une collision et 2 libres parcours.
 $\epsilon^1$ est solution de 
-$$ \mu \frac{\partial \epsilon^1}{\partial x} (x,\mu) + \st \epsilon^1(x,\mu) =  \frac{\Ssss}{2} \into \pp^{0}(x,\mu')\ d\mu'= \frac{\Ssss}{2}  \ppt^{0}(x) $$
+$$ \mu \frac{\partial \epsilon^1}{\partial x} (x,\mu) + \st \epsilon^1(x,\mu) =  \frac{\Ssss}{2} \into \pp^{0}(x,\mu')\ d\mu'= \Ssss \ppt^{0}(x) $$
 
 On utilise encore une fois le fait que $\ppt^0(x) = \int_0^1 \ppt^0(t)\delta_x(t)\ dt$ pour obtenir par linéarité
 \begin{equation}
@@ -443,14 +443,12 @@ On peut donc calculer tous les flux collisionnés. Comme la solution de l'équat
 on a 
 $$\ppt(x) = \sum_{k=1}^\infty \epst^k + \ppt^0$$
 
-Dans la pratique on détermine un critère d'arrêt à $n=m$ dès que deux contributions sont 
-"suffisamment proches", i.e. dès que $\epst^m< \eta$ où $\eta$ est un paramètre 
-fixé à l'avance qui caractérise la précision de notre simulation.
+Dans la pratique on procède par \textit{batch} de particules. On choisit un nombre $N$ de particules au départ. On détermine le flux non collisionné issu, puis le flux une fois collisionné des particules encore dans l'intervalle et on ajoute cette contribution à celle du flux non collisionné. Tant qu'il reste des particules (non absorbées ou sorties) on continue les itérations et on ajoute les contributions à ce qui précède. Une fois qu'il n'y a plus de particules on a calculé $\ppt(x)$.
 
 En intégrant sur un petit intervalle autour de $x$ on obtient une formule explicite pour calculer $\ppt$ avec une simulation Monte-Carlo
 \begin{equation}
     \label{eq:sol.MC.diffusion}
-    \ppt(x) = \sum_{k=0}^m \frac{\PP(x_{k+1} \in [x;x+dx])}{\st dx}
+    \ppt(x) = \sum_{k=0}^{\infty} \frac{\PP(x_{k+1} \in [x;x+dx])}{\st dx}
 \end{equation}
 L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'itération $k$ et $x_{k+1}$ sa position d'arrivée. 
 

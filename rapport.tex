@@ -1,18 +1,19 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{natbib}
 \usepackage[french]{babel}
 \usepackage[top=2.5cm, bottom=2.8cm, left=2.7cm, right=2.7cm]{geometry} 
-\usepackage{xcolor}
-\usepackage{amsmath}
 \usepackage{amsfonts,stmaryrd}
-\usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{listings}
-\usepackage{graphicx}
+\usepackage{amsthm}
 \usepackage{caption}
+\usepackage{comment}
+\usepackage{listings}
+\usepackage{natbib}
+\usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{xcolor}
 
 \newcommand{\pp}{\varphi}
 \newcommand{\ppt}{\tilde{\varphi}}
@@ -458,17 +459,36 @@ Contrairement aux cas précédents on ne connaît pas la solution analytique, ma
 
 \begin{figure}[htp!]
     \centering
-    \includegraphics[scale=0.6]{Figures/Q8_N10e7_cst_morceaux.png}
+    \includegraphics[scale=0.6]{Figures/Q8_N10e7_cst_morceaux_100_2.png}
     \caption{Simulation de $\pp(x,\mu)$ pour $N=10^7$ tirages}
     \label{fig:q8}
 \end{figure}
-La figure (\ref{fig:q8}) montre la simulation pour $N=10^7$ tirages et $100$ intervalles. Elle est bien symétrique et régulière (sans sursaut lié à un point abérrant).
+La figure (\ref{fig:q8}) montre la simulation pour $N=10^7$ tirages et $100$ intervalles. 
+Elle est bien symétrique et régulière (sans sursaut lié à un point aberrant).
 
-\section*{Conclusion préliminaire}
+\subsubsection{Conclusion Monte-Carlo}
+La méthode Monte-Carlo permet de calculer $\pp$ et $\ppt$ dans plusieurs cas 1D.
+Cependant la taille de l'intervalle de confiance réduisant en $\frac{1}{\sqrt{N}}$, 
+le temps de calcul nécessaire pour une précision donnée augmente au carré du nombre de particules. Ainsi il nous a été difficile sans paralléliser le calcul de faire plus de $10^8$ particules dans des temps de calculs raisonnables. 
+
+Ceci justifie de tenter à une approche itérative pour voir si elle réduirait les temps de calculs à précision fixée. 
+
+\begin{comment}
+    \section*{Conclusion préliminaire}
 Nous avons mis en oeuvre la méthode Monte-Carlo et testé sur les cas où nous connaissons une solution analytique qu'elle donne les bons résultats. 
 Nous souhaiterons également vérifier dans le cas avec diffusion que notre solveur donne des résultats corrects, ce que nous ferons ultérieurement.
 
 Il aurait aussi était intéressant de regarder l'impact de $\mu$ sur la précision de la méthode : comme la largeur de l'intervalle de confiance dépend de la valeur de $\pp$, on s'attends à ce que faire diminuer $\mu$ modifie la précision de la méthode.
+\end{comment}
+
+
+
+\section{Solveur itératif}
+Nous allons procéder à la mise en place de la méthode itérative dans le même ordre que la méthode Monte-Carlo ce qui permet de construire le solveur brique par brique et de comparer chaque étape aux résultats Monte-Carlo.
+
+\subsection{Matériau purement absorbant}
+\subsubsection{Source ponctuelle = courant entrant unitaire}
+On commence par le cas d'une source ponctuelle, qui équivaut au cas sans source mais avec un courant entrant unitaire.
 
 
 \end{document}

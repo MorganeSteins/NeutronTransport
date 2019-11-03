@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     vector<double> Q(Nx);
     vector<double> sigmaT(Nx);
     for (int i=0;i<Nx;i++){
-        Q[i] = 1;
+        Q[i] = 0;
         sigmaT[i] = 1;
         // if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
         // else {sigmaT[i]=1;}
@@ -35,8 +35,43 @@ int main(int argc, char *argv[]) {
 
     double mu = 1.;
     double epsilon=1e-7;
-    // vector<double> phi = IS_iteration(Nx,mu,0,Q,sigmaT);
+    vector<double> phi;
+    // vector<double> phi = IS_iteration(Nx,mu,1./mu,Q,sigmaT);
     vector<double> phi = IS(Nx,Nmu,epsilon,1000, Q,sigmaT);
     // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx+dx/2<<" "<<phi[i]<<endl;}
+    // for (int i=10;i<=1000000;i*=10){
+    //     cout<<"Nx="<<i<<endl;
+    //     Nx=i/2;
+    //     dx = 1./Nx;
+    //     vector<double> Q(Nx);
+    //     vector<double> sigmaT(Nx);
+    //     for (int i=0;i<Nx;i++){
+    //         Q[i] = 0;
+    //         sigmaT[i] = 1;
+    //     }   
+    //     phi = IS_iteration(i/2,mu,1./mu,Q,sigmaT);
+    //     ofstream fichier("Data/phi_q9_"+to_string(i/2)+"_"+to_string(abs((mu)))+"test.txt", ios::out | ios::trunc);
+    //     for (int i=0;i<phi.size();i++){
+    //         fichier<<phi[i]<<",";
+    //     }
+    //     fichier.close();
+        
+    //     Nx=i;
+    //     dx = 1./Nx;
+    //     Q.resize(Nx);
+    //     sigmaT.resize(Nx);
+    //     for (int i=0;i<Nx;i++){
+    //         Q[i] = 0;
+    //         sigmaT[i] = 1;
+    //     }   
+    //     phi = IS_iteration(i,mu,1./mu,Q,sigmaT);
+    //     IS_iteration(i,mu,1./mu,Q,sigmaT);
+    //     ofstream fichier2("Data/phi_q9_"+to_string(i)+"_"+to_string(abs((mu)))+"test.txt", ios::out | ios::trunc);
+    //     for (int i=0;i<phi.size();i++){
+    //         fichier2<<phi[i]<<",";
+    //     }
+    //     fichier2.close();
+    // }
+
     return 0;
 }

@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     vector<double> Q(Nx);
     vector<double> sigmaT(Nx);
     for (int i=0;i<Nx;i++){
-        Q[i] = 0;
+        Q[i] = 1;
         sigmaT[i] = 1;
         // if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
         // else {sigmaT[i]=1;}
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
     double mu = 1.;
     double epsilon=1e-7;
-    vector<double> phi;
+    // vector<double> phi;
     // vector<double> phi = IS_iteration(Nx,mu,1./mu,Q,sigmaT);
     vector<double> phi = IS(Nx,Nmu,epsilon,1000, Q,sigmaT);
     // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx+dx/2<<" "<<phi[i]<<endl;}

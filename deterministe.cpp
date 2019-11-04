@@ -12,11 +12,11 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
     double phi_plus;
     int sign_mu = sgn(mu); //signe de mu
 
- 
     double phi_moins = abs(flux_entrant);
 
-    if (sign_mu>0){
-        for (int i = 0; i <Nx; i ++)
+    if (sign_mu > 0)
+    {
+        for (int i = 0; i < Nx; i++)
         {
             phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
             phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
@@ -25,8 +25,9 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
             // cout << "i=" << i << "  " << phi_t[i] << endl;
         }
     }
-    else {
-        for (int i = Nx-1; i >=0; i --)
+    else
+    {
+        for (int i = Nx - 1; i >= 0; i--)
         {
             phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
             phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
@@ -54,13 +55,11 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
     for (int i = 0; i <= Nx; i++)
         X[i] = i * dx;
 
-
     //initialisation de MU
     double dmu = 2. / Nmu;
     double w = dmu; //poids de quadrature constant
     for (int i = 0; i < Nmu; i++)
         MU[i] = i * dmu - 1 + dmu / 2;
-
 
     //initialisation de Q
     for (int i = 0; i < Nx; i++)
@@ -70,39 +69,44 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
     }
 
     double err = 1.; // erreur que l'on initialise grande
-    int n_iter = 0;  //compteur itération
-    while (sqrt(err) > epsilon && n_iter < iter_max)
+    double norm_Q = 1.;
+    int n_iter = 0; //compteur itération
+    while (err / norm_Q > epsilon * epsilon && n_iter < iter_max)
     {
         for (int n = 0; n < Nmu; n++)
         {
             phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
             for (int i = 0; i < Nx; i++)
+            {
                 Q2[i] += (1. / 2) * w * phi[i];
+            }
         }
 
         err = 0.;
+        norm_Q = 0.;
 
         for (int i = 0; i < Nx; i++)
         {
-            auto tmp = (Q[i]-(Q2[i]+S[i]));
-            err += tmp*tmp;
-            Q[i] = Q2[i]+S[i];
+            auto tmp = (Q[i] - (Q2[i] + S[i]));
+            err += tmp * tmp;
+            Q[i] = Q2[i] + S[i];
+            norm_Q += Q[i] * Q[i];
             Q2[i] = 0;
         }
         // cout<<" difference entre 2 itérations "<<sqrt(err)<<endl;
         n_iter++;
     }
-    cout<<"Convergé en "<<n_iter<<" itérations avec une erreur "<<err<<endl;
-    cout<<endl;
+    cout << "Convergé en " << n_iter << " itérations avec une erreur " << err << endl;
+    cout << endl;
 
-    vector<double> phi_final(Nx,0.);
+    vector<double> phi_final(Nx, 0.);
     for (int n = 0; n < Nmu; n++)
-        {
-            phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
-            for (int i = 0; i < Nx; i++)
-                phi_final[i] += (1. / 2) * w * phi[i];
-        }
-    
+    {
+        phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
+        for (int i = 0; i < Nx; i++)
+            phi_final[i] += (1. / 2) * w * phi[i];
+    }
+
     return phi_final;
 }
 

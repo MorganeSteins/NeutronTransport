@@ -5,6 +5,9 @@
 #include <cmath>
 #include "deterministe.hpp"
 
+#include "eigen/Eigen/IterativeLinearSolvers"
+#include "eigen/Eigen/Sparse"
+
 vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<double> Q, vector<double> sigmaT)
 {
     vector<double> phi_t(Nx);
@@ -43,8 +46,7 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
 //solveur IS
 vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT, vector<double> sigmaS)
 {
-    vector<double> Q(Nx);           //source à initialiser selon le pb
-    vector<double> phi_t(Nx * Nmu); // pb
+    vector<double> Q(Nx); //source à initialiser selon le pb
     vector<double> X(Nx + 1);
     vector<double> MU(Nmu);
     vector<double> phi(Nx);
@@ -104,7 +106,7 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
     {
         phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
         for (int i = 0; i < Nx; i++)
-            phi_final[i] += (1. / 2) *w * phi[i];
+            phi_final[i] += (1. / 2) * w * phi[i];
     }
 
     return phi_final;
@@ -139,3 +141,127 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
 //     fichier.close();
 //     return phi;
 // }
+
+Eigen::VectorXd IS_iteration(int Nx, double mu, double flux_entrant, Eigen::VectorXd Q, Eigen::VectorXd sigmaT)
+{
+    using namespace Eigen;
+
+    VectorXd phi_t(Nx);
+    double dx = 1. / Nx;
+    double phi_plus;
+    int sign_mu = sgn(mu);
+
+    double phi_moins = abs(flux_entrant);
+
+    if (sign_mu > 0)
+    {
+        for (int i = 0; i < Nx; i++)
+        {
+            phi_plus = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+            phi_t(i) = (1. / 2.) * (phi_plus + phi_moins);
+            // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
+            phi_moins = phi_plus;
+            // cout << "i=" << i << "  " << phi_t[i] << endl;
+        }
+    }
+    else
+    {
+        for (int i = Nx - 1; i >= 0; i--)
+        {
+            phi_plus = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+            phi_t(i) = (1. / 2.) * (phi_plus + phi_moins);
+            // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
+            phi_moins = phi_plus;
+            // cout << "i=" << i << "  " << phi_t[i] << endl;
+        }
+    }
+
+    return phi_t;
+}
+
+Eigen::VectorXd IS_iteration_phi(int Nx, double mu, double flux_entrant, Eigen::VectorXd Q, Eigen::VectorXd sigmaT)
+{
+    using namespace Eigen;
+
+    VectorXd phi(Nx + 1);
+    double dx = 1. / Nx;
+    int sign_mu = sgn(mu);
+
+    if (sign_mu > 0)
+    {
+        double phi_moins = phi(0) = abs(flux_entrant);
+        for (size_t i = 1; i < Nx + 1; i++)
+        {
+            phi(i) = phi_moins = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+        }
+    }
+    else
+    {
+        double phi_moins = phi(Nx) = abs(flux_entrant);
+        for (size_t i = Nx - 1; i >= 0; i--)
+        {
+            phi(i) = phi_moins = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+        }
+    }
+
+    return phi;
+}
+
+Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::VectorXd S, Eigen::VectorXd sigmaT, Eigen::VectorXd sigmaS)
+{
+    using namespace Eigen;
+
+    VectorXd Q(Nx), Q2(Nx); //source à initialiser selon le pb
+
+    VectorXd X(Nx + 1);
+    VectorXd MU(Nmu);
+    VectorXd phi(Nx + 1), phi_demi(Nx + 1), q_demi(Nx + 1), L(Nx + 1), F(Nx + 1);
+
+    //initialisation de X
+    double dx = 1. / Nx;
+    for (int i = 0; i <= Nx; i++)
+        X(i) = i * dx;
+
+    //initialisation de MU
+    double dmu = 2. / Nmu;
+    double w = dmu; //poids de quadrature constant
+    for (int i = 0; i < Nmu; i++)
+        MU(i) = (i + 1. / 2.) * dmu - 1;
+
+    // Définition de la matrice de diffusion
+    SparseMatrix<double> A(Nx + 1, Nx + 1);
+    for (size_t i = 0; i < Nx + 1; i++)
+    {
+        A.coeffRef(i, i) = 2. / (3. * dx * sigmaT(i)) + (sigmaT(i) - sigmaS(i)) * dx * 2. / 3.;
+        if (i < Nx)
+        {
+            A.coeffRef(i, i + 1) = A.coeffRef(i + 1, i) = (sigmaT(i) - sigmaS(i)) * dx / 6. - 1. / (3 * dx * sigmaT(i));
+        }
+    }
+    A.coeffRef(0, 0) = A.coeffRef(Nx, Nx) /= 2.;
+
+    // initialisation du solveur
+    ConjugateGradient<SparseMatrix<double>> solver;
+    solver.compute(A);
+
+    //initialisation de Q
+    Q = S;
+    Q2.Zero();
+
+    double err = 1.; // erreur que l'on initialise grande
+    double norm_Q = 1.;
+    int n_iter = 0; //compteur itération
+    while (err / norm_Q > epsilon * epsilon && n_iter < iter_max)
+    {
+        for (size_t n = 0; n < Nmu; n++)
+        {
+            phi_demi = IS_iteration(Nx, MU(n), 0., Q, sigmaT);
+            q_demi = phi_demi - phi;
+
+            L = dx * q_demi;
+            L(0) = L(Nx) /= 2;
+
+            F = solver.solve(L);
+        }
+    }
+}

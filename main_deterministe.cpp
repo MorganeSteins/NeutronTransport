@@ -23,15 +23,16 @@ int main(int argc, char *argv[]) {
         Nmu = atof(argv[2]);
     }
 
-    double epsilon = 0.01;
+    double epsilon = 0.001;
     double dx = 1./Nx;
     vector<double> Q(Nx);
     vector<double> sigmaT(Nx);
-    vector<double> sigmaA(Nx);
+    vector<double> sigmaS(Nx);
+    double sa=1;
     for (int i=0;i<Nx;i++){
         Q[i] = 1*epsilon;
         sigmaT[i] = 1/epsilon;
-        sigmaA[i] = 1*epsilon;
+        sigmaS[i] = sigmaT[i]-sa*epsilon;
         // if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
         // else {sigmaT[i]=1;}
     }
@@ -40,7 +41,13 @@ int main(int argc, char *argv[]) {
     double nu=1e-7;
     // vector<double> phi;
     // vector<double> phi = IS_iteration(Nx,mu,1./mu,Q,sigmaT);
-    vector<double> phi = IS(Nx,Nmu,nu,1000, Q,sigmaT);
+    vector<double> phi = IS(Nx,Nmu,nu,500000, Q,sigmaT,sigmaS);
+    ofstream fichier("Data/phi_q13_"+to_string(Nx)+"_"+to_string(Nmu)+"_epsilon0001_sa.txt", ios::out | ios::trunc);
+    for (int i=0;i<phi.size();i++){
+        fichier<<phi[i]<<",";
+    }
+    fichier.close();
+    cout<<"Saved in Data/phi_q13_"+to_string(Nx)+"_"+to_string(Nmu)+"_epsilon01_sa.txt"<<endl;
     // for (int i=0;i<phi.size();i++) {cout<<"x="<<i*dx+dx/2<<" "<<phi[i]<<endl;}
     // for (int i=10;i<=1000000;i*=10){
     //     cout<<"Nx="<<i<<endl;

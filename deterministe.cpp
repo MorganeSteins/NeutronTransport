@@ -41,7 +41,7 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
 }
 
 //solveur IS
-vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT)
+vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT, vector<double> sigmaS)
 {
     vector<double> Q(Nx);           //source à initialiser selon le pb
     vector<double> phi_t(Nx * Nmu); // pb
@@ -78,7 +78,7 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
             phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
             for (int i = 0; i < Nx; i++)
             {
-                Q2[i] += (1. / 2) * w * phi[i];
+                Q2[i] += (1. / 2) * sigmaS[i] * w * phi[i];
             }
         }
 
@@ -104,7 +104,7 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
     {
         phi = IS_iteration(Nx, MU[n], 0., Q, sigmaT); // ATTENTION FLUX ENTRANT
         for (int i = 0; i < Nx; i++)
-            phi_final[i] += (1. / 2) * w * phi[i];
+            phi_final[i] += (1. / 2) *w * phi[i];
     }
 
     return phi_final;

@@ -13,6 +13,6 @@ template <typename T> int sgn(T val) {
 }
 
 vector<double> IS_iteration(int Nx, double mu, double source, vector<double> Q,vector<double> sigmaT);
-vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT);
+vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> S, vector<double> sigmaT,vector<double> sigmaS);
 
 #endif // DETERMINISTE_INCLUDED

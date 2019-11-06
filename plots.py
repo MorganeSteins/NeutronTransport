@@ -24,7 +24,7 @@ def density_no_scattering_non_homog(x,mu):
         return  (1/mu)*np.exp(-(x-0.7)/mu)*(np.exp(-3*(0.7-0.3)/mu))*(np.exp(-0.3/mu))
 
 sigmaT = 1
-n_deter=1000
+n_deter=100
 n_MC=25
 sigmaT = 1
 N = 10000
@@ -37,7 +37,7 @@ mu=1
 # MC.pop()
 # MC = np.asarray(MC).astype(np.float)
 
-deter = open("Data/phi_q9_"+str(n_deter)+"_1.000000test.txt", "r")
+deter = open("Data/phi_q13_100_100_epsilon0001_sa.txt", "r")
 # deter = open("Data/phi_t_q11_"+str(n_deter)+"_1.000000.txt", "r")
 # deter = open("Data/phi_q10_"+str(n_deter)+".txt", "r")
 deter = deter.read().split(',')
@@ -64,21 +64,22 @@ phi_exact = np.array([density_no_scattering_homog_point(x[i],1,sigmaT) for i in 
 # # x = np.linspace(0,1-1/n_MC,n_MC)
 # # plt.scatter(x+dx/2,MC, marker = '*',label='Monte-Carlo pour N='+str(N), linewidth=2.5)
 # # x = np.concatenate((np.array([0]),np.repeat(np.linspace(1/n_MC,1-1/n_MC,n_MC-1),2),np.array([1])),axis=0)
-# # plt.plot(x,np.repeat(MC,2), label='Monte-Carlo pour N=$N=10^8$')
-# plt.scatter(x[0:len(x)-1]+dx/2,deter, linewidth=0.1, label='Résultats MC')
+# plt.plot(x,np.repeat(MC,2), label='Monte-Carlo pour N=$N=10^8$')
+plt.scatter(x[0:len(x)-1]+dx/2,deter, linewidths=0.01, label='Résultats deterministes')
+plt.ylim([np.min(deter)-0.1*abs(np.min(deter)), np.max(deter)+0.1*abs(np.max(deter))])
 # # print(lines)
 # plt.plot(x,phi_exact, label='solution exacte')
 # # plt.plot(x,phi_exact-1.96*var/dx,'r', label='Intervalle de fluctuation')
 # # plt.plot(x,phi_exact+1.96*var/dx,'r')
 # # plt.plot(x+dx/2,MC-1.96*var,'r',label='intervalle de fluctuation')
 # # plt.plot(x+dx/2,MC+1.96*var,'r')
-# plt.legend()
-# plt.ylabel("$\phi$")
-# plt.xlabel("$x$")
+plt.legend()
+plt.ylabel("$\phi$")
+plt.xlabel("$x$")
 # # plt.title("Simulation sur "+str(n_deter)+" intervalles avec N="+str(N)+"particules")
 # plt.title("Simulation iterative sans scattering, source ponctuelle")
-# plt.show()
+plt.show()
 
-phi_exact = np.array([density_no_scattering_homog_point(x[i]+dx/2,1,sigmaT) for i in range(len(x)-1)])
-errl2 = np.sqrt(np.sum(((deter-phi_exact)**2)*dx))
-print(errl2)
+# phi_exact = np.array([density_no_scattering_homog_point(x[i]+dx/2,1,sigmaT) for i in range(len(x)-1)])
+# errl2 = np.sqrt(np.sum(((deter-phi_exact)**2)*dx))
+# print(errl2)

@@ -13,6 +13,7 @@
 \usepackage{natbib}
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{tikz}
 \usepackage{xcolor}
 
 \newcommand{\pp}{\varphi}
@@ -23,6 +24,7 @@
 \newcommand{\sa}{\Sigma_a}
 \newcommand{\Ssss}{\Sigma_s}
 \newcommand{\into}{\int_{-1}^{1}}
+\newcommand{\psit}{\tilde{\psi}}
 
 \title{TP1 AMS302 - Modélisation et Simulation du transport de particules neutres}
 \author{Morgane STEINS et Etienne PEILLON}
@@ -346,6 +348,7 @@ On regarde ensuite les résultats de la simulation Monte-Carlo et encore une foi
 
 \vspace{0.5cm}
 \subsubsection{Matériau non homogène avec source ponctuelle}
+\label{sec:nonhomog.MC}
 On peut se pose la question de ce qui se passe dans le cas d'un matériau où $\st$ est une fonction de $x$.
 On se place dans le cas d'une source homogène avec un matériau de $\st$
 \begin{equation*}
@@ -489,6 +492,97 @@ Nous allons procéder à la mise en place de la méthode itérative dans le mêm
 \subsection{Matériau purement absorbant}
 \subsubsection{Source ponctuelle = courant entrant unitaire}
 On commence par le cas d'une source ponctuelle, qui équivaut au cas sans source mais avec un courant entrant unitaire.
+Pour $\mu$ positif, la solution est donnée par
+$$ \psi(x,\mu) = \frac{1}{\mu} e^{-\frac{\st x}{\mu}}$$
+Dans le cas $\mu$ négatif, la solution est $\psi(x,\mu) = \psi(1-x,-\mu)$.
+
+Dans ce cas précis on peut calculer $\psi$ aussi bien que $\tilde{\psi} = \frac{1}{2}\int_{-1}^1 \psi(x,\mu) d\mu$. Il n'y a pas besoin de discrétiser l'espace de $\mu$ pour calculer ces deux fonctions. Comme dans la suite nous sommes intéressés par le flux moyenné en angle, nous allons directement nous concentrer sur $\tilde{\psi}$ ici.
+
+\vspace{0.1cm}
+Pour résoudre le problème spatial général en $\pp$ qui est $\mu \ppt '(x) + \st \ppt(x) = Q(x)$, on utilise un schéma de type volumes finis. On découpe l'intervalle $[0,1]$ en $N$ intervalles $M_i$ de taille régulière $dx=1/N$. $\pp$ est définie sur les extrémités des intervalles et $\ppt$ comme la moyenne de $\pp$ sur chacun de ces intervalles (cf figure). On cnsidère que $\st$ et $Q$ sont constants sur chaque maille $M_i$ et on note respectivement $\st^i$ et $Q^i$ leurs valeurs sur l'intervalle $M_i$. 
+\vspace{0.5cm}
+
+\begin{tikzpicture}
+    \draw[thick] (0,0) -- (10,0); node[anchor= west] {domaine spatial};
+    \draw (2 cm,2pt) -- (2 cm,-4pt) node[anchor=north] {$dx$};
+    \draw (4 cm,2pt) -- (4 cm,-4pt) node[anchor=north] {$2dx$};
+    \draw (10 cm,2pt) -- (10 cm,-4pt) node[anchor=north] {$N dx$};
+    \draw (6 cm,2pt) -- (6 cm,-4pt) node[anchor=north] {$\dots$};
+    \draw (8 cm,2pt) -- (8 cm,-4pt) node[anchor=north] {$(N-1)dx$};
+    \draw (0 cm,2pt) -- (0 cm,-4pt) node[anchor=north] {$0$};
+
+    \draw[red] (2 cm,1pt) -- (2 cm,-1pt) node[anchor=south] {$\pp_1$};
+    \draw[red] (4 cm,1pt) -- (4 cm,-1pt) node[anchor=south] {$\pp_2$};
+    \draw[red] (8 cm,1pt) -- (8 cm,-1pt) node[anchor=south] {$\pp_{N-1}$};
+    \draw[red] (10 cm,1pt) -- (10 cm,-1pt) node[anchor=south] {$\pp_N$};
+    \draw[red] (0 cm,1pt) -- (0 cm,-1pt) node[anchor=south] {$\pp_0$};
+
+    \draw[blue] (1 cm,1pt) -- (1 cm,-1pt) node[anchor=south] {$\ppt_1$};
+    \draw[blue] (3 cm,1pt) -- (3 cm,-1pt) node[anchor=south] {$\ppt_2$};
+    \draw[blue] (9 cm,1pt) -- (9 cm,-1pt) node[anchor=south] {$\ppt_{N}$};
+\end{tikzpicture}
+
+On intègre l'équation spatiale sur chaque maille ce qui donne $N$ relations
+
+\begin{equation}
+    \label{eq:vfinis.1}
+    \mu \left( \pp_{i+1} - \pp_i \right) + \st^i dx\  \ppt_i = \tilde{Q}^i 
+\end{equation}
+Pour avoir le bon nombre de relations ($2N$) comme le nombre de degrés de liberté inconnus (les conditions de flux entrant imposent une des valeurs $\pp_0$ ou $\pp_N$ selon le signe de $\mu$), on ajoute une relation de fermeture. Cette relation impose que $\pp$ soit affine par morceaux
+
+\begin{equation}
+    \ppt_i = \frac{1}{2}(\pp_{i+1}-\pp_i)
+\end{equation}
+
+On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation contenant uniquement $\pp$. Comme le sens de propagation change en fonction de $\mu$, on veut une expression de $\pp_i$ en fonction de son antécédent, que ce soit $\pp_{i-1}$ ou $\pp_{i+1}$. On note $\pp_i^+$ le terme qu'on cherche à calculer et $\pp_i^-$ le terme précédent selon le sens de propagation.
+
+\begin{equation}
+    \pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
+\end{equation}
+
+On en déduit ensuite $\ppt_i$ grâce à la relation de fermeture. 
+
+\vspace{0.2cm}
+En fixant $\mu$, on utilie ce processus une unique fois et on obient $\psi_t$ pour tous les intervalles souhaités. On peut regarder la solution pour différents $\mu$ et regarder l'erreur en fonction de la discrétisation spatiale. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminiue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). On remarque cependant que pour $N>500$ l'erreur ne décroit plus. Nous supposons que des erreurs numériques sont à l'origine de cette staganation de l'erreur. 
+
+\begin{figure}[ht!]
+    \centering
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.42]{Figures/q9_sol_3mu.png}
+        \caption{Résultats pour différents $\mu$}
+        \label{fig:q9.sol}
+    \end{subfigure}
+    \begin{subfigure}{.49\textwidth}
+        \centering
+        \includegraphics[scale=0.42]{Figures/q9_err_l2.png}
+        \caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
+        \label{fig:q9.errl2}
+    \end{subfigure}
+    \caption{Etude de la simulation de $\psit(x)$}
+    \label{fig:q9}
+\end{figure}
+
+\subsubsection{Source uniforme}
+On peut utiliser exactement la même méthode pour trouver la solution dans le cas d'une source homogène. On rappelle le résultat de la partie 1 : dans ces conditions la solution vaut
+\begin{equation*}
+    \phi(x,\mu) = \left\{ \begin{aligned}
+        \frac{1}{\mu}(1-e^{-\st x /\mu}) \hspace{1cm} \text{ si } \mu>0 \\ 
+        \frac{1}{\mu}(1-e^{-\st (x-1) /\mu}) \hspace{1cm} \text{ si } \mu<0 
+    \end{aligned}  \right.
+\end{equation*}
+
+On peut faire les mêmes analyses que dans le cas de la source ponctuelle.
+
+\subsubsection{Matériau non homogène}
+On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. 
+
+\subsection{Matériau diffusant}
+On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions.
+
+
+
+
 
 
 \end{document}

@@ -15,13 +15,13 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
     double phi_plus;
     int sign_mu = sgn(mu); //signe de mu
 
-    double phi_moins = abs(flux_entrant);
+    double phi_moins = std::abs(flux_entrant);
 
     if (sign_mu > 0)
     {
         for (int i = 0; i < Nx; i++)
         {
-            phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
+            phi_plus = (2 * dx * Q[i] + (2 * std::abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * std::abs(mu) + dx * sigmaT[i]);
             phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
             // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
             phi_moins = phi_plus;
@@ -32,7 +32,7 @@ vector<double> IS_iteration(int Nx, double mu, double flux_entrant, vector<doubl
     {
         for (int i = Nx - 1; i >= 0; i--)
         {
-            phi_plus = (2 * dx * Q[i] + (2 * abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * abs(mu) + dx * sigmaT[i]);
+            phi_plus = (2 * dx * Q[i] + (2 * std::abs(mu) - dx * sigmaT[i]) * phi_moins) / (2 * std::abs(mu) + dx * sigmaT[i]);
             phi_t[i] = (1. / 2) * (phi_plus + phi_moins);
             // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
             phi_moins = phi_plus;
@@ -151,13 +151,13 @@ Eigen::VectorXd IS_iteration(int Nx, double mu, double flux_entrant, Eigen::Vect
     double phi_plus;
     int sign_mu = sgn(mu);
 
-    double phi_moins = abs(flux_entrant);
+    double phi_moins = std::abs(flux_entrant);
 
     if (sign_mu > 0)
     {
         for (int i = 0; i < Nx; i++)
         {
-            phi_plus = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+            phi_plus = (2 * dx * Q(i) + (2 * std::abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * std::abs(mu) + dx * sigmaT(i));
             phi_t(i) = (1. / 2.) * (phi_plus + phi_moins);
             // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
             phi_moins = phi_plus;
@@ -168,7 +168,7 @@ Eigen::VectorXd IS_iteration(int Nx, double mu, double flux_entrant, Eigen::Vect
     {
         for (int i = Nx - 1; i >= 0; i--)
         {
-            phi_plus = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+            phi_plus = (2 * dx * Q(i) + (2 * std::abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * std::abs(mu) + dx * sigmaT(i));
             phi_t(i) = (1. / 2.) * (phi_plus + phi_moins);
             // cout<<"phi moins = "<<phi_moins<<" et phi_plus = "<<phi_plus<<endl;
             phi_moins = phi_plus;
@@ -189,18 +189,18 @@ Eigen::VectorXd IS_iteration_phi(int Nx, double mu, double flux_entrant, Eigen::
 
     if (sign_mu > 0)
     {
-        double phi_moins = phi(0) = abs(flux_entrant);
+        double phi_moins = phi(0) = std::abs(flux_entrant);
         for (size_t i = 1; i < Nx + 1; i++)
         {
-            phi(i) = phi_moins = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+            phi(i) = phi_moins = (2 * dx * Q(i) + (2 * std::abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * std::abs(mu) + dx * sigmaT(i));
         }
     }
     else
     {
-        double phi_moins = phi(Nx) = abs(flux_entrant);
+        double phi_moins = phi(Nx) = std::abs(flux_entrant);
         for (size_t i = Nx - 1; i >= 0; i--)
         {
-            phi(i) = phi_moins = (2 * dx * Q(i) + (2 * abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * abs(mu) + dx * sigmaT(i));
+            phi(i) = phi_moins = (2 * dx * Q(i) + (2 * std::abs(mu) - dx * sigmaT(i)) * phi_moins) / (2 * std::abs(mu) + dx * sigmaT(i));
         }
     }
 
@@ -215,7 +215,9 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
 
     VectorXd X(Nx + 1);
     VectorXd MU(Nmu);
-    VectorXd phi(Nx + 1), phi_demi(Nx + 1), q_demi(Nx + 1), L(Nx + 1), F(Nx + 1);
+    MatrixXd phi(Nx, Nmu);
+    VectorXd phi_demi(Nx);
+    VectorXd q_demi(Nx), L(Nx + 1), F(Nx + 1);
 
     //initialisation de X
     double dx = 1. / Nx;
@@ -238,15 +240,29 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
             A.coeffRef(i, i + 1) = A.coeffRef(i + 1, i) = (sigmaT(i) - sigmaS(i)) * dx / 6. - 1. / (3 * dx * sigmaT(i));
         }
     }
+    std::cout << "test" << std::endl
+              << std::endl;
     A.coeffRef(0, 0) = A.coeffRef(Nx, Nx) /= 2.;
 
     // initialisation du solveur
     ConjugateGradient<SparseMatrix<double>> solver;
     solver.compute(A);
 
+    // matrice q->L
+    SparseMatrix<double> q2L(Nx + 1, Nx);
+    for (size_t i = 0; i < Nx + 1; i++)
+    {
+        A.coeffRef(i, i) = 2;
+        if (i < Nx)
+            A.coeffRef(i, i + 1) = A.coeffRef(i + 1, i) = 1;
+    }
+    A.coeffRef(1, 1) = A.coeffRef(Nx, Nx) = 1;
+    A *= dx / 2.;
+
     //initialisation de Q
     Q = S;
-    Q2.Zero();
+    Q2.Zero(Nx);
+
 
     double err = 1.; // erreur que l'on initialise grande
     double norm_Q = 1.;
@@ -256,12 +272,29 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
         for (size_t n = 0; n < Nmu; n++)
         {
             phi_demi = IS_iteration(Nx, MU(n), 0., Q, sigmaT);
-            q_demi = phi_demi - phi;
+            q_demi = (phi_demi - phi.col(n)).cwiseProduct(sigmaS);
 
-            L = dx * q_demi;
-            L(0) = L(Nx) /= 2;
+            L = q2L * q_demi;
 
             F = solver.solve(L);
+            phi.col(n) = phi_demi + 0.5 * (VectorXd)(F.head(Nx) + F.tail(Nx));
+
+            Q2 += (w / 2) * (VectorXd)(phi.col(n).cwiseProduct(sigmaS));
         }
+
+        err = (Q - Q2 - S).dot(Q - Q2 - S);
+        norm_Q = Q.dot(Q);
+        Q = Q2 + S;
+        Q2.Zero(Nx);
+
+        n_iter++;
+    }
+    cout << "Convergé en " << n_iter << " itérations avec une erreur " << err << endl;
+    cout << endl;
+
+    VectorXd phi_final(Nx);
+    for (size_t i = 0; i < Nmu; i++)
+    {
+        phi_final += (w / 2) * IS_iteration(Nx, MU(i), 0., Q, sigmaT);
     }
 }

@@ -254,7 +254,6 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     }
     A.coeffRef(0, 0) = (sigmaT(0) - sigmaS(0)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(0));
     A.coeffRef(Nx, Nx) = (sigmaT(Nx) - sigmaS(Nx)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(Nx));
-    SelfAdjointEigenSolver<SparseMatrix<double>> eigensolver(A);
 
     // cout << " A = \n"
     //      << A << endl;

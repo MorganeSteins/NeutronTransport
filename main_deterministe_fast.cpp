@@ -27,15 +27,15 @@ int main(int argc, char *argv[])
         Nmu = atof(argv[2]);
     }
 
-    double epsilon = 0.001, sa = 1;
+    double epsilon = 1, sa = 1;
     double dx = 1. / Nx;
-    Eigen::VectorXd Q(Nx), sigmaT(Nx), sigmaS(Nx);
+    Eigen::VectorXd Q(Nx), sigmaT(Nx + 1), sigmaS(Nx + 1);
     Q.setConstant(1 * epsilon);
     sigmaT.setConstant(1. / epsilon);
-    sigmaS = sigmaT - sa * epsilon * Eigen::VectorXd::Ones(Nx);
+    sigmaS = sigmaT - sa * epsilon * Eigen::VectorXd::Ones(Nx + 1);
 
     double nu = 1e-3;
-    auto phi = Fast_IS(Nx, Nmu, epsilon, 1000, Q, sigmaT, sigmaS);
+    Eigen::VectorXd phi = Fast_IS(Nx, Nmu, 1e-3, 1000, Q, sigmaT, sigmaS);
 
     ofstream fichier("Data/phi_fast_" + to_string(Nx) + "_" + to_string(Nmu) + "_epsilon" + to_string(epsilon) + ".txt", ios::out | ios::trunc);
     fichier << phi;

@@ -245,17 +245,27 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     SparseMatrix<double> A(Nx + 1, Nx + 1);
     for (size_t i = 0; i < Nx + 1; i++)
     {
-        A.coeffRef(i, i) = 2. / (3. * dx * sigmaT(i)) + (sigmaT(i) - sigmaS(i)) * dx * 2. / 3.;
+        A.coeffRef(i, i) = -2. / (3. * dx * sigmaT(i)) + (sigmaT(i) - sigmaS(i)) * dx * 2. / 3.;
         if (i < Nx)
         {
-            A.coeffRef(i, i + 1) = A.coeffRef(i + 1, i) = (sigmaT(i) - sigmaS(i)) * dx / 6. - 1. / (3 * dx * sigmaT(i));
+            A.coeffRef(i + 1, i) = (sigmaT(i) - sigmaS(i)) * dx / 6. - 1. / (3 * dx * sigmaT(i));
+            A.coeffRef(i, i + 1) = A.coeffRef(i + 1, i);
         }
     }
-    A.coeffRef(0, 0) = A.coeffRef(Nx, Nx) /= 2.;
+    A.coeffRef(0, 0) = (sigmaT(0) - sigmaS(0)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(0));
+    A.coeffRef(Nx, Nx) = (sigmaT(Nx) - sigmaS(Nx)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(Nx));
+    SelfAdjointEigenSolver<SparseMatrix<double>> eigensolver(A);
+
+    // cout << " A = \n"
+    //      << A << endl;
+    // cout << "A eigenvalues : " << endl
+    //      << eigensolver.eigenvalues() << endl;
 
     // initialisation du solveur
-    ConjugateGradient<SparseMatrix<double>> solver;
-    solver.compute(A);
+    SimplicialLDLT<SparseMatrix<double>> solver_ldlt;
+    solver_ldlt.compute(A);
+    // ConjugateGradient<SparseMatrix<double>> solver;
+    // solver.compute(A);
 
     // matrice q->L
     SparseMatrix<double> q2L(Nx + 1, Nx);
@@ -267,8 +277,7 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     q2L *= dx / 2.;
 
     // cout << "q2l = " << endl
-    //      << q2L << endl
-    //      << endl;
+    //      << q2L << endl;
 
     //initialisation de Q
     Q = S;
@@ -286,6 +295,7 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
         for (size_t n = 0; n < Nmu; n++)
         {
             phi_demi = IS_iteration(Nx, MU(n), 0., Q, sigmaT_tilde);
+
             // cout << "phi_demi(" + to_string(n) + ") = " << endl;
             // cout << phi_demi << endl
             //      << endl;
@@ -293,33 +303,40 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
             // cout << phi.col(n) << endl
             //      << endl;
             q_demi = (phi_demi - phi.col(n)).cwiseProduct(sigmaS_tilde);
-
+            // cout << "phi.col(" << to_string(n) << ") =" << endl;
+            // cout << phi.col(n) << endl;
             L = q2L * q_demi;
             // cout << "L(" + to_string(n) + ") = " << endl;
-            // cout << L << endl
-            //      << endl;
+            // cout << L << endl;
+            // cout << endl;
             // F = solver.solve(L);
+            F = solver_ldlt.solve(L);
             // cout << "F(" + to_string(n) + ") = " << endl;
             // cout << F << endl
             //      << endl;
+            cout << F.norm() << " ";
             phi.col(n) = phi_demi + 0.5 * (F.head(Nx) + F.tail(Nx));
             Q2 += (w / 2) * (phi.col(n).cwiseProduct(sigmaS_tilde));
         }
-
+        cout << endl;
         err = (Q - Q2 - S).dot(Q - Q2 - S);
         norm_Q = Q.dot(Q);
         // cout << err << "     " << norm_Q << endl
         //      << endl;
         // cout << "Q = " << endl
         //      << Q << endl;
-        // cout << "Q2 + S = " << endl
-        //      << Q2 + S << endl
+        // cout << "Q2 = " << endl
+        //      << Q2 << endl
+        //      << endl;
+        // cout << "S = " << endl
+        //      << S << endl
         //      << endl;
         Q = Q2 + S;
-        Q2.Zero(Nx);
-
+        Q2 = VectorXd::Zero(Nx);
+        // cout << Q2 << endl;
         n_iter++;
     }
+    err = sqrt(err);
     cout << "Convergé en " << n_iter << " itérations avec une erreur " << err << endl;
     cout << endl;
 
@@ -327,12 +344,12 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     for (size_t i = 0; i < Nmu; i++)
     {
         phi_final += (w / 2) * phi.col(i);
-        cout << "phi(" + to_string(i) + ") = " << endl
-             << phi.col(i) << endl
-             << endl;
+        // cout << "phi(" + to_string(i) + ") = " << endl
+        //      << phi.col(i) << endl
+        //      << endl;
     }
-    cout << "phi_final = " << endl
-         << phi_final << endl
-         << endl;
+    // cout << "phi_final = " << endl
+    //      << phi_final << endl
+    //      << endl;
     return phi_final;
 }

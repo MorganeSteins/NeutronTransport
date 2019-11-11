@@ -4,9 +4,6 @@
 #include <fstream>
 #include <algorithm>
 #include <time.h>
-#include "points.hpp"
-#include "aleat_tools.hpp"
-#include "MC.hpp"
 #include "deterministe.hpp"
 
 int main(int argc, char *argv[]) {
@@ -79,7 +76,7 @@ int main(int argc, char *argv[]) {
     //     ofstream fichier2("Data/phi_q9_"+to_string(i)+"_"+to_string(abs((mu)))+"test.txt", ios::out | ios::trunc);
     //     for (int i=0;i<phi.size();i++){
     //         fichier2<<phi[i]<<",";
-    //     }
+    //     }iphérique	point de montage	ntfs-3g ou vfat	rw,user,aut
     //     fichier2.close();
     // }
 

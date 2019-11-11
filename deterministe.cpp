@@ -215,8 +215,8 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
 
     VectorXd X(Nx + 1);
     VectorXd MU(Nmu);
-    MatrixXd phi(Nx, Nmu);
-    VectorXd phi_demi(Nx);
+    VectorXd phi_tilde(Nx);
+    VectorXd phi_demi(Nx), phi_demi_tilde(Nx);
     VectorXd q_demi(Nx), L(Nx + 1), F(Nx + 1);
 
     //initialisation de X
@@ -234,13 +234,6 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     VectorXd sigmaS_tilde = 0.5 * (sigmaS.head(Nx) + sigmaS.tail(Nx));
     VectorXd sigmaT_tilde = 0.5 * (sigmaT.head(Nx) + sigmaT.tail(Nx));
 
-    // cout << "sigmaS_tilde = " << endl
-    //      << sigmaS_tilde << endl
-    //      << endl;
-    // cout << "sigmaT_tilde = " << endl
-    //      << sigmaT_tilde << endl
-    //      << endl;
-
     // Définition de la matrice de diffusion
     SparseMatrix<double> A(Nx + 1, Nx + 1);
     for (size_t i = 0; i < Nx + 1; i++)
@@ -254,11 +247,6 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     }
     A.coeffRef(0, 0) = (sigmaT(0) - sigmaS(0)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(0));
     A.coeffRef(Nx, Nx) = (sigmaT(Nx) - sigmaS(Nx)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(Nx));
-
-    // cout << " A = \n"
-    //      << A << endl;
-    // cout << "A eigenvalues : " << endl
-    //      << eigensolver.eigenvalues() << endl;
 
     // initialisation du solveur
     SimplicialLDLT<SparseMatrix<double>> solver_ldlt;
@@ -275,80 +263,38 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::Ve
     }
     q2L *= dx / 2.;
 
-    // cout << "q2l = " << endl
-    //      << q2L << endl;
-
     //initialisation de Q
     Q = S;
-    Q2.Zero(Nx);
+    Q2.setZero(Nx);
 
-    // cout << "Q = " << endl
-    //      << Q << endl
-    //      << endl;
 
     double err = 1.; // erreur que l'on initialise grande
     double norm_Q = 1.;
     int n_iter = 0; //compteur itération
     while (err / norm_Q > epsilon * epsilon && n_iter < iter_max)
     {
+        phi_demi_tilde.setZero(Nx);
         for (size_t n = 0; n < Nmu; n++)
         {
             phi_demi = IS_iteration(Nx, MU(n), 0., Q, sigmaT_tilde);
-
-            // cout << "phi_demi(" + to_string(n) + ") = " << endl;
-            // cout << phi_demi << endl
-            //      << endl;
-            // cout << "phi(" + to_string(n) + ") = " << endl;
-            // cout << phi.col(n) << endl
-            //      << endl;
-            q_demi = (phi_demi - phi.col(n)).cwiseProduct(sigmaS_tilde);
-            // cout << "phi.col(" << to_string(n) << ") =" << endl;
-            // cout << phi.col(n) << endl;
-            L = q2L * q_demi;
-            // cout << "L(" + to_string(n) + ") = " << endl;
-            // cout << L << endl;
-            // cout << endl;
-            // F = solver.solve(L);
-            F = solver_ldlt.solve(L);
-            // cout << "F(" + to_string(n) + ") = " << endl;
-            // cout << F << endl
-            //      << endl;
-            cout << F.norm() << " ";
-            phi.col(n) = phi_demi + 0.5 * (F.head(Nx) + F.tail(Nx));
-            Q2 += (w / 2) * (phi.col(n).cwiseProduct(sigmaS_tilde));
+            phi_demi_tilde += w / 2 * phi_demi;
         }
-        cout << endl;
+        q_demi = (phi_demi_tilde - phi_tilde).cwiseProduct(sigmaS_tilde);
+        L = q2L * q_demi;
+        F = solver_ldlt.solve(L);
+        phi_tilde = phi_demi_tilde + 0.5 * (F.head(Nx) + F.tail(Nx));
+        Q2 = phi_demi_tilde.cwiseProduct(sigmaS_tilde);
+
         err = (Q - Q2 - S).dot(Q - Q2 - S);
         norm_Q = Q.dot(Q);
-        // cout << err << "     " << norm_Q << endl
-        //      << endl;
-        // cout << "Q = " << endl
-        //      << Q << endl;
-        // cout << "Q2 = " << endl
-        //      << Q2 << endl
-        //      << endl;
-        // cout << "S = " << endl
-        //      << S << endl
-        //      << endl;
+
         Q = Q2 + S;
-        Q2 = VectorXd::Zero(Nx);
-        // cout << Q2 << endl;
+        Q2.setZero(Nx);
         n_iter++;
     }
     err = sqrt(err);
     cout << "Convergé en " << n_iter << " itérations avec une erreur " << err << endl;
     cout << endl;
 
-    VectorXd phi_final = VectorXd::Zero(Nx);
-    for (size_t i = 0; i < Nmu; i++)
-    {
-        phi_final += (w / 2) * phi.col(i);
-        // cout << "phi(" + to_string(i) + ") = " << endl
-        //      << phi.col(i) << endl
-        //      << endl;
-    }
-    // cout << "phi_final = " << endl
-    //      << phi_final << endl
-    //      << endl;
-    return phi_final;
+    return phi_tilde;
 }

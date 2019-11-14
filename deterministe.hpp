@@ -22,6 +22,6 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
 Eigen::VectorXd IS_iteration(int Nx, double mu, double flux_entrant, Eigen::VectorXd Q, Eigen::VectorXd sigmaT);
 Eigen::VectorXd IS_iteration_phi(int Nx, double mu, double flux_entrant, Eigen::VectorXd Q, Eigen::VectorXd sigmaT);
 
-Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, Eigen::VectorXd S, Eigen::VectorXd sigmaT, Eigen::VectorXd sigmaS);
+Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max,const Eigen::VectorXd S, const Eigen::VectorXd sigmaT, const Eigen::VectorXd sigmaS);
 
 #endif // DETERMINISTE_INCLUDED

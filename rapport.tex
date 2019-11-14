@@ -249,7 +249,7 @@ La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i (1
 \end{figure}
 On a représenté sur la figure (\ref{fig:q4.simul}) l'allure de la solution par simulation Monte-Carlo. Elle est constante par morceaux pour chaque intervalle d'approximation où la valeur moyenne est assimilée à l'intégrale.
 
-Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est invisible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}$. Les points donnent toutefois l'impression d'être compris dedans ou très proches. Nous avons tracé l'intervalle de confiance à $95\%$ pour une gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérance.
+Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est peu visible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}/25$ pour $25$ intervalles. Les points donnent toutefois l'impression d'être compris dedans de manière très qualitative. Nous avons tracé l'intervalle de confiance à $95\%$ pour uneriabe aléatoire suivant une loi gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérance de la valeur ponctuelle de $\pp$.
 
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
@@ -263,13 +263,13 @@ Il est intéressant de regarder à $N$ fixé comment évolue la précision de no
     \end{subfigure}
     \begin{subfigure}{.49\textwidth}
         \centering
-        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25_2.png}
+        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25.png}
         \caption{$25$ intervalles}
         \label{fig:q4.nb25}
-    \end{subfigure}
+    \end{subfigure} 
     \caption{Etude de la simulation de $\psi(x,\mu=1)$}
     \label{fig:q4.nb_points}
-\end{figure}
+\end{figure} s
 
 Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de la solution exacte. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages. C'est pour cette raison que la taille de l'intervalle de fluctuation dépend de la taille des intervalles $dx$. 
 
@@ -337,7 +337,7 @@ Pour $\mu<0$ le cas est symétrique par rapport au centre de l'intervalle.
         \label{fig:q5.ic}
     \end{subfigure}
     \caption{Etude de la simulation de $\psi(x,\mu=1)$}
-    \label{fig:q5}
+    \label{fig:q5} 
 \end{figure}
 
 La solution est toujours nulle en $x=0$ comme imposé par la condition de flux entrant nul.
@@ -393,6 +393,15 @@ Le même raisonnement donne
     \pp_3(x,\mu) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
 \end{equation}
 
+On est donc capable d'écrire la solution théorique dont on voit deux allures pour deux valeurs de $\mu$ différentes sur la figure (\ref{fig:q5.allures}).
+\begin{figure}[htp!]
+    \centering
+    \includegraphics[scale=0.5]{Figures/q6_sol_theorique.png}
+    \caption{$\pp(x,\mu)$ théorique dans le cas $\st$ non homogène}
+    \label{fig:q5.allures}
+\end{figure}
+
+Pour calculer la solution avec une méthode Monte-Carlo il faut mettre en oeuvre la méthode de Woodcokc qui permet de prendre en compte les variations de $\st$. 
 
 
 
@@ -414,7 +423,6 @@ Les flux collisionnés vérifient le système
 et les $\epsilon^n$ le même système sans source.
 
 Pour simplifier l'étude on considère ici que l'absorption est négligeable, i.e. $\st = \Ssss$ et $\sa = 0$.
-%Ceci entraîne immédiatement que les $\epsilon^n$ sont solution de la même équation que les $\pp^n$.
 
 Nous n'allons ici considérer que le flux moyenné en $\mu$, fonction uniquement de l'espace $\tilde{\pp}(x)$.
 Le flux non collisionné $\ppt^0$ est donné par la partie précédente équation (\ref{eq:sol.unif}).
@@ -487,8 +495,9 @@ Nous souhaiterons également vérifier dans le cas avec diffusion que notre solv
 Il aurait aussi était intéressant de regarder l'impact de $\mu$ sur la précision de la méthode : comme la largeur de l'intervalle de confiance dépend de la valeur de $\pp$, on s'attends à ce que faire diminuer $\mu$ modifie la précision de la méthode.
 \end{comment}
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% SECTION 2 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Solveur itératif}
 Nous allons procéder à la mise en place de la méthode itérative dans le même ordre que la méthode Monte-Carlo ce qui permet de construire le solveur brique par brique et de comparer chaque étape aux résultats Monte-Carlo.
 
@@ -540,6 +549,7 @@ Pour avoir le bon nombre de relations ($2N$) comme le nombre de degrés de liber
 On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation contenant uniquement $\pp$. Comme le sens de propagation change en fonction de $\mu$, on veut une expression de $\pp_i$ en fonction de son antécédent, que ce soit $\pp_{i-1}$ ou $\pp_{i+1}$. On note $\pp_i^+$ le terme qu'on cherche à calculer et $\pp_i^-$ le terme précédent selon le sens de propagation.
 
 \begin{equation}
+    \label{eq:phiplus}
     \pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
 \end{equation}
 
@@ -578,10 +588,36 @@ On peut utiliser exactement la même méthode pour trouver la solution dans le c
 On peut faire les mêmes analyses que dans le cas de la source ponctuelle.
 
 \subsubsection{Matériau non homogène}
-On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. 
+On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. La solution théorique est toujours la même mais cette fois-ci nous n'avons plus besoin de modifier le solveur pour prendre en compte les variations de $\st$ puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$. 
+
+Il faut bien attention à fournir au solveur une liste de $\st^i$ de la taille du nombre de mailles et à couper le domaine de façon à conserver $\st^i$ constant par maille. Comme ici $\st$ change de valeur en $0.3$ et $0.7$, il suffit de prendre un nombre de mailles multiple de 10 en $x$ pour être certain d'éviter tout problème avec la définition des $\st^i$.
+
+Voici les résultats obtenus
+
+
 
 \subsection{Matériau diffusant}
-On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions de chaque arc de cercle. 
+On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions de chaque arc de cercle pour obtenir $\ppt(x)$.
+
+On met en place la méthode des ordonnées discrète qui est une méthode de collocation : on choisit un nombre fini de directions $N_\mu$ pour lesquelles l'équation (\ref{eq.transport}) sera vérifiée. L'intégrale en angle est alors approchée par une formule de quadrature. Nous choisissons ici pour méthode de quadrature la méthode des rectangles qui nous permet de répartir les $\mu_k$ de manière homogène sur tout l'intervalle $[-1;1]$. On a alors $\mu_k = (k + 1/2)d\mu - 1$ où $d\mu = \frac{2}{N_\mu}$ et $k \in \{0,\dots ,N_{\mu}-1\}$. Le poids associé à chaque $\mu_k$ est le même : $d\mu$.
+
+On a alors $\forall 0 \leqslant k \leqslant N_\mu-1$
+\begin{equation}
+    \label{eq:semi.discrete.mu}
+    \mu_k \frac{\partial \pp_k}{\partial x} (x) + \st \pp_k(x) = \frac{\Ssss(x)}{2} \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l(x) + S(x)
+\end{equation}
+
+Pour découpler les différents termes d'angles on utilise l'itération sur les sources qui donne le problème : $\forall n \geqslant 1, \forall 0 \leqslant k \leqslant N_\mu-1$
+\begin{equation}
+    \label{eq:semi.discret.IS}
+    \mu_k \frac{\partial \pp_k^n}{\partial x} (x) + \st \pp_k^n(x) = \frac{\Ssss(x)}{2} \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) + S(x)
+\end{equation}
+
+Il faut donc à chaque étape résoudre un problème spatial comme précédemment avec pour source $Q(x) = S(x) + \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) $. On utilise donc le solveur précédent, englobé dans une double boucle, en $n$ pour l'itération sur les sources et en $k$ pour tous les angles. 
+
+On a démontrer que la différence entre deux itérations en $n$, $e^n =\pp^n-\pp^{n-1} $ converge vers 0 en norme $\mathcal{L}^1$ en l'injectant dans l'équation. Donc $\pp^n$ est une suite de Cauchy dans $\mathcal{L}^1$ qui est un Banach : elle converge. On utilise donc un critère de Cauchy pour arrêter l'algorithme d'itération sur les sources. On se fixe une erreur maximale $\eta$ et on continue les itérations en $n$ tant que $||\phi^{n}-\phi^{n-1}||>\eta$. 
+
+
 
 \subsection{Limite de diffusion}
 Nous avons considéré deux cas : $\Ssss=0$ et $\sa=0$. On se place maintenant dans un cas intermédiaire où aucun des deux coefficients n'est nul et on regarde la limite de diffusion poour $\epsilon$ tendant vers $0$. 

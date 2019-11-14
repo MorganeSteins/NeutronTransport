@@ -179,6 +179,7 @@ Eigen::VectorXd IS_iteration(int Nx, double mu, double flux_entrant, Eigen::Vect
     return phi_t;
 }
 
+
 Eigen::VectorXd IS_iteration_phi(int Nx, double mu, double flux_entrant, Eigen::VectorXd Q, Eigen::VectorXd sigmaT)
 {
     using namespace Eigen;
@@ -207,6 +208,7 @@ Eigen::VectorXd IS_iteration_phi(int Nx, double mu, double flux_entrant, Eigen::
     return phi;
 }
 
+
 Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, const Eigen::VectorXd S, const Eigen::VectorXd sigmaT, const Eigen::VectorXd sigmaS)
 {
     using namespace Eigen;
@@ -218,7 +220,7 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, const Eig
     VectorXd phi_tilde(Nx);      // solution courante
     VectorXd phi_demi_tilde(Nx); // solution au temps t+1/2
     VectorXd q_demi(Nx);         //
-    VectorXd L(Nx + 1);          // Second membre du système DSA
+    VectorXd L(Nx - 1);          // Second membre du système DSA
     VectorXd F(Nx + 1);          // solution du système DSA
 
     //initialisation de X
@@ -247,8 +249,6 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, const Eig
             A.coeffRef(i, i + 1) = A.coeffRef(i + 1, i);
         }
     }
-    // A.coeffRef(0, 0) = (sigmaT(0) - sigmaS(0)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(0));
-    // A.coeffRef(Nx - 2, Nx - 2) = (sigmaT(Nx) - sigmaS(Nx)) * dx * 1. / 3. - 1. / (3. * dx * sigmaT(Nx));
 
     // initialisation du solveur
     SimplicialLDLT<SparseMatrix<double>> solver_ldlt;
@@ -280,32 +280,17 @@ Eigen::VectorXd Fast_IS(int Nx, int Nmu, double epsilon, int iter_max, const Eig
             phi_demi_tilde += w / 2 * IS_iteration(Nx, MU(n), 0., Q, sigmaT_tilde);
         }
 
-        cout << "\nphi_demi_tilde = \n";
-        cout << phi_demi_tilde << endl;
-
         // DSA
         q_demi = (phi_demi_tilde - phi_tilde).cwiseProduct(sigmaS_tilde);
-
-        cout << "\nq_demi = \n";
-        cout << q_demi << endl;
 
         L = (q2L * q_demi).segment(1, Nx - 1);
         F.segment(1, Nx - 1) = solver_ldlt.solve(L);
 
-        cout << "\nL = \n";
-        cout << L << endl;
-
         F(0) = 0.;
         F(Nx) = 0.;
 
-        cout << "\nF = \n";
-        cout << F << endl;
-
         // nouvelle solution
         phi_tilde = phi_demi_tilde + 0.5 * (F.head(Nx) + F.tail(Nx));
-
-        cout << "\nphi_tilde = \n";
-        cout << phi_tilde << endl;
 
         // nouvelle source
         Q2 = phi_tilde.cwiseProduct(sigmaS_tilde);

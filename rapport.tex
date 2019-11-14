@@ -1,7 +1,8 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper,draft]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
+\usepackage{lmodern}
 \usepackage[top=2.5cm, bottom=2.8cm, left=2.7cm, right=2.7cm]{geometry} 
 \usepackage{amsfonts,stmaryrd}
 \usepackage{amsmath}
@@ -39,8 +40,8 @@
 
 Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'intervalle $[0;1]$ et pour tout $\mu \in [1;1]$
 \begin{equation}
-    \label{eq.transport}
-    \mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \frac{\Ssss(x)}{2} \into \pp(x,\mu')\ d\mu' + S(x,\mu)
+	\label{eq.transport}
+	\mu \frac{\partial \pp}{\partial x} (x,\mu) + \st \pp(x,\mu) = \frac{\Ssss(x)}{2} \into \pp(x,\mu')\ d\mu' + S(x,\mu)
 \end{equation}
 
 
@@ -104,18 +105,18 @@ Nous cherchons à résoudre l'équation du transport neutronique en 1D sur l'int
 
 
 \subsection{Préliminaires}
-Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une section efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$ 
-$$P_{\text{interaction}}([x;x+\delta l]) = \Sigma \delta l$$ 
+Tout d'abord nous justifions la forme du libre parcours d'un neutron. Une section efficace macroscopique $\Sigma$ caractérise la probabilité d'intéraction sur un petit intervale $\delta l$
+$$P_{\text{interaction}}([x;x+\delta l]) = \Sigma \delta l$$
 Lorsque l'on projette cette distance sur l'axe des abscisses, on fait apparaître le cosinus de l'angle entre le vecteur directeur du déplacement et $\vec{x}$ qui est définit par $\mu$ dans ce TP.
 D'où en 1D $P_{\text{interaction}}(x) = \frac{\Sigma}{\mu} \delta l $
 
-On peut voir le libre parcours du neutron de deux manières différentes. 
-La première est de considérer qu'il s'agit d'une sorte comme un "temps" de survie et utiliser le fait que ce genre de phénomène se modélise avec une loi exponentielle. 
-On peut aussi utiliser faire une démonstration plus physique. 
-On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longueur $dx$ et on considère partir du point 0. 
+On peut voir le libre parcours du neutron de deux manières différentes.
+La première est de considérer qu'il s'agit d'une sorte comme un "temps" de survie et utiliser le fait que ce genre de phénomène se modélise avec une loi exponentielle.
+On peut aussi utiliser faire une démonstration plus physique.
+On découpe l'intervalle $[0;1]$ en $N$ sous-intervalles de longueur $dx$ et on considère partir du point 0.
 La probabilité d'interaction au point $x=idx$ s'obtient en considérant qu'il y a une interaction dans l'intervalle $i$ mais pas dans les précédents ce qui donne
 \begin{equation*}
-    P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}dx
+	P_{\text{interaction}}(x \in [idx;(i+1)dx]) = \frac{\Sigma}{\mu}(1-\frac{\Sigma}{\mu}dx)^{i}dx
 \end{equation*}
 
 Le passage à la limite $N \rightarrow \infty$ donne la densité de probabilité d'interagir au point $x$ et pas avant, donc la densité de probabilité du libre parcours $f$:
@@ -123,77 +124,77 @@ $f(x) = \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}x}$
 
 On vérifie immédiatement que $\int_0^{\infty} f(x) \text{d}x = 1$.
 
-Pour échantillonner une variable aléatoire selon une loi, on peut inverser sa fonction de répartition si elle est connue. 
+Pour échantillonner une variable aléatoire selon une loi, on peut inverser sa fonction de répartition si elle est connue.
 La fonction de répartition $F$ du libre parcours moyen s'écrit
 \begin{equation*}
-    F(x) = \int_0^x f(t) \text{d}t = \int_0^x \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}t} = 1- e^{-\frac{\Sigma}{\mu}x}
+	F(x) = \int_0^x f(t) \text{d}t = \int_0^x \frac{\Sigma}{\mu}e^{-\frac{\Sigma}{\mu}t} = 1- e^{-\frac{\Sigma}{\mu}x}
 \end{equation*}
 
 Pour l'inverser on résout $y = F(x)$
 \begin{equation*}
-    y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = -\frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
+	y = 1- e^{-\frac{\Sigma}{\mu}x}  \iff  x = -\frac{\mu}{\Sigma} \text{log}(1-y) = F^{-1}(y)
 \end{equation*}
 
 Pour tirer une variable aléatoire selon la loi $F$, on tire $y$ selon une loi uniforme sur $[0;1]$ et on calcule $F^{-1}(y)$.
 
 \vspace{0.1cm}
-La méthode Monte-Carlo consiste à simuler un grand nombre de trajectoires de neutrons et en déduire le flux neutronique par la loi des grands nombres. 
+La méthode Monte-Carlo consiste à simuler un grand nombre de trajectoires de neutrons et en déduire le flux neutronique par la loi des grands nombres.
 
 \vspace{0.2cm}
 \subsection{Matériau purement absorbant}
 \subsubsection{Source ponctuelle}
-On commence avec le cas particulièrement simple $\Sigma_s = 0$. 
+On commence avec le cas particulièrement simple $\Sigma_s = 0$.
 Il n'y a pas de scattering, les neutrons émis par une source avec une direction $\mu$ continuent simplement dans cette direction jusqu'à être absorbés.
 
-Le cas le plus simple est celui d'une source ponctuelle en $0$. L'équation devient 
+Le cas le plus simple est celui d'une source ponctuelle en $0$. L'équation devient
 \begin{equation}
-    \label{eq.homog.point}
-    \mu \frac{\partial \psi}{\partial x} (x,\mu) + \st \psi(x,\mu) = \delta_0(x)
+	\label{eq.homog.point}
+	\mu \frac{\partial \psi}{\partial x} (x,\mu) + \st \psi(x,\mu) = \delta_0(x)
 \end{equation}
-avec pour condition aux limites un flux entrant nul, c'est à dire 
-$$ \psi(0,\mu >0) = \psi(1,\mu<0) = 0 $$ 
-On note la solution de ce problème $\psi$ car elle nous sera utile dans la suite pour des cas plus complexes. 
+avec pour condition aux limites un flux entrant nul, c'est à dire
+$$ \psi(0,\mu >0) = \psi(1,\mu<0) = 0 $$
+On note la solution de ce problème $\psi$ car elle nous sera utile dans la suite pour des cas plus complexes.
 Il s'agit de la solution élémentaire.
 
 Pour trouver la solution plaçons nous à $\mu>0$ puisque pour $\mu<0$ les neutrons émis en $0$ sortent immédiatement du domaine, le flux est nul en tout point.
 On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et $x$
 
 \begin{align*}
-    \int_0^x \left( \mu \frac{\partial \psi}{\partial x} (t,\mu)  + \st
-    \psi(t,\mu)\right) e^\frac{\st t}{\mu} dt &= \int_0^x \delta_0(t)e^\frac{\st t}{\mu} dt \\
-    \iff  \mu \psi(x,\mu) e^{\frac{\st x}{\mu}} &= \mu \psi(0,\mu) + 1 \\
-    \iff  \psi(x,\mu) &= \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
+	\int_0^x \left( \mu \frac{\partial \psi}{\partial x} (t,\mu)  + \st
+	\psi(t,\mu)\right) e^\frac{\st t}{\mu} dt   & = \int_0^x \delta_0(t)e^\frac{\st t}{\mu} dt \\
+	\iff  \mu \psi(x,\mu) e^{\frac{\st x}{\mu}} & = \mu \psi(0,\mu) + 1                        \\
+	\iff  \psi(x,\mu)                           & = \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
 \end{align*}
 
 
 Pour simuler ce flux neutronique avec un solveur Monte-Carlo on commence par tirer une direction de départ $\mu_0$ avec une loi uniforme $\mathcal{U}[-1,1]$.
-Le point de départ est $x_0 = 0$ puisque la seule source se trouve en ce point. Puis on tire la distance parcourue par ce neutron selon la loi du libre parcours établie précédemment. 
-Le neutron finit sa trajectoire au point $x_1$ avec toujours la direction $\mu_0$. 
+Le point de départ est $x_0 = 0$ puisque la seule source se trouve en ce point. Puis on tire la distance parcourue par ce neutron selon la loi du libre parcours établie précédemment.
+Le neutron finit sa trajectoire au point $x_1$ avec toujours la direction $\mu_0$.
 Ceci donne alors une distributions de neutrons avec une densité $f_{\psi}$ égale au libre parcours.
 
 \begin{equation*}
-    f_{\psi}(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \psi(x_1,\mu)
+	f_{\psi}(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \psi(x_1,\mu)
 \end{equation*}
 
 La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est donc donnée par l'intégrale de $\pp$ sur cet interval à un facteur $\st$ près.
 En prenant un intervalle de longueur $dx$ négligeable devant $1$ (la taille de notre intervalle d'étude) on obtient
 
 \begin{equation}
-    \psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x-dx/2,x+dx/2] | \mu)}{\st dx}
+	\psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x-dx/2,x+dx/2] | \mu)}{\st dx}
 \end{equation}
 
 Pour approcher numériquement $\psi$, on commence par discrétiser l'intervale
 $[0,1]$ en sous-intervalles $[x_i,x_{i+1}]$, de longueur $h$. Puis on simule un grand nombre de particule
 Monte-Carlo, suivant le principe suivant :
 \begin{enumerate}
-    \item toutes les particules Monte-carlo ont pour position initiale $x=0$,
-\item pour chaque particule, on tire une distance de libre parcours suivant la
-loi $f_\psi$ et on note la position d'arrivée de chaque particule,
-\item on retient $C_0^i$ égal au nombre de particule dans
-l'intervalle $[x_i,x_{i+1}]$,
-\item on relance les particules encore dans l'intervalle, puis on compte à
-nouveau le nombre de particule dans chaque intervalle, qu'on retiens dans
-$C_1^i$ et ainsi de suite\dots
+	\item toutes les particules Monte-carlo ont pour position initiale $x=0$,
+	\item pour chaque particule, on tire une distance de libre parcours suivant la
+	      loi $f_\psi$ et on note la position d'arrivée de chaque particule,
+	\item on retient $C_0^i$ égal au nombre de particule dans
+	      l'intervalle $[x_i,x_{i+1}]$,
+	\item on relance les particules encore dans l'intervalle, puis on compte à
+	      nouveau le nombre de particule dans chaque intervalle, qu'on retiens dans
+	      $C_1^i$ et ainsi de suite\dots
 \end{enumerate}
 Finalement, la fréquence totale est $freq^i = \frac{1}{N} \sum_n C_n^i$.
 On peut ainsi approximer $\psi(x_{i+1/2},\mu)$ par $\frac{1}{\Sigma_t h} freq^i$.
@@ -203,17 +204,17 @@ On peut ainsi approximer $\psi(x_{i+1/2},\mu)$ par $\frac{1}{\Sigma_t h} freq^i$
 Maintenant que nous avons un algorithme nous pouvons nous concentrer sur l'implémentation.
 Commençons par étudier l'allure de la solution $\psi$ pour différentes valeurs de $\mu$.
 \begin{figure}[htp!]
-    \centering
-    \includegraphics[scale=0.45]{Figures/Q3_fx_solution.png}
-    \caption{$\psi(x,\mu)$}
-    \label{fig:q3.allures}
+	\centering
+	\includegraphics[scale=0.45]{Figures/Q3_fx_solution.png}
+	\caption{$\psi(x,\mu)$}
+	\label{fig:q3.allures}
 \end{figure}
-Plus $\mu$ se rapproche de $0$ plus sa densité est centrée sur 0. 
-La limite pour $\mu=0$ est le dirac en 0. 
+Plus $\mu$ se rapproche de $0$ plus sa densité est centrée sur 0.
+La limite pour $\mu=0$ est le dirac en 0.
 En effet si le neutron part à la verticale il sera aussi absorbé à $x=0$.
 
 Il s'agit maintenant de comparer ses densités théoriques aux résultats de notre simulation.
-Une question pratique se pose : quelle valeur donner à $dx$ ? 
+Une question pratique se pose : quelle valeur donner à $dx$ ?
 En effet ce paramètre n'est en rien déterminé par le problème physique ou la méthode Monte-Carlo.
 Empiriquement, s'il est trop grand l'approximation de l'intégrale est fausse et s'il est trop petit il n'y aura aucune trajectoire qui mène à l'intervalle $[x-dx/2;x+dx/2]$.
 Nous voulons limiter le nombre d'intervalles de calcul pour représenter les
@@ -223,29 +224,32 @@ solutions de manière visible et feront ici 25 intervalles.
 Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
 on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vrai.
 
-Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré sur ce point sur lequelle on approxime la solution par sa valeur en $x$. On peut considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de particules
+Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré sur ce point sur lequel on approxime la solution par sa valeur en $x$. On peut considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de particules
 
-La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i (1-freq^i)}{N}$. Par ailleurs, on connaît la solution exacte de notre problème, donc on va centrer l'intervalle autour de la solution exacte. Cela nous donne un intervalle de confiance de la forme :
+La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i
+		(1-freq^i)}{N}$. Par ailleurs, on connaît la solution exacte de notre problème,
+donc on va centrer l'intervalle autour de la solution exacte. Cela nous donne un
+intervalle de confiance de la forme :
 \begin{equation*}
-    I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
+	I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
 \end{equation*}
 
 \begin{figure}[ht!]
-    \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/Q4_simulation.png}
-        \caption{Solution et simulations pour $\mu=1$}
-        \label{fig:q4.simul}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/q4__ic_n1e6_nb25.png}
-        \caption{Intervalle de confiance $N=10^6$}
-        \label{fig:q4.ic}
-    \end{subfigure}
-    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
-    \label{fig:q4}
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.45]{Figures/Q4_simulation.png}
+		\caption{Solution et simulations pour $\mu=1$}
+		\label{fig:q4.simul}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.45]{Figures/q4__ic_n1e6_nb25.png}
+		\caption{Intervalle de confiance $N=10^6$}
+		\label{fig:q4.ic}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psi(x,\mu=1)$}
+	\label{fig:q4}
 \end{figure}
 On a représenté sur la figure (\ref{fig:q4.simul}) l'allure de la solution par simulation Monte-Carlo. Elle est constante par morceaux pour chaque intervalle d'approximation où la valeur moyenne est assimilée à l'intégrale.
 
@@ -254,50 +258,50 @@ Pour la représentation des intervalles de confiance, on remarque que pour $N=10
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
 \begin{figure}[ht!]
-    \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb10_2.png}
-        \caption{$10$ intervalles}
-        \label{fig:q4.nb10}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25_2.png}
-        \caption{$25$ intervalles}
-        \label{fig:q4.nb25}
-    \end{subfigure}
-    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
-    \label{fig:q4.nb_points}
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb10_2.png}
+		\caption{$10$ intervalles}
+		\label{fig:q4.nb10}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25_2.png}
+		\caption{$25$ intervalles}
+		\label{fig:q4.nb25}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psi(x,\mu=1)$}
+	\label{fig:q4.nb_points}
 \end{figure}
 
-Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de la solution exacte. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages. C'est pour cette raison que la taille de l'intervalle de fluctuation dépend de la taille des intervalles $dx$. 
+Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de la solution exacte. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages. C'est pour cette raison que la taille de l'intervalle de fluctuation dépend de la taille des intervalles $dx$.
 
 
 
 \vspace{0.5cm}
 \subsubsection{Source uniforme}
 On s'intéresse ensuite au cas d'une source $S$ uniforme et unitaire sur tout l'intervalle $[0,1]$.
-Comme on écrit $S(x) = \int_0^1 S(t) \delta_x(t)dt$ on peut réutiliser l'étude faite avec une source ponctuelle. Cette source peut maintenant être située en tout point de l'intervalle d'étude. 
+Comme on écrit $S(x) = \int_0^1 S(t) \delta_x(t)dt$ on peut réutiliser l'étude faite avec une source ponctuelle. Cette source peut maintenant être située en tout point de l'intervalle d'étude.
 Par translation on obtient la solution de l'équation pour une source ponctuelle en $x_0$ pour $\mu>0$
 \begin{equation}
-    \label{eq:sol.point.x0}
-    \psi_{x_0}(x,\mu) = 1_{(x>x_0)}\frac{1}{\mu} e^{-\frac{\st (x-x_0)}{\mu}} 
+	\label{eq:sol.point.x0}
+	\psi_{x_0}(x,\mu) = 1_{(x>x_0)}\frac{1}{\mu} e^{-\frac{\st (x-x_0)}{\mu}}
 \end{equation}
 Par symétrie on trouve la solution pour $\mu<0$ en changeant simplement l'indicatrice $1_{(x<x_0)}$.
 
 \vspace{0.1cm}
 Par linéarité la solution de notre equation pour $S=1$ s'écrit
 \begin{equation*}
-    \pp(x,\mu) = \int_0^1 \psi_{x_0}(x,\mu)\ dx_0
-\end{equation*} 
+	\pp(x,\mu) = \int_0^1 \psi_{x_0}(x,\mu)\ dx_0
+\end{equation*}
 
-Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le point de départ selon la loi de probabilité induite par la source. 
-Comme la source est constante on tire $x_0$ selon une loi uniforme $\mathcal{U}[0,1]$. 
+Dans notre démarche Monte-Carlo nous tirons maintenant $x_0$ le point de départ selon la loi de probabilité induite par la source.
+Comme la source est constante on tire $x_0$ selon une loi uniforme $\mathcal{U}[0,1]$.
 On tire $\mu_0$ comme précédemment.
 Pour connaître la densité $f_{\mu_0}(x_1)$ on utilise la formule de Bayes sur les densités conditionnelles
 \begin{equation*}
-    f(x_1|\mu_0) = \int_0^1 f_{\psi}(x_1|x_0,\mu_0)f_{\mu_0}(x_0)\ dx_0
+	f(x_1|\mu_0) = \int_0^1 f_{\psi}(x_1|x_0,\mu_0)f_{\mu_0}(x_0)\ dx_0
 \end{equation*}
 
 $f_{\psi}(x_1|x_0,\mu_0)$ est donnée par la solution (\ref{eq:sol.point.x0}) qui est le libre parcours depuis $x_0$ à $\st$ près et $f_{\mu_0}(x_0)$ par la densité de la source, ici $1$.
@@ -306,7 +310,7 @@ $$ f(x_1|\mu_0) = \st \int_0^1 \psi_{x_0}(x,\mu) \ dx  = \st \pp(x,\mu)$$
 
 \vspace{0.1cm}
 Pour obtenir la densité de neutrons totale en un point $x$ indépendamment de leur direction $\mu$, il faut considérer les probabilités conditionnelles selon $\mu$ également.
-Comme le tirage de $\mu$ est uniforme entre $-1$ et $1$, sa densité est $\frac{1}{2}$. 
+Comme le tirage de $\mu$ est uniforme entre $-1$ et $1$, sa densité est $\frac{1}{2}$.
 On intègre sur $\mu$ pour obtenir la densité moyenne $ \tilde{\pp}(x) = \into \pp(x,\mu) \ d\mu $.
 On a alors
 $$ f(x_1) = \frac{1}{2} \into f(x_1|\mu_0) \ d\mu_0 = \frac{\st}{2} \into \pp(x_1,\mu) \ d\mu  = \st\tilde{\pp}(x) $$
@@ -314,36 +318,36 @@ $$ f(x_1) = \frac{1}{2} \into f(x_1|\mu_0) \ d\mu_0 = \frac{\st}{2} \into \pp(x_
 Nous sommes donc capable d'approximer $\pp$ mais aussi $\tilde{\pp}$ par méthode Monte-Carlo
 
 \begin{equation}
-    \label{eq:sol.unif}
-    \pp(x,\mu_0) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2])}{\st dx}
+	\label{eq:sol.unif}
+	\pp(x,\mu_0) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2]| \mu_0)}{\st dx} \hspace{1cm} \tilde{\pp}(x) = \frac{\PP(x_1 \in [x-dx/2,x+dx/2])}{\st dx}
 \end{equation}
 
 \vspace{0.2cm}
-Comme pour le cas de la source ponctuelle on regarde d'abord l'allure de la solution en fonction de $\mu>0$ (figure (\ref{fig:q5.allures})). 
+Comme pour le cas de la source ponctuelle on regarde d'abord l'allure de la solution en fonction de $\mu>0$ (figure (\ref{fig:q5.allures})).
 Pour $\mu<0$ le cas est symétrique par rapport au centre de l'intervalle.
 
 \begin{figure}[htp!]
-    \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/Q5_fx_solution.png}
-        \caption{Allures de $\pp(x,\mu)$}
-        \label{fig:q5.allures}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/q5__ic_n1e5_nb25.png}
-        \caption{Simulation et intervalle de confiance }
-        \label{fig:q5.ic}
-    \end{subfigure}
-    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
-    \label{fig:q5}
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.45]{Figures/Q5_fx_solution.png}
+		\caption{Allures de $\pp(x,\mu)$}
+		\label{fig:q5.allures}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.45]{Figures/q5__ic_n1e5_nb25.png}
+		\caption{Simulation et intervalle de confiance }
+		\label{fig:q5.ic}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psi(x,\mu=1)$}
+	\label{fig:q5}
 \end{figure}
 
 La solution est toujours nulle en $x=0$ comme imposé par la condition de flux entrant nul.
 La limite quand $\mu \rightarrow 0$ est un flux constant égal à $1$ sur tout l'intervalle et nul en $0$. Encore une fois la situation est symétrique et $\mu<0$.
 
-On regarde ensuite les résultats de la simulation Monte-Carlo et encore une fois l'intervalle de confiance (\ref{fig:q5.ic}). Comme l'intervalle de confiance fait apparaître l'estimation de $\pp(x,\mu)$, quand cette valeur est petite l'intervalle de confiance l'est également. C'est ce qu'on remarque sur cette figure : pour $x$ proche de $1$ l'intervalle de confiance est plus large et la variance des points plus grande. 
+On regarde ensuite les résultats de la simulation Monte-Carlo et encore une fois l'intervalle de confiance (\ref{fig:q5.ic}). Comme l'intervalle de confiance fait apparaître l'estimation de $\pp(x,\mu)$, quand cette valeur est petite l'intervalle de confiance l'est également. C'est ce qu'on remarque sur cette figure : pour $x$ proche de $1$ l'intervalle de confiance est plus large et la variance des points plus grande.
 
 
 
@@ -355,42 +359,42 @@ On regarde ensuite les résultats de la simulation Monte-Carlo et encore une foi
 On peut se pose la question de ce qui se passe dans le cas d'un matériau où $\st$ est une fonction de $x$.
 On se place dans le cas d'une source homogène avec un matériau de $\st$
 \begin{equation*}
-\st (x) = \left\{     
-    \begin{aligned}
-    &1 \hspace{1cm}   x \in S_1=[0;0.3],\\
-    &3 \hspace{1cm}   x \in S_2=[0.3;0.7],\\
-    &1 \hspace{1cm}   x \in S_3=[0.7;1],
-\end{aligned}
-    \right.
+	\st (x) = \left\{
+	\begin{aligned}
+		 & 1 \hspace{1cm}   x \in S_1=[0;0.3],   \\
+		 & 3 \hspace{1cm}   x \in S_2=[0.3;0.7], \\
+		 & 1 \hspace{1cm}   x \in S_3=[0.7;1],
+	\end{aligned}
+	\right.
 \end{equation*}
 et une source ponctuelle en 0.
 
 On commence par résoudre le cette équation sur $[0;0.3]$ avec $\mu>0$ puisque il
-n'y a pas de source autre qu'en 0. 
+n'y a pas de source autre qu'en 0.
 La solution est donnée par le calcul de la partie précédente
 \begin{equation*}
-    \tag{S1}
-    \label{eq:sol.S1}
-    \pp_1(x,\mu) = \frac{1}{\mu} e^{-\frac{ x}{\mu}} \hspace{1cm} \forall x \in [0;0.3]
+	\tag{S1}
+	\label{eq:sol.S1}
+	\pp_1(x,\mu) = \frac{1}{\mu} e^{-\frac{ x}{\mu}} \hspace{1cm} \forall x \in [0;0.3]
 \end{equation*}
 
-Pour l'intervalle $[0.3;0.7]$ on peut considérer une source ponctuelle en $x=0.3$ 
+Pour l'intervalle $[0.3;0.7]$ on peut considérer une source ponctuelle en $x=0.3$
 \begin{equation*}
-    S_2(x,\mu) = \pp_1(0.3,\mu)\delta_{0.3}(x) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}}\delta_{0.3}(x)
+	S_2(x,\mu) = \pp_1(0.3,\mu)\delta_{0.3}(x) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}}\delta_{0.3}(x)
 \end{equation*}
 
 On résout le problème exactement de la même façon et on obtient
 \begin{equation}
-    \tag{S2}
-    \label{eq:sol.S2}
-    \pp_2(x,\mu) = S_2(0.3,\mu)e^{-\frac{3 (x-0.3)}{\mu}} = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(x-0.3)}{\mu}}
+	\tag{S2}
+	\label{eq:sol.S2}
+	\pp_2(x,\mu) = S_2(0.3,\mu)e^{-\frac{3 (x-0.3)}{\mu}} = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(x-0.3)}{\mu}}
 \end{equation}
 
 Le même raisonnement donne
 \begin{equation}
-    \tag{S3}
-    \label{eq:sol.S3}
-    \pp_3(x,\mu) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
+	\tag{S3}
+	\label{eq:sol.S3}
+	\pp_3(x,\mu) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
 \end{equation}
 
 
@@ -404,12 +408,12 @@ Nous abandonnons maintenant l'hypothèse d'un matériau purement absorbant et co
 Nous utilisons la suite des flux $n$ fois collisionnés $\pp^n$ et les différences entre deux itérations $\epsilon^n = \pp^n-\pp^{n-1}$ avec $\epsilon^0 = \pp^0$.
 Les flux collisionnés vérifient le système
 \begin{equation}
-    \label{eq:diffusion}
-    \left\{ \begin{aligned}
-        \mu \frac{\partial \pp^0}{\partial x} (x,\mu) + \st \pp^0(x,\mu) &=  S(x,\mu)  \\
-        \mu \frac{\partial \pp^n}{\partial x} (x,\mu) + \st \pp^n(x,\mu) &=  S(x,\mu) + \frac{\Ssss}{2} \into \pp^{n-1}(x,\mu')\ d\mu' \hspace{1cm} \forall n \geqslant 1
-    \end{aligned}
-    \right.
+	\label{eq:diffusion}
+	\left\{ \begin{aligned}
+		\mu \frac{\partial \pp^0}{\partial x} (x,\mu) + \st \pp^0(x,\mu) & =  S(x,\mu)                                                                                     \\
+		\mu \frac{\partial \pp^n}{\partial x} (x,\mu) + \st \pp^n(x,\mu) & =  S(x,\mu) + \frac{\Ssss}{2} \into \pp^{n-1}(x,\mu')\ d\mu' \hspace{1cm} \forall n \geqslant 1
+	\end{aligned}
+	\right.
 \end{equation}
 et les $\epsilon^n$ le même système sans source.
 
@@ -420,13 +424,13 @@ Nous n'allons ici considérer que le flux moyenné en $\mu$, fonction uniquement
 Le flux non collisionné $\ppt^0$ est donné par la partie précédente équation (\ref{eq:sol.unif}).
 
 Nous cherchons maintenant à estimer $\ppt^1$, c'est à dire trouver la densité de probabilité d'un point $x_2$ après une collision et 2 libres parcours.
-$\epsilon^1$ est solution de 
+$\epsilon^1$ est solution de
 $$ \mu \frac{\partial \epsilon^1}{\partial x} (x,\mu) + \st \epsilon^1(x,\mu) =  \frac{\Ssss}{2} \into \pp^{0}(x,\mu')\ d\mu'= \Ssss \ppt^{0}(x) $$
 
 On utilise encore une fois le fait que $\ppt^0(x) = \int_0^1 \ppt^0(t)\delta_x(t)\ dt$ pour obtenir par linéarité
 \begin{equation}
-    \label{eq:epsilon.1}
-    \epsilon^1(x,\mu) = \Ssss \int_0^1 \ppt^0(x_1,\mu) \psi_{x_1}(x,\mu) dx_1
+	\label{eq:epsilon.1}
+	\epsilon^1(x,\mu) = \Ssss \int_0^1 \ppt^0(x_1,\mu) \psi_{x_1}(x,\mu) dx_1
 \end{equation}
 
 
@@ -434,11 +438,11 @@ Pour mieux différencier les densités, on ajoute les indices $x$ et $\mu$ pour 
 
 On utilise la formule de Bayes avec les densités qui donne (en notant $f(0\rightarrow 1)$ la densité de probabilité de continuer entre l'état 0 et l'état 1)
 \begin{align*}
-    \tilde{f_{x}}(x_2) &= f(0\rightarrow 1)\into f_{\mu}(\mu_1) \int_{0}^1 f_x(x_2|x_1,\mu_1)\tilde{f_x}(x_1)\  dx_1 d\mu_1 \\
-    &=\frac{\Ssss}{\st}\into \frac{1}{2} \int_{0}^1 f_{\psi}(x_2|x_1,\mu_1) \times\frac{\st}{2}\ppt^0(x_1) \ dx_1 d\mu_1 \\
-    &= \frac{\Ssss}{2} \into \int_{0}^1 \st \psi_{x_1}(x_2,\mu_1) \ppt^0(x_1) \ dx_1 d\mu_1 \\
-    &= \frac{\st}{2} \into \epsilon^1(x_2,\mu_1) \hspace{1cm} \text{par l'équation (\ref{eq:epsilon.1})} \\
-    &= \st \tilde{\epsilon}^1(x_2)
+	\tilde{f_{x}}(x_2) & = f(0\rightarrow 1)\into f_{\mu}(\mu_1) \int_{0}^1 f_x(x_2|x_1,\mu_1)\tilde{f_x}(x_1)\  dx_1 d\mu_1                 \\
+	                   & =\frac{\Ssss}{\st}\into \frac{1}{2} \int_{0}^1 f_{\psi}(x_2|x_1,\mu_1) \times\frac{\st}{2}\ppt^0(x_1) \ dx_1 d\mu_1 \\
+	                   & = \frac{\Ssss}{2} \into \int_{0}^1 \st \psi_{x_1}(x_2,\mu_1) \ppt^0(x_1) \ dx_1 d\mu_1                              \\
+	                   & = \frac{\st}{2} \into \epsilon^1(x_2,\mu_1) \hspace{1cm} \text{par l'équation (\ref{eq:epsilon.1})}                 \\
+	                   & = \st \tilde{\epsilon}^1(x_2)
 \end{align*}
 
 Comme $\tilde{\epsilon}^1 = \ppt^1 - \ppt^0$, on peut directement calculer $\ppt^1$ dès qu'on a tiré les trajectoires.
@@ -447,41 +451,41 @@ On a
 $$\ppt^n = \epst^n + \ppt^{n-1} = \sum_{k=1}^n \epst^k + \ppt^0 $$
 
 On peut donc calculer tous les flux collisionnés. Comme la solution de l'équation de transport neutronique est donnée par la limite des flux quand $n \rightarrow \infty$
-on a 
+on a
 $$\ppt(x) = \sum_{k=1}^\infty \epst^k + \ppt^0$$
 
 Dans la pratique on procède par \textit{batch} de particules. On choisit un nombre $N$ de particules au départ. On détermine le flux non collisionné issu, puis le flux une fois collisionné des particules encore dans l'intervalle et on ajoute cette contribution à celle du flux non collisionné. Tant qu'il reste des particules (non absorbées ou sorties) on continue les itérations et on ajoute les contributions à ce qui précède. Une fois qu'il n'y a plus de particules on a calculé $\ppt(x)$.
 
 En intégrant sur un petit intervalle autour de $x$ on obtient une formule explicite pour calculer $\ppt$ avec une simulation Monte-Carlo
 \begin{equation}
-    \label{eq:sol.MC.diffusion}
-    \ppt(x) = \sum_{k=0}^{\infty} \frac{\PP(x_{k+1} \in [x;x+dx])}{\st dx}
+	\label{eq:sol.MC.diffusion}
+	\ppt(x) = \sum_{k=0}^{\infty} \frac{\PP(x_{k+1} \in [x;x+dx])}{\st dx}
 \end{equation}
-L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'itération $k$ et $x_{k+1}$ sa position d'arrivée. 
+L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'itération $k$ et $x_{k+1}$ sa position d'arrivée.
 
 \vspace{0.2cm}
 \subsubsection{Résultats}
 Contrairement aux cas précédents on ne connaît pas la solution analytique, mais on sait que la solution doit être symétrique par rapport à $x=1/2$. Il serait possible de tester que notre code fonctionne bien en prenant une solution manufacturée. Il faut alors déterminer la source à l'origine de ce flux neutronique puis tirer les particules de départ selon la densité de cette source et enfin comparer les résultats. Nous avons cependant manqué de temps pour ce rapport préliminaire pour mettre en oeuvre cette méthode.
 
 \begin{figure}[htp!]
-    \centering
-    \includegraphics[scale=0.6]{Figures/Q8_N10e7_cst_morceaux_100_2.png}
-    \caption{Simulation de $\pp(x,\mu)$ pour $N=10^7$ tirages}
-    \label{fig:q8}
+	\centering
+	\includegraphics[scale=0.6]{Figures/Q8_N10e7_cst_morceaux_100_2.png}
+	\caption{Simulation de $\pp(x,\mu)$ pour $N=10^7$ tirages}
+	\label{fig:q8}
 \end{figure}
-La figure (\ref{fig:q8}) montre la simulation pour $N=10^7$ tirages et $100$ intervalles. 
+La figure (\ref{fig:q8}) montre la simulation pour $N=10^7$ tirages et $100$ intervalles.
 Elle est bien symétrique et régulière (sans sursaut lié à un point aberrant).
 
 \subsubsection{Conclusion Monte-Carlo}
 La méthode Monte-Carlo permet de calculer $\pp$ et $\ppt$ dans plusieurs cas 1D.
-Cependant la taille de l'intervalle de confiance réduisant en $\frac{1}{\sqrt{N}}$, 
-le temps de calcul nécessaire pour une précision donnée augmente au carré du nombre de particules. Ainsi il nous a été difficile sans paralléliser le calcul de faire plus de $10^8$ particules dans des temps de calculs raisonnables. 
+Cependant la taille de l'intervalle de confiance réduisant en $\frac{1}{\sqrt{N}}$,
+le temps de calcul nécessaire pour une précision donnée augmente au carré du nombre de particules. Ainsi il nous a été difficile sans paralléliser le calcul de faire plus de $10^8$ particules dans des temps de calculs raisonnables.
 
-Ceci justifie de tenter à une approche itérative pour voir si elle réduirait les temps de calculs à précision fixée. 
+Ceci justifie de tenter à une approche itérative pour voir si elle réduirait les temps de calculs à précision fixée.
 
 \begin{comment}
-    \section*{Conclusion préliminaire}
-Nous avons mis en oeuvre la méthode Monte-Carlo et testé sur les cas où nous connaissons une solution analytique qu'elle donne les bons résultats. 
+\section*{Conclusion préliminaire}
+Nous avons mis en oeuvre la méthode Monte-Carlo et testé sur les cas où nous connaissons une solution analytique qu'elle donne les bons résultats.
 Nous souhaiterons également vérifier dans le cas avec diffusion que notre solveur donne des résultats corrects, ce que nous ferons ultérieurement.
 
 Il aurait aussi était intéressant de regarder l'impact de $\mu$ sur la précision de la méthode : comme la largeur de l'intervalle de confiance dépend de la valeur de $\pp$, on s'attends à ce que faire diminuer $\mu$ modifie la précision de la méthode.
@@ -502,150 +506,204 @@ Dans le cas $\mu$ négatif, la solution est $\psi(x,\mu) = \psi(1-x,-\mu)$.
 Dans ce cas précis on peut calculer $\psi$ aussi bien que $\tilde{\psi} = \frac{1}{2}\int_{-1}^1 \psi(x,\mu) d\mu$. Il n'y a pas besoin de discrétiser l'espace de $\mu$ pour calculer ces deux fonctions. Comme dans la suite nous sommes intéressés par le flux moyenné en angle, nous allons directement nous concentrer sur $\tilde{\psi}$ ici.
 
 \vspace{0.1cm}
-Pour résoudre le problème spatial général en $\pp$ qui est $\mu \ppt '(x) + \st \ppt(x) = Q(x)$, on utilise un schéma de type volumes finis. On découpe l'intervalle $[0,1]$ en $N$ intervalles $M_i$ de taille régulière $dx=1/N$. $\pp$ est définie sur les extrémités des intervalles et $\ppt$ comme la moyenne de $\pp$ sur chacun de ces intervalles (cf figure). On cnsidère que $\st$ et $Q$ sont constants sur chaque maille $M_i$ et on note respectivement $\st^i$ et $Q^i$ leurs valeurs sur l'intervalle $M_i$. 
+Pour résoudre le problème spatial général en $\pp$ qui est $\mu \ppt '(x) + \st \ppt(x) = Q(x)$, on utilise un schéma de type volumes finis. On découpe l'intervalle $[0,1]$ en $N$ intervalles $M_i$ de taille régulière $dx=1/N$. $\pp$ est définie sur les extrémités des intervalles et $\ppt$ comme la moyenne de $\pp$ sur chacun de ces intervalles (cf figure). On considère que $\st$ et $Q$ sont constants sur chaque maille $M_i$ et on note respectivement $\st^i$ et $Q^i$ leurs valeurs sur l'intervalle $M_i$.
 \vspace{0.5cm}
 
 \begin{tikzpicture}
-    \draw[thick] (0,0) -- (10,0); node[anchor= west] {domaine spatial};
-    \draw (2 cm,2pt) -- (2 cm,-4pt) node[anchor=north] {$dx$};
-    \draw (4 cm,2pt) -- (4 cm,-4pt) node[anchor=north] {$2dx$};
-    \draw (10 cm,2pt) -- (10 cm,-4pt) node[anchor=north] {$N dx$};
-    \draw (6 cm,2pt) -- (6 cm,-4pt) node[anchor=north] {$\dots$};
-    \draw (8 cm,2pt) -- (8 cm,-4pt) node[anchor=north] {$(N-1)dx$};
-    \draw (0 cm,2pt) -- (0 cm,-4pt) node[anchor=north] {$0$};
+	\draw[thick] (0,0) -- (10,0); node[anchor= west] {domaine spatial};
+	\draw (2 cm,2pt) -- (2 cm,-4pt) node[anchor=north] {$dx$};
+	\draw (4 cm,2pt) -- (4 cm,-4pt) node[anchor=north] {$2dx$};
+	\draw (10 cm,2pt) -- (10 cm,-4pt) node[anchor=north] {$N dx$};
+	\draw (6 cm,2pt) -- (6 cm,-4pt) node[anchor=north] {$\dots$};
+	\draw (8 cm,2pt) -- (8 cm,-4pt) node[anchor=north] {$(N-1)dx$};
+	\draw (0 cm,2pt) -- (0 cm,-4pt) node[anchor=north] {$0$};
 
-    \draw[red] (2 cm,1pt) -- (2 cm,-1pt) node[anchor=south] {$\pp_1$};
-    \draw[red] (4 cm,1pt) -- (4 cm,-1pt) node[anchor=south] {$\pp_2$};
-    \draw[red] (8 cm,1pt) -- (8 cm,-1pt) node[anchor=south] {$\pp_{N-1}$};
-    \draw[red] (10 cm,1pt) -- (10 cm,-1pt) node[anchor=south] {$\pp_N$};
-    \draw[red] (0 cm,1pt) -- (0 cm,-1pt) node[anchor=south] {$\pp_0$};
+	\draw[red] (2 cm,1pt) -- (2 cm,-1pt) node[anchor=south] {$\pp_1$};
+	\draw[red] (4 cm,1pt) -- (4 cm,-1pt) node[anchor=south] {$\pp_2$};
+	\draw[red] (8 cm,1pt) -- (8 cm,-1pt) node[anchor=south] {$\pp_{N-1}$};
+	\draw[red] (10 cm,1pt) -- (10 cm,-1pt) node[anchor=south] {$\pp_N$};
+	\draw[red] (0 cm,1pt) -- (0 cm,-1pt) node[anchor=south] {$\pp_0$};
 
-    \draw[blue] (1 cm,1pt) -- (1 cm,-1pt) node[anchor=south] {$\ppt_1$};
-    \draw[blue] (3 cm,1pt) -- (3 cm,-1pt) node[anchor=south] {$\ppt_2$};
-    \draw[blue] (9 cm,1pt) -- (9 cm,-1pt) node[anchor=south] {$\ppt_{N}$};
+	\draw[blue] (1 cm,1pt) -- (1 cm,-1pt) node[anchor=south] {$\ppt_1$};
+	\draw[blue] (3 cm,1pt) -- (3 cm,-1pt) node[anchor=south] {$\ppt_2$};
+	\draw[blue] (9 cm,1pt) -- (9 cm,-1pt) node[anchor=south] {$\ppt_{N}$};
 \end{tikzpicture}
 
 On intègre l'équation spatiale sur chaque maille ce qui donne $N$ relations
 
 \begin{equation}
-    \label{eq:vfinis.1}
-    \mu \left( \pp_{i+1} - \pp_i \right) + \st^i dx\  \ppt_i = \tilde{Q}^i 
+	\label{eq:vfinis.1}
+	\mu \left( \pp_{i+1} - \pp_i \right) + \st^i dx\  \ppt_i = \tilde{Q}^i
 \end{equation}
 Pour avoir le bon nombre de relations ($2N$) comme le nombre de degrés de liberté inconnus (les conditions de flux entrant imposent une des valeurs $\pp_0$ ou $\pp_N$ selon le signe de $\mu$), on ajoute une relation de fermeture. Cette relation impose que $\pp$ soit affine par morceaux
 
 \begin{equation}
-    \ppt_i = \frac{1}{2}(\pp_{i+1}-\pp_i)
+	\ppt_i = \frac{1}{2}(\pp_{i+1}-\pp_i)
 \end{equation}
 
 On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation contenant uniquement $\pp$. Comme le sens de propagation change en fonction de $\mu$, on veut une expression de $\pp_i$ en fonction de son antécédent, que ce soit $\pp_{i-1}$ ou $\pp_{i+1}$. On note $\pp_i^+$ le terme qu'on cherche à calculer et $\pp_i^-$ le terme précédent selon le sens de propagation.
 
 \begin{equation}
-    \pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
+	\pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
 \end{equation}
 
-On en déduit ensuite $\ppt_i$ grâce à la relation de fermeture. 
+On en déduit ensuite $\ppt_i$ grâce à la relation de fermeture.
 
 \vspace{0.2cm}
-En fixant $\mu$, on utilie ce processus une unique fois et on obient $\psi_t$ pour tous les intervalles souhaités. On peut regarder la solution pour différents $\mu$ et regarder l'erreur en fonction de la discrétisation spatiale. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminiue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). On remarque cependant que pour $N>500$ l'erreur ne décroit plus. Nous supposons que des erreurs numériques sont à l'origine de cette staganation de l'erreur. 
+En fixant $\mu$, on utilise ce processus une unique fois et on obtient $\psi_t$ pour tous les intervalles souhaités. On peut regarder la solution pour différents $\mu$ et regarder l'erreur en fonction de la discrétisation spatiale. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). On remarque cependant que pour $N>500$ l'erreur ne décroît plus. Nous supposons que des erreurs numériques sont à l'origine de cette stagnation de l'erreur.
 
 \begin{figure}[ht!]
-    \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.42]{Figures/q9_sol_3mu.png}
-        \caption{Résultats pour différents $\mu$}
-        \label{fig:q9.sol}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.42]{Figures/q9_err_l2.png}
-        \caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
-        \label{fig:q9.errl2}
-    \end{subfigure}
-    \caption{Etude de la simulation de $\psit(x)$}
-    \label{fig:q9}
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q9_sol_3mu.png}
+		\caption{Résultats pour différents $\mu$}
+		\label{fig:q9.sol}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q9_err_l2.png}
+		\caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
+		\label{fig:q9.errl2}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psit(x)$}
+	\label{fig:q9}
 \end{figure}
 
 \subsubsection{Source uniforme}
 On peut utiliser exactement la même méthode pour trouver la solution dans le cas d'une source homogène. On rappelle le résultat de la partie 1 : dans ces conditions la solution vaut
 \begin{equation*}
-    \phi(x,\mu) = \left\{ \begin{aligned}
-        \frac{1}{\mu}(1-e^{-\st x /\mu}) \hspace{1cm} \text{ si } \mu>0 \\ 
-        \frac{1}{\mu}(1-e^{-\st (x-1) /\mu}) \hspace{1cm} \text{ si } \mu<0 
-    \end{aligned}  \right.
+	\phi(x,\mu) = \left\{ \begin{aligned}
+		\frac{1}{\mu}(1-e^{-\st x /\mu}) \hspace{1cm} \text{ si } \mu>0 \\
+		\frac{1}{\mu}(1-e^{-\st (x-1) /\mu}) \hspace{1cm} \text{ si } \mu<0
+	\end{aligned}  \right.
 \end{equation*}
 
 On peut faire les mêmes analyses que dans le cas de la source ponctuelle.
 
 \subsubsection{Matériau non homogène}
-On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. 
+On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}.
 
 \subsection{Matériau diffusant}
-On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions de chaque arc de cercle. 
+On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions de chaque arc de cercle.
 
 \subsection{Limite de diffusion}
-Nous avons considéré deux cas : $\Ssss=0$ et $\sa=0$. On se place maintenant dans un cas intermédiaire où aucun des deux coefficients n'est nul et on regarde la limite de diffusion poour $\epsilon$ tendant vers $0$. 
+Nous avons considéré deux cas : $\Ssss=0$ et $\sa=0$. On se place maintenant dans un cas intermédiaire où aucun des deux coefficients n'est nul et on regarde la limite de diffusion pour $\epsilon$ tendant vers $0$.
 $$\sa(x) = \epsilon \sigma_a,\hspace{1cm} \st(x) = \sigma_t/\epsilon, \hspace{1cm} \Ssss=\st -\sa, \hspace{1cm} S(x) = \epsilon$$
 
-On s'intéresse à $\ppt_{\epsilon}(x) = \frac{1}{2} \int_{-1}^1 \pp_{\epsilon}(x \mu) \ d\mu$ le flux moyenné en angle pour un certain $\epsilon$. On cherche l'équation vérifiée par cette grandeur. Pour ce faire on postule la décomposition de $\ppeps = \sum_{n=0}^{n=+\infty} \ppeps^n \epsilon^n$. On injecte cette forme dans l'équation du transport neutronique et on regarde chaque équation pour chaque puissance de $\epsilon^n$. On obtient pour les 4 premières puissances de $\epsilon$ : 
+On s'intéresse à $\ppt_{\epsilon}(x) = \frac{1}{2} \int_{-1}^1 \pp_{\epsilon}(x \mu) \ d\mu$ le flux moyenné en angle pour un certain $\epsilon$. On cherche l'équation vérifiée par cette grandeur. Pour ce faire on postule la décomposition de $\ppeps = \sum_{n=0}^{n=+\infty} \ppeps^n \epsilon^n$. On injecte cette forme dans l'équation du transport neutronique et on regarde chaque équation pour chaque puissance de $\epsilon^n$. On obtient pour les 4 premières puissances de $\epsilon$ :
 
 \begin{align*}
-    \tag{$\epsilon^{-1}$}
-    \ppeps^0 &= \ppteps^0 \\
-    \tag{$\epsilon^{0}$} 
-    \mu \frac{\partial \ppeps^0}{\partial x} + \sigma_t \ppeps^1 &= \sigma_t \ppteps^1 \\
-    \tag{$\epsilon^{1}$}
-    \mu \frac{\partial \ppeps^1}{\partial x} + \sigma_t \ppeps^2 &= \sigma_t \ppteps^2 - \sigma_a \ppteps^0 + 1 \\
-    \tag{$\epsilon^{2}$}
-    \mu \frac{\partial \ppeps^2}{\partial x} + \sigma_t \ppeps^3 &= \sigma_t \ppteps^3 - \sigma_a \ppteps^1 \\
+	\tag{$\epsilon^{-1}$}
+	\ppeps^0                                                     & = \ppteps^0                                   \\
+	\tag{$\epsilon^{0}$}
+	\mu \frac{\partial \ppeps^0}{\partial x} + \sigma_t \ppeps^1 & = \sigma_t \ppteps^1                          \\
+	\tag{$\epsilon^{1}$}
+	\mu \frac{\partial \ppeps^1}{\partial x} + \sigma_t \ppeps^2 & = \sigma_t \ppteps^2 - \sigma_a \ppteps^0 + 1 \\
+	\tag{$\epsilon^{2}$}
+	\mu \frac{\partial \ppeps^2}{\partial x} + \sigma_t \ppeps^3 & = \sigma_t \ppteps^3 - \sigma_a \ppteps^1     \\
 \end{align*}
-Au delà les équations en puissances plus élevées de $\epsilon$ reprennent l'équation ($\epsilon^2$) avec un decallage des indices. 
+Au delà les équations en puissances plus élevées de $\epsilon$ reprennent l'équation ($\epsilon^2$) avec un décalage des indices.
 
 On utilise ($\epsilon^{-1}$) dans $\mu \times$ ($\epsilon^{0}$) qu'on moyenne en $\mu$
 
 \begin{equation*}
-    \frac{1}{2} \int_{-1}^1 \mu \ppeps^1(x,\mu)d\mu = \frac{-1}{3 \sigma_t} \frac{d\ppeps^0}{d x}
-\end{equation*} 
+	\frac{1}{2} \int_{-1}^1 \mu \ppeps^1(x,\mu)d\mu = \frac{-1}{3 \sigma_t} \frac{d\ppeps^0}{d x}
+\end{equation*}
 
 On moyenne ($\epsilon^{1}$) en $\mu$ et on utilise le résultat précédent, et on moyenne aussi ($\epsilon^{2}$)
 \begin{align*}
-    \frac{-1}{3 \sigma_t}  \frac{d^2 \ppteps^0}{d x^2} + \sa \ppteps^0 &= 1 \\
-    \frac{1}{2} \int_{-1}^1 \mu \frac{\partial \ppeps^2}{\partial x} d\mu + \sa \ppteps^1 &= 0
+	\frac{-1}{3 \sigma_t}  \frac{d^2 \ppteps^0}{d x^2} + \sa \ppteps^0                    & = 1 \\
+	\frac{1}{2} \int_{-1}^1 \mu \frac{\partial \ppeps^2}{\partial x} d\mu + \sa \ppteps^1 & = 0
 \end{align*}
 
-Cette dernière équation fait apparaitre une intégrale avec $\ppeps^2$ que l'on fait aussi apparaître dans $\frac{\mu}{\sigma_t} \frac{\partial (\epsilon^{1})}{\partial x}$. En joignant les deux on obtient
+Cette dernière équation fait apparaître une intégrale avec $\ppeps^2$ que l'on fait aussi apparaître dans $\frac{\mu}{\sigma_t} \frac{\partial (\epsilon^{1})}{\partial x}$. En joignant les deux on obtient
 \begin{equation*}
-    \frac{-1}{2}\int_{-1}^1 \frac{\mu}{\sigma_t} \frac{\partial^2 \ppeps^1}{\partial x^2} d\mu + \sa \ppteps^1 = 0
+	\frac{-1}{2}\int_{-1}^1 \frac{\mu}{\sigma_t} \frac{\partial^2 \ppeps^1}{\partial x^2} d\mu + \sa \ppteps^1 = 0
 \end{equation*}
- On utilise l'expression de $\ppeps^1$ dans ($\epsilon^0$) pour faire disparaitre l'intégrale. En utilisant aussi l'équation en $\ppteps^0$ on obtient l'équation de diffusion neutronique à un $O(\epsilon^2)$ près avec une source unitaire
+On utilise l'expression de $\ppeps^1$ dans ($\epsilon^0$) pour faire disparaître l'intégrale. En utilisant aussi l'équation en $\ppteps^0$ on obtient l'équation de diffusion neutronique à un $O(\epsilon^2)$ près avec une source unitaire
 
- \begin{equation}
-     \frac{-1}{3\sigma_t} \frac{d^2 \ppteps}{d x^2} + \sa \ppteps = 1
- \end{equation}
+\begin{equation}
+	\frac{-1}{3\sigma_t} \frac{d^2 \ppteps}{d x^2} + \sa \ppteps = 1
+\end{equation}
 
- \vspace{0.2cm}
- On peut maintenant regarder la solution de ce problème pour $\sigma_a=0$ et $\sigma_t=1$ qui est le cas sans absorption étudié auparavent. On trouve 
- \begin{equation}
-     \frac{-1}{3} \ppt_0(x)'' = 1
- \end{equation}
-soit $\ppt_0(x)$ un polynome d'ordre 2 en $x$ de la forme $\ppt_0(x) = -3x^2+bx+c$. Pour déterminer les coefficients on utilise la symétrie de la solution par rapport à la droite $x=\frac{1}{2}$ qui donne $b=3$. L'ordonnée à l'origine est donnée par les conditions aux limites de flux entrant nul.
+\vspace{0.2cm}
+On peut maintenant regarder la solution de ce problème pour $\sigma_a=0$ et $\sigma_t=1$ qui est le cas sans absorption étudié auparavant. On trouve
+\begin{equation}
+	\frac{-1}{3} \ppt_0(x)'' = 1
+\end{equation}
+soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -3x^2+bx+c$. Pour déterminer les coefficients on utilise la symétrie de la solution par rapport à la droite $x=\frac{1}{2}$ qui donne $b=3$. L'ordonnée à l'origine est donnée par les conditions aux limites de flux entrant nul.
 
-On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécéssaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
+On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
 
 \vspace{0.1cm}
 \begin{tabular}{cccc}
-    $\bm{\epsilon}$ &1 &0.1&0.01\\
-    \textbf{Nombre d'itérations} & 1 itération : cas sans scattering & 368& 19875
+	$\bm{\epsilon}$              & 1                                 & 0.1 & 0.01  \\
+	\textbf{Nombre d'itérations} & 1 itération : cas sans scattering & 368 & 19875
 \end{tabular}
 \vspace{0.2cm}
 
-Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique. 
+Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique.
 
 Avant de passer à l'accélération regardons l'impact des paramètres $N_x$ et $N_\mu$ sur l'erreur.
 
 \subsection{Accélération par diffusion synthétique}
-Pour accélérer le code dans la limite de diffusion on utilise la méthode d'accélération par diffusion synthétique. 
 
+Pour accélérer le code dans la limite de diffusion on utilise la méthode
+d'accélération par diffusion synthétique.
+
+Cette méthode consiste à utiliser une approximation de l'équation
+(\ref{eq.transport}) par une équation de diffusion de la forme :
+\begin{equation}
+	\label{eq:diffusion_dsa}
+	-\mathrm{div} \left( \frac{1}{3\Sigma_t}\nabla \tilde \varphi \right) + \Sigma_a \tilde \varphi = Q
+\end{equation}
+
+On reprend la méthode itérative des flux collisionnés, mais à la différence de
+précédemment, on suppose que le flux moyenné en angle n'est plus qu'une
+\emph{demi-itération} $\tilde \varphi^{n + 1/2}$. Ainsi, le (n+1)-ième flux
+collisionné s'exprime en fonction du n-ième flux collisionné par la relation
+\begin{equation*}
+	\tilde \varphi^{n+1} = \tilde \varphi^{n + 1/2} + \delta_\varphi^{l+1}
+\end{equation*}
+Et ainsi $\delta_\varphi^{l+1}$ vérifie l'équation de transport :
+\begin{equation*}
+	\mu \frac{\partial \delta_\varphi^{l+1}}{\partial x} + \Sigma_t \delta_\varphi^{l+1} =
+	\frac{\Sigma_S}{2} \int\limits_{-1}^1 \delta_\varphi^{l+1} d\mu' + \Sigma_S \left( \tilde \varphi^{n-1/2} - \tilde \varphi^n\right)
+\end{equation*}
+
+Ainsi, l'équation de diffusion qui nous permet de calculer
+$\delta_\varphi^{l+1}$ et par la suite $\tilde \varphi^{n+1}$, pour notre cas 1D, est
+\begin{equation}
+	\label{eq:diff_delta}
+	-\frac{1}{3\Sigma_t} \frac{\partial^2 \delta_\varphi^{l+1}}{\partial x^2} + \Sigma_a \delta_\varphi^{l+1} = \Sigma_S \left( \tilde \varphi^{n-1/2} - \tilde \varphi^n\right) \quad \text{ sur } ]0,1[
+\end{equation}
+qu'on complète par des condition de Dirichlet sur les bords :
+$\delta_\varphi^{l+1}(0)= \delta_\varphi^{l+1}(1)= 0$.
+
+Cette équation très classique est ici résolue en utilisant une méthode de type
+éléments finis $P^1$. Pour allèger les notations, on notera dans la suite $f = \delta_\varphi^{l+1}$, Ainsi on écris la formulation variationnelle de
+(\ref{eq:diff_delta}) :
+\begin{equation}
+	\label{eq:delta_varia}
+	\int\limits_{-1}^1 \left(\frac{1}{3\Sigma_t} f' g' + \Sigma_a f g \right) dx  =  \Sigma_S \int\limits_{-1}^1 \left( \tilde \varphi^{n-1/2} - \tilde \varphi^n \right) g\ dx
+\end{equation}
+
+Cela nous amène à résoudre un système linéaire $\mathbb{A} F = L$ où
+\begin{itemize}
+	\item $\mathbb{A}$ est une matrice tridiagonale, dont la diagonale est constante et
+	      égale à $\frac{2}{3\Delta x \Sigma_t} + \frac{\Sigma_a \Delta x}{3}$ et les
+	      diagonales supérieure et inférieure sont constantes et égales à
+	      $-\frac{1}{3\Delta x \Sigma_t} + \frac{\sigma_a \Delta x}{6}$,
+	\item $F$ est la discrétisation de $\delta_\varphi^{l+1}$,
+	\item $L$ est le second membre, calculé à partir de $\Sigma_S \left( \tilde \varphi^{n-1/2} - \tilde \varphi^n \right)$.
+\end{itemize}
+
+\bigskip
+La résolution du système linéaire est effectuée par une méthode de décomposition
+de Cholesky. Le choix de cette méthode n'est pas anodin : la matrice
+$\mathbb{A}$ ne change pas au cours des itérations. Ainsi, la résolution de ce
+système est effectuée en $\mathcal{O} (n^2)$ opérations.
 
 
 

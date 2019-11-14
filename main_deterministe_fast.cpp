@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
         Nmu = atof(argv[2]);
     }
 
-    double epsilon = 0.1, sa = 0;
+    double epsilon = 0.0001, sa = 0;
     double dx = 1. / Nx;
     Eigen::VectorXd Q(Nx), sigmaT(Nx + 1), sigmaS(Nx + 1);
     Q.setConstant(1 * epsilon);
@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
 
     // cout << sigmaT;
 
-    double nu = 1e-3;
-    Eigen::VectorXd phi = Fast_IS(Nx, Nmu, 1e-7, 1000, Q, sigmaT, sigmaS);
+    double nu = 1e-10;
+    Eigen::VectorXd phi = Fast_IS(Nx, Nmu, nu, 10000, Q, sigmaT, sigmaS);
 
     ofstream fichier("Data/phi_fast_" + to_string(Nx) + "_" + to_string(Nmu) + "_epsilon" + to_string(epsilon) + ".txt", ios::out | ios::trunc);
     fichier << phi;

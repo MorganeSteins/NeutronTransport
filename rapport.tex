@@ -1,6 +1,7 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{natbib}
 \usepackage[french]{babel}
 \usepackage{lmodern}
 \usepackage[top=2.5cm, bottom=2.8cm, left=2.7cm, right=2.7cm]{geometry} 
@@ -12,7 +13,6 @@
 \usepackage{caption}
 \usepackage{comment}
 \usepackage{listings}
-\usepackage{natbib}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{tikz}
@@ -142,7 +142,9 @@ Pour l'inverser on résout $y = F(x)$
 Pour tirer une variable aléatoire selon la loi $F$, on tire $y$ selon une loi uniforme sur $[0;1]$ et on calcule $F^{-1}(y)$.
 
 \vspace{0.1cm}
-La méthode Monte-Carlo consiste à simuler un grand nombre de trajectoires de neutrons et en déduire le flux neutronique par la loi des grands nombres.
+La méthode Monte-Carlo consiste à simuler un grand nombre de trajectoires de
+neutrons et en déduire le flux neutronique par la loi des grands nombres, ce qui
+sera développé ci-dessous.
 
 \vspace{0.2cm}
 \subsection{Matériau purement absorbant}
@@ -160,7 +162,7 @@ $$ \psi(0,\mu >0) = \psi(1,\mu<0) = 0 $$
 On note la solution de ce problème $\psi$ car elle nous sera utile dans la suite pour des cas plus complexes.
 Il s'agit de la solution élémentaire.
 
-Pour trouver la solution plaçons nous à $\mu>0$ puisque pour $\mu<0$ les neutrons émis en $0$ sortent immédiatement du domaine, le flux est nul en tout point.
+Pour trouver la solution, plaçons nous à $\mu>0$ puisque pour $\mu<0$ les neutrons émis en $0$ sortent immédiatement du domaine, le flux est nul en tout point.
 On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et $x$
 
 \begin{align*}
@@ -170,7 +172,7 @@ On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et
 	\iff  \psi(x,\mu)                           & = \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
 \end{align*}
 
-Pour simuler ce flux neutronique avec un solveur Monte-Carlo sur un intervale de
+Pour simuler ce flux neutronique avec un solveur Monte-Carlo sur un intervalle de
 largeur $dx$ centré en x, l'idée de base est de tirer un grand nombre de
 particule dans le domaine et de compter celle qui s'arrêtent dans l'intervalle.
 Plus précisément, on considère une subdivision du domaine $[0,1] = \bigcup_i
@@ -249,6 +251,7 @@ Plus $\mu$ se rapproche de $0$ plus sa densité est centrée sur 0.
 La limite pour $\mu=0$ est le dirac en 0.
 En effet si le neutron part à la verticale il sera aussi absorbé à $x=0$.
 
+\medskip
 Il s'agit maintenant de comparer ses densités théoriques aux résultats de notre simulation.
 Une question pratique se pose : quelle valeur donner à $dx$ ?
 En effet ce paramètre n'est en rien déterminé par le problème physique ou la méthode Monte-Carlo.
@@ -272,7 +275,7 @@ $p_{i|\mu_0}$ la probabilité d'un succès, qui est donné par :
 Ainsi, l'espérance et la variance de $X$ sont $\mathbb{E} ( X ) = N
 	p_{i|\mu_0}$ et $\mathbb{V}\mathrm{ar} (X) = N p_{i|\mu_0} (1-p_{i|\mu_0})$.
 
-Ainsi, pour une seule particule, on peut faire les estimations suivantes :
+Pour une seule particule, on peut faire les estimations suivantes :
 \begin{equation*}
 	\mathbb{E}_\varphi = \frac{1}{\Delta x} \int_{I_i} \psi(x,\mu_0) dx = \frac{\mathbb{E} (X)}{N\Delta x }
 \end{equation*}
@@ -470,12 +473,12 @@ Le même raisonnement donne
 	\pp_3(x,\mu) = \frac{1}{\mu} e^{-\frac{0.3}{\mu}} e^{-\frac{3(0.7-0.3)}{\mu}}e^{-\frac{x-0.7}{\mu}}
 \end{equation}
 
-On est donc capable d'écrire la solution théorique dont on voit deux allures pour deux valeurs de $\mu$ différentes sur la figure (\ref{fig:q5.allures}).
+On est donc capable d'écrire la solution théorique dont on voit deux allures pour deux valeurs de $\mu$ différentes sur la figure (\ref{fig:q5.allures1}).
 \begin{figure}[htp!]
 	\centering
 	\includegraphics[scale=0.5]{Figures/q6_sol_theorique.png}
 	\caption{$\pp(x,\mu)$ théorique dans le cas $\st$ non homogène}
-	\label{fig:q5.allures}
+	\label{fig:q5.allures1}
 \end{figure}
 
 Pour calculer la solution avec une méthode Monte-Carlo il faut mettre en oeuvre la méthode de Woodcock qui permet de prendre en compte les variations de $\st$.
@@ -774,7 +777,7 @@ pour Monte-Carlo et 0.2 secondes pour le code déterministe.
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.42]{Figures/q12_comp.png}
-	\caption{Cas purement diffusant : solutions Monte-Carlo et deterministe}
+	\caption{Cas purement diffusant : solutions Monte-Carlo et déterministe}
 	\label{fig:q12.MC.deter}
 \end{figure}
 
@@ -849,18 +852,32 @@ On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'i
 \begin{table}[h]
 	\centering
 	\begin{tabular}{ccccc}\toprule
-		$\bm{\epsilon}$              & 1  & 0.1 & 0.01  &0.001\\ \midrule
-		\textbf{Nombre d'itérations} & 32 & 505 & 25243 &?\\\bottomrule
-		\textbf{Temps d'exécution} &0.09s &1.18s & 1m& >20m
+		$\bm{\epsilon}$              & 1     & 0.1   & 0.01  & 0.001 \\ \midrule
+		\textbf{Nombre d'itérations} & 32    & 505   & 25243 & ?     \\
+		\textbf{Temps d'exécution}   & 0.09s & 1.18s & 1m    & >20m  \\\bottomrule
 	\end{tabular}
 \end{table}
 
 
-Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue, tout comme le temps d'exécution. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique. Nous avons laissé tourner le code 20 minutes pour $\epsilon=0.001$ avant de couper l'exécution et nous n'avions toujours pas convergé. 
+Le nombre d'itérations nécessaires pour arriver à la précision souhaitée
+augmente très rapidement avec $\epsilon$ qui diminue, tout comme le temps
+d'exécution. On voit donc bien l'intérêt de mettre en place une méthode
+d'accélération comme par exemple l'accélération par diffusion synthétique. Nous
+avons laissé tourner le code 20 minutes pour $\epsilon=0.001$ avant de couper
+l'exécution et nous n'avions toujours pas convergé.
 
-Avant de passer à l'accélération regardons l'impact des paramètres $N_x$ et $N_\mu$. Comme le nombre de boucle augmente linéairement avec $N_\mu$ et $N_x$, multiplier l'un ou l'autre par 10 multiplie d'autant le nombre d'opérations et donc le temps de calcul. Comme le nombre d'itérations nécéssaires avec $\epsilon$ faible augmente très vite aussi, on se retrouve vite avec de grands temps de calcul en comparaison avec avant. 
+Avant de passer à l'accélération regardons l'impact des paramètres $N_x$ et
+$N_\mu$. Comme le nombre de boucle augmente linéairement avec $N_\mu$ et $N_x$,
+multiplier l'un ou l'autre par 10 multiplie d'autant le nombre d'opérations et
+donc le temps de calcul. Comme le nombre d'itérations nécessaires avec
+$\epsilon$ faible augmente très vite aussi, on se retrouve vite avec de grands
+temps de calcul en comparaison avec avant.
 
-De même que dans les questions précédentes $N_x$ et $N_\mu$ améliorent la précision, mais comme il n'y a pas de solution analytique on ne peut pas calculer l'erreur commise. On peut toutefois regarder la convergence de la solution obtenue vers la solution théorique en limite de diffusion quand on diminue $\epsilon$.
+De même que dans les questions précédentes $N_x$ et $N_\mu$ améliorent la
+précision, mais comme il n'y a pas de solution analytique on ne peut pas
+calculer l'erreur commise. On peut toutefois regarder la convergence de la
+solution obtenue vers la solution théorique en limite de diffusion quand on
+diminue $\epsilon$.
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[scale=0.6]{Figures/q14_diffepsilon.png}
@@ -868,9 +885,12 @@ De même que dans les questions précédentes $N_x$ et $N_\mu$ améliorent la pr
 	\label{fig:q12.eps}
 \end{figure}
 
-On a vu que sans accélération il est difficile de demander $\epsilon$ plus petit que $0.01$ mais sur la figure (\ref{fig:q12.eps}) on voit que ceci ne permet pas d'approcher le cas de la limite de diffusion avec une erreur $\mathcal{L}^2$ acceptable, on voit même l'erreur à l'oeil nu. 
+On a vu que sans accélération il est difficile de demander $\epsilon$ plus petit
+que $0.01$ mais sur la figure (\ref{fig:q12.eps}) on voit que ceci ne permet pas
+d'approcher le cas de la limite de diffusion avec une erreur $\mathcal{L}^2$
+acceptable, on voit même l'erreur à l'œil nu.
 
-Tout ceci justifie amplement la mise en place de l'accélération par diffusion synthétique. 
+Tout ceci justifie amplement la mise en place de l'accélération par diffusion synthétique.
 
 
 
@@ -934,9 +954,9 @@ de Cholesky est effectuée en $\mathcal{O} (N_x^3)$ opérations, la résolution 
 système est effectuée en $\mathcal{O} (N_x^2)$ opérations pendant l'algorithme.
 
 \vspace{0.2cm}
-On peut regarder les résultats de simulation et vérifier d'une part que la solution est la même qu'avant la mise en place de l'accélération par diffusion synthétique et d'autre part que celle-ci permet de prendre des $\epsilon$ plus petits. 
+On peut regarder les résultats de simulation et vérifier d'une part que la solution est la même qu'avant la mise en place de l'accélération par diffusion synthétique et d'autre part que celle-ci permet de prendre des $\epsilon$ plus petits.
 
-C'est ce que montre la figure (\ref{fig:q16.eps}), on a pu caluler $\epsilon=0.0001$ et la solution est confondue avec la limite de diffusion. 
+C'est ce que montre la figure (\ref{fig:q16.eps}), on a pu calculer $\epsilon=0.0001$ et la solution est confondue avec la limite de diffusion.
 
 
 \begin{figure}[ht!]
@@ -969,16 +989,16 @@ tableau ci-dessus.
 \section*{Conclusion}
 
 Nous avons pu comparer au cours de ce projet deux méthodes très différentes :
-une méthode Monte-Carlo et une méthode déterministe. 
+une méthode Monte-Carlo et une méthode déterministe.
 
 Chacune des deux méthodes a des avantages et des inconvénients. La méthode
 Monte-Carlo permet par exemple de simuler le problème sans discrétisation en
 angle et se généralise bien en 3D mais la méthode converge relativement
-lentement. 
+lentement.
 
 Tandis que la méthode
 déterministe plus rapide dans notre cas et converge mieux mais doit malgré tout être accélérée
 artificiellement et nécessite de discrétiser en angle, ce qui peut rapidement
-devenir problématique en 3D. 
+devenir problématique en 3D.
 
 \end{document}

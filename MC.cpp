@@ -55,23 +55,6 @@ vector<double> density_segment_no_scattering_homog_point_MC(int N, int nb_points
             freq[indice] += (1. / (point::sigmaT * dx)) * (1. / (float)N);
         }
     }
-
-    // enregistrement des valeurs de phi
-    ofstream fichier("Data/phi_q4_" + to_string(N) + "_"+to_string(nb_points)+".txt", ios::out | ios::trunc);
-    for (int i = 0; i < freq.size(); i++)
-    {
-        fichier << freq[i] << ",";
-    }
-    fichier.close();
-
-    // enregistrement des valeurs de fréquence pour les intervalles de confiance
-    // ofstream fichier2("Data/freq_q4_" + to_string(N) + ".txt", ios::out | ios::trunc);
-    // for (int i = 0; i < freq.size(); i++)
-    // {
-    //     fichier2 << freq[i] * N * point::sigmaT * dx << ",";
-    // }
-    // fichier2.close();
-    // cout << "Data/phi_q4_" + to_string(N) + ".txt" << endl;
     return freq;
 }
 
@@ -137,7 +120,6 @@ double density_no_scattering_homog_unif_MC(point p, int N)
             rsl++;
         }
     }
-    //print_vector(selection);
     return rsl / (N * p.sigmaT * dx);
 }
 
@@ -159,22 +141,6 @@ vector<double> density_segment_no_scattering_homog_unif_MC(int N, int nb_points,
             freq[indice] += (1. / (point::sigmaT * dx)) * (1. / (float)N);
         }
     }
-
-    // enregistrement des valeurs de phi
-    ofstream fichier("Data/phi_q5_" + to_string(N) + ".txt", ios::out | ios::trunc);
-    for (int i = 0; i < freq.size(); i++)
-    {
-        fichier << freq[i] << ",";
-    }
-    fichier.close();
-
-    // enregistrement des valeurs de fréquence pour les intervalles de confiance
-    ofstream fichier2("Data/freq_q5_" + to_string(N) + ".txt", ios::out | ios::trunc);
-    for (int i = 0; i < freq.size(); i++)
-    {
-        fichier2 << freq[i] * N * point::sigmaT * dx << ",";
-    }
-    fichier2.close();
 
     return freq;
 }
@@ -258,14 +224,6 @@ vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_inter
         step++;
     }
     cout << "Convergé en " << step << " itérations" << endl;
-
-    //sauver la valeur de phi dans un fichier txt
-    ofstream fichier("Data/phi_q8_" + to_string(N) + ".txt", ios::out | ios::trunc);
-    for (int i = 0; i < phi.size(); i++)
-    {
-        fichier << phi[i] << ",";
-    }
-    fichier.close();
     return phi;
 }
 
@@ -334,14 +292,6 @@ vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_i
         step++;
     }
     cout << "Convergé en " << step << " itérations" << endl;
-
-    //sauver la valeur de phi dans un fichier txt
-    ofstream fichier("Data/phi_q8_" + to_string(N) + ".txt", ios::out | ios::trunc);
-    for (int i = 0; i < phi.size(); i++)
-    {
-        fichier << phi[i] << ",";
-    }
-    fichier.close();
     return phi;
 }
 

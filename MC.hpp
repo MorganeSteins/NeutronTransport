@@ -41,7 +41,7 @@ double density_scattering_homog_unif_MC(int N, point p, int max_iter=10000);
 
 vector<double> density_tilda_segment_scattering_homg_unif_MC(int N, int nb_points,int max_iter=100000);
 
-/* Fonctions pour le cas Woodcock et source uniforme */
+/* Fonctions pour le cas Woodcock et source uniforme  : non testée ni utilisée */
 
 vector<double> density_tilda_segment_scattering_woodcock_unif_MC(int N, int nb_intervalles, int max_iter);
 

@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,draft]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
@@ -560,19 +560,19 @@ On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation conten
 On en déduit ensuite $\ppt_i$ grâce à la relation de fermeture.
 
 \vspace{0.2cm}
-En fixant $\mu$, on utilise ce processus une unique fois et on obtient $\psi_t$ pour tous les intervalles souhaités. On peut regarder la solution pour différents $\mu$ et regarder l'erreur en fonction de la discrétisation spatiale. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). On remarque cependant que pour $N>500$ l'erreur ne décroît plus. Nous supposons que des erreurs numériques sont à l'origine de cette stagnation de l'erreur.
+En fixant $\mu$, on utilise ce processus une unique fois et on obtient $\psi_t$ pour tous les intervalles souhaités. On peut comparer visuellement la solution obtenue avec la solution théorique avant de regarder la convergence de l'erreur en faisant diminuer le pas de discrétisation $dx$. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). La vitesse de convergence est de $2$ ce qui estune bonne vitesse pour une méthode numérique.
 
 \begin{figure}[ht!]
 	\centering
 	\begin{subfigure}{.49\textwidth}
 		\centering
-		\includegraphics[scale=0.42]{Figures/q9_sol_3mu.png}
+		\includegraphics[scale=0.42]{Figures/q9_soletcalc.png}
 		\caption{Résultats pour différents $\mu$}
 		\label{fig:q9.sol}
 	\end{subfigure}
 	\begin{subfigure}{.49\textwidth}
 		\centering
-		\includegraphics[scale=0.42]{Figures/q9_err_l2.png}
+		\includegraphics[scale=0.42]{Figures/q9_cv_ordre2.png}
 		\caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
 		\label{fig:q9.errl2}
 	\end{subfigure}
@@ -589,7 +589,25 @@ On peut utiliser exactement la même méthode pour trouver la solution dans le c
 	\end{aligned}  \right.
 \end{equation*}
 
-On peut faire les mêmes analyses que dans le cas de la source ponctuelle.
+On peut faire les mêmes analyses que dans le cas de la source ponctuelle. On affiche la solution obtenue pour $N_x=25$ et l'erreur en fonction de $N_x$
+
+\begin{figure}[ht!]
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q10_soletcalc.png}
+		\caption{Comparaison de la solution théorique et calculée}
+		\label{fig:q10.sol}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q9_cv_ordre2.png}
+		\caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
+		\label{fig:q10.errl2}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psit(x)$}
+	\label{fig:q9}
+\end{figure}
 
 \subsubsection{Matériau non homogène}
 On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. La solution théorique est toujours la même mais cette fois-ci nous n'avons plus besoin de modifier le solveur pour prendre en compte les variations de $\st$ puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$. 

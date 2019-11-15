@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper,draft]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
@@ -17,6 +17,8 @@
 \usepackage{subcaption}
 \usepackage{tikz}
 \usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
 
 \newcommand{\pp}{\varphi}
 \newcommand{\ppt}{\tilde{\varphi}}
@@ -257,27 +259,45 @@ solutions de manière visible et feront ici 25 intervalles.
 Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
 on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vrai.
 
-Pour ce faire, on considère la variable aléatoire $X$ nous donnant le nombre de 
+Pour ce faire, on considère la variable aléatoire $X$ nous donnant le nombre de
 particules dans l'intervalle $I_i = [x_i,x_{i+1}]$. Cette variable aléatoire
 suit une loi binomiale de paramètre $N$ le nombre total de particules et
 $p_{i|\mu_0}$ la probabilité d'un succès, qui est donné par :
 \begin{equation*}
-	p_{i|\mu_0} = \int_{I_i} \frac{\psi(x,\mu_0)}{\int_0^1 \psi(y,\mu_0)dy}dx = 
-	\int_{I_i} \Sigma_S \psi(x,\mu_0)dx 
+	p_{i|\mu_0} = \int_{I_i} \frac{\psi(x,\mu_0)}{\int_0^1 \psi(y,\mu_0)dy}dx =
+	\int_{I_i} \Sigma_S \psi(x,\mu_0)dx
 \end{equation*}
 
-Ainsi, l'espérance et la variance de $X$ sont $\mathcal{E} ( X ) = N
-p_{i|\mu_0}$ et $\mathcal{V}\mathrm{ar} (X) = N p_{i|\mu_0} (1-p_{i|\mu_0})$.
+Ainsi, l'espérance et la variance de $X$ sont $\mathbb{E} ( X ) = N
+	p_{i|\mu_0}$ et $\mathbb{V}\mathrm{ar} (X) = N p_{i|\mu_0} (1-p_{i|\mu_0})$.
 
-Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré sur ce point sur lequel on approxime la solution par sa valeur en $x$. On peut considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de particules
-
-La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i
-		(1-freq^i)}{N}$. Par ailleurs, on connaît la solution exacte de notre problème,
-donc on va centrer l'intervalle autour de la solution exacte. Cela nous donne un
-intervalle de confiance de la forme :
+Ainsi, pour une seule particule, on peut faire les estimations suivantes :
 \begin{equation*}
-	I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
+	\mathbb{E}_\varphi = \frac{1}{\Delta x} \int_{I_i} \psi(x,\mu_0) dx = \frac{\mathbb{E} (X)}{N\Delta x }
 \end{equation*}
+et
+\begin{equation*}
+	\mathbb{V}\mathrm{ar}_\varphi = \frac{1}{\Delta x} \int_{I_i} (\psi(x,\mu_0)- \mathbb{E}_\varphi)^2 dx = \frac{\mathbb{V}\mathrm{ar}(X)}{N\Delta x}
+\end{equation*}
+
+Cette estimation nous donne un intervalle asymptotique de confiance :
+\begin{equation*}
+	I_c^i = \left[\psi - 1.96 \sqrt{\frac{\mathbb{V}\mathrm{ar}(X)}{N\Delta x}} , \psi + 1.96 \sqrt{\frac{\mathbb{V}\mathrm{ar}(X)}{N\Delta x}} \right]
+\end{equation*}
+
+% Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré
+% sur ce point sur lequel on approxime la solution par sa valeur en $x$. On peut
+% considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je
+% dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de
+% particules 
+
+% La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i
+% 		(1-freq^i)}{N}$. Par ailleurs, on connaît la solution exacte de notre problème,
+% donc on va centrer l'intervalle autour de la solution exacte. Cela nous donne un
+% intervalle de confiance de la forme :
+% \begin{equation*}
+% 	I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
+% \end{equation*}
 
 \begin{figure}[ht!]
 	\centering
@@ -298,7 +318,14 @@ intervalle de confiance de la forme :
 \end{figure}
 On a représenté sur la figure (\ref{fig:q4.simul}) l'allure de la solution par simulation Monte-Carlo. Elle est constante par morceaux pour chaque intervalle d'approximation où la valeur moyenne est assimilée à l'intégrale.
 
-Pour la représentation des intervalles de confiance, on remarque que pour $N=10^6$ simulations il est peu visible sur la figure puisque de largeur évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de $10^{-3}/25$ pour $25$ intervalles. Les points donnent toutefois l'impression d'être compris dedans de manière très qualitative. Nous avons tracé l'intervalle de confiance à $95\%$ pour uneriabe aléatoire suivant une loi gaussienne puisque par théorème central limite la moyenne empirique que nous calculons tend vers l'espérance de la valeur ponctuelle de $\pp$.
+Pour la représentation des intervalles de confiance, on remarque que pour
+$N=10^6$ simulations il est peu visible sur la figure puisque de largeur
+évoluant en l'inverse de $\sqrt{N}$, il est ici de largeur de l'ordre de
+$10^{-3}/25$ pour $25$ intervalles. Les points donnent toutefois l'impression
+d'être compris dedans de manière très qualitative. Nous avons tracé l'intervalle
+de confiance à $95\%$ pour une variable aléatoire suivant une loi gaussienne
+puisque par théorème central limite la moyenne empirique que nous calculons tend
+vers l'espérance de la valeur ponctuelle de $\pp$.
 
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
@@ -450,7 +477,7 @@ On est donc capable d'écrire la solution théorique dont on voit deux allures p
 	\label{fig:q5.allures}
 \end{figure}
 
-Pour calculer la solution avec une méthode Monte-Carlo il faut mettre en oeuvre la méthode de Woodcokc qui permet de prendre en compte les variations de $\st$.
+Pour calculer la solution avec une méthode Monte-Carlo il faut mettre en oeuvre la méthode de Woodcock qui permet de prendre en compte les variations de $\st$.
 
 
 
@@ -601,7 +628,7 @@ Pour résoudre le problème spatial général en $\pp$ qui est $\mu \pp '(x) + \
 
 On intègre l'équation spatiale sur chaque maille ce qui donne $N$ relations
 
-\begin{equation} 
+\begin{equation}
 	\label{eq:vfinis.1}
 	\mu \left( \pp_{i+1} - \pp_i \right) + \st^i dx\  \ppb_i = \bar{Q}^i
 \end{equation}
@@ -618,7 +645,12 @@ On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation conten
 	\pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
 \end{equation}
 
-On en déduit ensuite $\ppb_i$ grâce à la relation de fermeture. C'est la grandeur à laquelle nous allon snous intéresser car c'est l'unique que l'on peut calculer quand il y a de la dispersion, et nous voulons un solveur général pour tous les cas physiques. Ce que nous appelons donc la \textit{solution calculée} i.e. la sortie de notre algorithme est l'approximation constante par morceaux $\pp(x \in [(i-1)dx;idx],\mu \text{ fixé }) = \ppb_i$.
+On en déduit ensuite $\ppb_i$ grâce à la relation de fermeture. C'est la
+grandeur à laquelle nous allons nous intéresser car c'est l'unique que l'on peut
+calculer quand il y a de la dispersion, et nous voulons un solveur général pour
+tous les cas physiques. Ce que nous appelons donc la \textit{solution calculée}
+i.e. la sortie de notre algorithme est l'approximation constante par morceaux
+$\pp(x \in [(i-1)dx;idx],\mu \text{ fixé }) = \ppb_i$.
 
 \begin{figure}[ht!]
 	\centering
@@ -673,7 +705,7 @@ On peut faire les mêmes analyses que dans le cas de la source ponctuelle. On af
 On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}.
 La solution théorique est toujours la même mais cette fois-ci nous n'avons plus
 besoin de modifier le solveur pour prendre en compte les variations de $\st$
-puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$. 
+puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$.
 
 Il faut bien attention à fournir au solveur une liste de $\st^i$ de la taille du nombre de mailles et à couper le domaine de façon à conserver $\st^i$ constant par maille. Comme ici $\st$ change de valeur en $0.3$ et $0.7$, il suffit de prendre un nombre de mailles multiple de 10 en $x$ pour être certain d'éviter tout problème avec la définition des $\st^i$.
 
@@ -708,8 +740,8 @@ l'équation (\ref{eq.transport}) sera vérifiée. L'intégrale en angle est alor
 approchée par une formule de quadrature. Nous choisissons ici pour méthode de
 quadrature la méthode des rectangles qui nous permet de répartir les $\mu_k$ de
 manière homogène sur tout l'intervalle $[-1;1]$. On a alors $\mu_k = (k +
-1/2)d\mu - 1$ où $d\mu = \frac{2}{N_\mu}$ et $k \in \{0,\dots ,N_{\mu}-1\}$. Le
-poids associé à chaque $\mu_k$ est le même : $d\mu$. 
+	1/2)d\mu - 1$ où $d\mu = \frac{2}{N_\mu}$ et $k \in \{0,\dots ,N_{\mu}-1\}$. Le
+poids associé à chaque $\mu_k$ est le même : $d\mu$.
 
 On a alors $\forall 0 \leqslant k \leqslant N_\mu-1$
 \begin{equation}
@@ -728,7 +760,15 @@ Il faut donc à chaque étape résoudre un problème spatial comme précédemmen
 On a démontrer que la différence entre deux itérations en $n$, $e^n =\pp^n-\pp^{n-1} $ converge vers 0 en norme $\mathcal{L}^1$ en l'injectant dans l'équation. Donc $\pp^n$ est une suite de Cauchy dans $\mathcal{L}^1$ qui est un Banach : elle converge. On utilise donc un critère de Cauchy pour arrêter l'algorithme d'itération sur les sources. On se fixe une erreur maximale $\eta$ et on continue les itérations en $n$ tant que $||\phi^{n}-\phi^{n-1}||>\eta$.
 
 \vspace{0.2cm}
-Dans ce cas-ci nous n'avons pas la solution alytique de l'équation. Une méthode de vérification est toutefois de comparer qualitativement avec la solution obtenue dans le cas Monte-Carlo. Parler de convergence d'une solution vers l'autre alors qu'elles sont toutes les deux approchées n'est pas envisagé. La figure (\ref{fig:q12.MC.deter}) montre les résultats par simulation Monte-Carlo et déterministe. Nous avons fixé $\eta=10^{-9}$ et l'algorithme avait convergé en $46$ itérations. La courbe déterministe est bien plus lisse que la courbe M0nte-Carlo et obtenue en un temps bien inférieur :  3 secondes pour Monte-Carlo et 0.2 secondes pour le code déterministe.
+Dans ce cas-ci nous n'avons pas la solution analytique de l'équation. Une
+méthode de vérification est toutefois de comparer qualitativement avec la
+solution obtenue dans le cas Monte-Carlo. Parler de convergence d'une solution
+vers l'autre alors qu'elles sont toutes les deux approchées n'est pas envisagé.
+La figure (\ref{fig:q12.MC.deter}) montre les résultats par simulation
+Monte-Carlo et déterministe. Nous avons fixé $\eta=10^{-9}$ et l'algorithme
+avait convergé en $46$ itérations. La courbe déterministe est bien plus lisse
+que la courbe M0nte-Carlo et obtenue en un temps bien inférieur :  3 secondes
+pour Monte-Carlo et 0.2 secondes pour le code déterministe.
 
 \begin{figure}
 	\centering
@@ -739,9 +779,9 @@ Dans ce cas-ci nous n'avons pas la solution alytique de l'équation. Une méthod
 
 
 \vspace{0.2cm}
-Pour étudier l'impact des paramètres du calcul déterministe on peut se donner un cas très raffiné ($N_x$ et $N_\mu$ très grands), prendre cette simulation comme référence et regarder l'erreur commise par rapport à cette référence pour des paramètres bien plus petits. Pour faire varier $N_x$ cela demande d'interpoler notre solution moins raffinée sur le maillage plus raffiné. Comme nous avons déjà regardé l'impact de $N_x$ sur les simulations nous préférons nous concentrer sur $N_\mu$. 
+Pour étudier l'impact des paramètres du calcul déterministe on peut se donner un cas très raffiné ($N_x$ et $N_\mu$ très grands), prendre cette simulation comme référence et regarder l'erreur commise par rapport à cette référence pour des paramètres bien plus petits. Pour faire varier $N_x$ cela demande d'interpoler notre solution moins raffinée sur le maillage plus raffiné. Comme nous avons déjà regardé l'impact de $N_x$ sur les simulations nous préférons nous concentrer sur $N_\mu$.
 
-On prend $N_\mu=10^4$ de référence et on regarde pour des $N_\mu$ au moins $10$ fois plus petits. On remarque d'abord que le nombre d'itérations reste globalement le même. On a ensuite une convergence de cette pseudo-erreur comme visisble sur la figure (\ref{fig:q12.Nmu}). Il nous est difficile d'expliquer la pente de $\frac{3}{2}$. 
+On prend $N_\mu=10^4$ de référence et on regarde pour des $N_\mu$ au moins $10$ fois plus petits. On remarque d'abord que le nombre d'itérations reste globalement le même. On a ensuite une convergence de cette pseudo-erreur comme visible sur la figure (\ref{fig:q12.Nmu}). Il nous est difficile d'expliquer la pente de $\frac{3}{2}$.
 
 \begin{figure}[ht!]
 	\centering
@@ -805,6 +845,7 @@ soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3
 
 On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
 
+<<<<<<< HEAD
 \vspace{0.1cm}
 \begin{tabular}{c|c|c|c|c}
 	$\bm{\epsilon}$              & 1& 0.1 & 0.01&0.001  \\
@@ -812,6 +853,16 @@ On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'i
 	\textbf{Temps d'exécution} &0.09s &1.18s & 1m& >20m
 \end{tabular}
 \vspace{0.2cm}
+=======
+\begin{table}[h]
+	\centering
+	\begin{tabular}{cccc}\toprule
+		$\bm{\epsilon}$              & 1  & 0.1 & 0.01  \\ \midrule
+		\textbf{Nombre d'itérations} & 32 & 505 & 25243 \\\bottomrule
+	\end{tabular}
+\end{table}
+
+>>>>>>> feb7c4d9803590e0943fa0fb5f782f52d56903f6
 
 Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue, tout comme le temps d'exécution. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique. Nous avons laissé tourner le code 20 minutes pour $\epsilon=0.001$ avant de couper l'exécution et nous n'avions toujours pas convergé. 
 
@@ -889,6 +940,22 @@ pour toute au début l'algorithme. Ainsi, même si le calcul de la décompositio
 de Cholesky est effectuée en $\mathcal{O} (N_x^3)$ opérations, la résolution de ce
 système est effectuée en $\mathcal{O} (N_x^2)$ opérations pendant l'algorithme.
 
+\bigskip
+
+L'accélération synthétique permet d'accélérer\footnote{heureusement} grandement
+le calcul dns le cas de la limite de diffusion comme cela peut être vu dans le
+tableau (\ref{tab:comp_dsa}).
+
+\begin{table}[hb]
+	\centering
+	\begin{tabular}{cccc}\toprule
+		$\bm{\epsilon}$ & 1 (sans absorption) & 0.1 & 0.01  \\\midrule
+		Sans DSA        & 32                  & 505 & 25243 \\
+		Avec DSA        & 24                  & 27  & 23    \\\bottomrule
+	\end{tabular}
+	\caption{Nombre d'itération avec et sans accélération. Les paramètres de simulations sont $\nu = 10^{-7}$, $N_x = 1000$ points, et $N_\mu = 100$ arcs de cercles.}
+	\label{tab:comp_dsa}
+\end{table}
 
 
 \end{document}

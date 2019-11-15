@@ -20,6 +20,7 @@
 
 \newcommand{\pp}{\varphi}
 \newcommand{\ppt}{\tilde{\varphi}}
+\newcommand{\ppb}{\bar{\varphi}}
 \newcommand{\ppeps}{\varphi_{\epsilon}}
 \newcommand{\ppteps}{\tilde{\varphi}_{\epsilon}}
 \newcommand{\PP}{\mathbb{P}}
@@ -573,7 +574,7 @@ Dans le cas $\mu$ négatif, la solution est $\psi(x,\mu) = \psi(1-x,-\mu)$.
 Dans ce cas précis on peut calculer $\psi$ aussi bien que $\tilde{\psi} = \frac{1}{2}\int_{-1}^1 \psi(x,\mu) d\mu$. Il n'y a pas besoin de discrétiser l'espace de $\mu$ pour calculer ces deux fonctions. Comme dans la suite nous sommes intéressés par le flux moyenné en angle, nous allons directement nous concentrer sur $\tilde{\psi}$ ici.
 
 \vspace{0.1cm}
-Pour résoudre le problème spatial général en $\pp$ qui est $\mu \ppt '(x) + \st \ppt(x) = Q(x)$, on utilise un schéma de type volumes finis. On découpe l'intervalle $[0,1]$ en $N$ intervalles $M_i$ de taille régulière $dx=1/N$. $\pp$ est définie sur les extrémités des intervalles et $\ppt$ comme la moyenne de $\pp$ sur chacun de ces intervalles (cf figure). On considère que $\st$ et $Q$ sont constants sur chaque maille $M_i$ et on note respectivement $\st^i$ et $Q^i$ leurs valeurs sur l'intervalle $M_i$.
+Pour résoudre le problème spatial général en $\pp$ qui est $\mu \pp '(x) + \st \pp(x) = Q(x)$, on utilise un schéma de type volumes finis. On découpe l'intervalle $[0,1]$ en $N$ intervalles $M_i$ de taille régulière $dx=1/N$. $\pp$ est définie sur les extrémités des intervalles et $\ppb$ comme la moyenne spatiale de $\pp$ sur chacun de ces intervalles (cf figure). On considère que $\st$ et $Q$ sont constants sur chaque maille $M_i$ et on note respectivement $\st^i$ et $Q^i$ leurs valeurs sur l'intervalle $M_i$.
 \vspace{0.5cm}
 
 \begin{tikzpicture}
@@ -591,21 +592,21 @@ Pour résoudre le problème spatial général en $\pp$ qui est $\mu \ppt '(x) + 
 	\draw[red] (10 cm,1pt) -- (10 cm,-1pt) node[anchor=south] {$\pp_N$};
 	\draw[red] (0 cm,1pt) -- (0 cm,-1pt) node[anchor=south] {$\pp_0$};
 
-	\draw[blue] (1 cm,1pt) -- (1 cm,-1pt) node[anchor=south] {$\ppt_1$};
-	\draw[blue] (3 cm,1pt) -- (3 cm,-1pt) node[anchor=south] {$\ppt_2$};
-	\draw[blue] (9 cm,1pt) -- (9 cm,-1pt) node[anchor=south] {$\ppt_{N}$};
+	\draw[blue] (1 cm,1pt) -- (1 cm,-1pt) node[anchor=south] {$\ppb_1$};
+	\draw[blue] (3 cm,1pt) -- (3 cm,-1pt) node[anchor=south] {$\ppb_2$};
+	\draw[blue] (9 cm,1pt) -- (9 cm,-1pt) node[anchor=south] {$\ppb_{N}$};
 \end{tikzpicture}
 
 On intègre l'équation spatiale sur chaque maille ce qui donne $N$ relations
 
-\begin{equation}
+\begin{equation} 
 	\label{eq:vfinis.1}
-	\mu \left( \pp_{i+1} - \pp_i \right) + \st^i dx\  \ppt_i = \tilde{Q}^i
+	\mu \left( \pp_{i+1} - \pp_i \right) + \st^i dx\  \ppb_i = \bar{Q}^i
 \end{equation}
 Pour avoir le bon nombre de relations ($2N$) comme le nombre de degrés de liberté inconnus (les conditions de flux entrant imposent une des valeurs $\pp_0$ ou $\pp_N$ selon le signe de $\mu$), on ajoute une relation de fermeture. Cette relation impose que $\pp$ soit affine par morceaux
 
 \begin{equation}
-	\ppt_i = \frac{1}{2}(\pp_{i+1}-\pp_i)
+	\ppb_i = \frac{1}{2}(\pp_{i+1}-\pp_i)
 \end{equation}
 
 On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation contenant uniquement $\pp$. Comme le sens de propagation change en fonction de $\mu$, on veut une expression de $\pp_i$ en fonction de son antécédent, que ce soit $\pp_{i-1}$ ou $\pp_{i+1}$. On note $\pp_i^+$ le terme qu'on cherche à calculer et $\pp_i^-$ le terme précédent selon le sens de propagation.
@@ -615,17 +616,14 @@ On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation conten
 	\pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
 \end{equation}
 
-On en déduit ensuite $\ppt_i$ grâce à la relation de fermeture.
-
-\vspace{0.2cm}
-En fixant $\mu$, on utilise ce processus une unique fois et on obtient $\psi_t$ pour tous les intervalles souhaités. On peut comparer visuellement la solution obtenue avec la solution théorique avant de regarder la convergence de l'erreur en faisant diminuer le pas de discrétisation $dx$. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). La vitesse de convergence est de $2$ ce qui estune bonne vitesse pour une méthode numérique.
+On en déduit ensuite $\ppb_i$ grâce à la relation de fermeture. C'est la grandeur à laquelle nous allon snous intéresser car c'est l'unique que l'on peut calculer quand il y a de la dispersion, et nous voulons un solveur général pour tous les cas physiques. Ce que nous appelons donc la \textit{solution calculée} i.e. la sortie de notre algorithme est l'approximation constante par morceaux $\pp(x \in [(i-1)dx;idx],\mu \text{ fixé }) = \ppb_i$.
 
 \begin{figure}[ht!]
 	\centering
 	\begin{subfigure}{.49\textwidth}
 		\centering
 		\includegraphics[scale=0.42]{Figures/q9_soletcalc.png}
-		\caption{Résultats pour différents $\mu$}
+		\caption{Comparaison de la solution théorique et calculée}
 		\label{fig:q9.sol}
 	\end{subfigure}
 	\begin{subfigure}{.49\textwidth}
@@ -634,9 +632,11 @@ En fixant $\mu$, on utilise ce processus une unique fois et on obtient $\psi_t$ 
 		\caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
 		\label{fig:q9.errl2}
 	\end{subfigure}
-	\caption{Etude de la simulation de $\psit(x)$}
+	\caption{Etude de la simulation de $\bar{\psi}(x)$, source ponctuelle en 0}
 	\label{fig:q9}
 \end{figure}
+
+En fixant $\mu$, on utilise ce processus une unique fois et on obtient $\psi_t$ pour tous les intervalles souhaités. On peut comparer visuellement la solution obtenue avec la solution théorique avant de regarder la convergence de l'erreur en faisant diminuer le pas de discrétisation $dx$. En effet on commet une erreur en assimilant $\pp$ à une fonction affine par morceaux, erreur qui diminue cependant avec $dx$ la largeur des intervalles comme sur la figure (\ref{fig:q9.errl2}). La vitesse de convergence est de $2$ ce qui est une vitesse satisfaisante pour une méthode numérique.
 
 \subsubsection{Source uniforme}
 On peut utiliser exactement la même méthode pour trouver la solution dans le cas d'une source homogène. On rappelle le résultat de la partie 1 : dans ces conditions la solution vaut
@@ -647,7 +647,7 @@ On peut utiliser exactement la même méthode pour trouver la solution dans le c
 	\end{aligned}  \right.
 \end{equation*}
 
-On peut faire les mêmes analyses que dans le cas de la source ponctuelle. On affiche la solution obtenue pour $N_x=25$ et l'erreur en fonction de $N_x$
+On peut faire les mêmes analyses que dans le cas de la source ponctuelle. On affiche la solution obtenue pour $N_x=25$ et l'erreur en fonction de $N_x$ sur les graphes de la figure (\ref{fig:q10}).
 
 \begin{figure}[ht!]
 	\centering
@@ -659,12 +659,12 @@ On peut faire les mêmes analyses que dans le cas de la source ponctuelle. On af
 	\end{subfigure}
 	\begin{subfigure}{.49\textwidth}
 		\centering
-		\includegraphics[scale=0.42]{Figures/q9_cv_ordre2.png}
+		\includegraphics[scale=0.42]{Figures/q10_err_l2.png}
 		\caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
 		\label{fig:q10.errl2}
 	\end{subfigure}
-	\caption{Etude de la simulation de $\psit(x)$}
-	\label{fig:q9}
+	\caption{Etude de la simulation de $\ppt(x)$ source uniforme}
+	\label{fig:q10}
 \end{figure}
 
 \subsubsection{Matériau non homogène}
@@ -672,10 +672,28 @@ On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}.
 
 Il faut bien attention à fournir au solveur une liste de $\st^i$ de la taille du nombre de mailles et à couper le domaine de façon à conserver $\st^i$ constant par maille. Comme ici $\st$ change de valeur en $0.3$ et $0.7$, il suffit de prendre un nombre de mailles multiple de 10 en $x$ pour être certain d'éviter tout problème avec la définition des $\st^i$.
 
-Voici les résultats obtenus
+Voici les résultats obtenus sur la figure (\ref{fig:q11}). On peut remarquer que dans l'intervalle $[0.3;0.7]$ l'erreur commise par l'approximation constante par morceaux est plus grande. Ceci est lié à la pente de la solution qui augmente avec $\st$. Ceci se ressent dans l'erreur $\mathcal{L}$, qui converge toujours en $O(dx^2)$ mais avec un facteur 10 par rapport aux cas précédents. Si on étudie les cas précédents à $\st=3$ constant  ou avec $\mu<1$ on trouve des résultats similaires.
 
 
+\begin{figure}[ht!]
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q11_soletcalc.png}
+		\caption{Comparaison de la solution théorique et calculée}
+		\label{fig:q11.sol}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q11_err_l2.png}
+		\caption{Erreur $\mathcal{L}^2$ en fonction de $N$}
+		\label{fig:q11.errl2}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\ppt(x)$ avec $\st$ non homogène}
+	\label{fig:q11}
+\end{figure}
 
+\vspace{0.5cm}
 \subsection{Matériau diffusant}
 On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions de chaque arc de cercle pour obtenir $\ppt(x)$.
 
@@ -696,6 +714,21 @@ Pour découpler les différents termes d'angles on utilise l'itération sur les 
 Il faut donc à chaque étape résoudre un problème spatial comme précédemment avec pour source $Q(x) = S(x) + \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) $. On utilise donc le solveur précédent, englobé dans une double boucle, en $n$ pour l'itération sur les sources et en $k$ pour tous les angles.
 
 On a démontrer que la différence entre deux itérations en $n$, $e^n =\pp^n-\pp^{n-1} $ converge vers 0 en norme $\mathcal{L}^1$ en l'injectant dans l'équation. Donc $\pp^n$ est une suite de Cauchy dans $\mathcal{L}^1$ qui est un Banach : elle converge. On utilise donc un critère de Cauchy pour arrêter l'algorithme d'itération sur les sources. On se fixe une erreur maximale $\eta$ et on continue les itérations en $n$ tant que $||\phi^{n}-\phi^{n-1}||>\eta$.
+
+\vspace{0.2cm}
+Dans ce cas-ci nous n'avons pas la solution alytique de l'équation. Une méthode de vérification est toutefois de comparer qualitativement avec la solution obtenue dans le cas Monte-Carlo. Parler de convergence d'une solution vers l'autre alors qu'elles sont toutes les deux approchées n'est pas envisagé. La figure (\ref{fig:q12.MC.deter}) montre les résultats par simulation Monte-Carlo et déterministe. Nous avons fixé $\eta=10^{-9}$ et l'algorithme avait convergé en $46$ itérations. La courbe déterministe est bien plus lisse que la courbe M0nte-Carlo et obtenue en un temps bien inférieur :  3 secondes pour Monte-Carlo et 0.2 secondes pour le code déterministe.
+
+\vspace{0.2cm}
+Pour étudier l'impact des paramètres du calcul déterministe on peut se donner un cas très raffiné ($N_x$ et $N_\mu$ très grands), prendre cette simulation comme référence et regarder l'erreur commise par rapport à cette référence pour des paramètres bien plus petits. Pour faire varier $N_x$ cela demande d'interpoler notre solution moins raffinée sur le maillage plus raffiné. Comme nous avons déjà regardé l'impact de $N_x$ sur les simulations nous préférons nous concentrer sur $N_\mu$. 
+
+On prend $N_\mu=10^4$ de référence 
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.42]{Figures/q12_comp.png}
+	\caption{Cas purement diffusant : solutions Monte-Carlo et deterministe}
+	\label{fig:q12.MC.deter}
+\end{figure}
 
 
 
@@ -727,9 +760,8 @@ On moyenne ($\epsilon^{1}$) en $\mu$ et on utilise le résultat précédent, et 
 \begin{align*}
 	\frac{-1}{3 \sigma_t}  \frac{d^2 \ppteps^0}{d x^2} + \sa \ppteps^0                    & = 1 \\
 	\frac{1}{2} \int_{-1}^1 \mu \frac{\partial \ppeps^2}{\partial x} d\mu + \sa \ppteps^1 & = 0
-\end{align*}Problem p;
-buildLinearSystem(p, m, alpha, f);
-bu
+\end{align*}
+
 
 Cette dernière équation fait apparaître une intégrale avec $\ppeps^2$ que l'on fait aussi apparaître dans $\frac{\mu}{\sigma_t} \frac{\partial (\epsilon^{1})}{\partial x}$. En joignant les deux on obtient
 \begin{equation*}
@@ -746,7 +778,10 @@ On peut maintenant regarder la solution de ce problème pour $\sigma_a=0$ et $\s
 \begin{equation}
 	\frac{-1}{3} \ppt_0(x)'' = 1
 \end{equation}
-soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3}{2}x^2+bx+c$. Pour déterminer les coefficients on utilise la symétrie de la solution par rapport à la droite $x=\frac{1}{2}$ qui donne $b=3$. L'ordonnée à l'origine est donnée par les conditions aux limites de flux entrant nul.
+soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3}{2}x^2+bx+c$. Pour déterminer les coefficients on utilise la symétrie de la solution par rapport à la droite $x=\frac{1}{2}$ qui donne $b=\frac{3}{2}$. L'ordonnée à l'origine est donnée par les conditions aux limites de Dirichlet homogène. On obtient donc la solution théorique à la limite de diffusion
+\begin{equation}
+	\ppt_0(x) = \frac{3}{2}x(1-x)
+\end{equation}
 
 On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
 
@@ -760,6 +795,9 @@ On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'i
 Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique.
 
 Avant de passer à l'accélération regardons l'impact des paramètres $N_x$ et $N_\mu$ sur l'erreur.
+
+
+
 
 \subsection{Accélération par diffusion synthétique}
 

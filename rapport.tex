@@ -166,16 +166,48 @@ On multiplie l'équation par $e^{\frac{\st x}{\mu}}$ et on intègre entre $0$ et
 	\iff  \psi(x,\mu)                           & = \frac{1}{\mu} e^{-\frac{\st x}{\mu}}
 \end{align*}
 
+Pour simuler ce flux neutronique avec un solveur Monte-Carlo sur un intervale de
+largeur $dx$ centré en x, l'idée de base est de tirer un grand nombre de
+particule dans le domaine et de compter celle qui s'arrêtent dans l'intervalle.
+Plus précisément, on considère une subdivision du domaine $[0,1] = \bigcup_i
+	[x_i,x_{i+1}]$ et on va compter le nombre de particule dans chaque
+sous-intervalle.
 
-Pour simuler ce flux neutronique avec un solveur Monte-Carlo on commence par tirer une direction de départ $\mu_0$ avec une loi uniforme $\mathcal{U}[-1,1]$.
-Le point de départ est $x_0 = 0$ puisque la seule source se trouve en ce point. Puis on tire la distance parcourue par ce neutron selon la loi du libre parcours établie précédemment.
-Le neutron finit sa trajectoire au point $x_1$ avec toujours la direction $\mu_0$.
-Ceci donne alors une distributions de neutrons avec une densité $f_{\psi}$ égale au libre parcours.
-
+Pour simuler une particule, on choisi au début d'une itération une direction de
+départ $\mu_0$ avec une loi uniforme $\mathcal{U}[-1,1]$, puis on la fait avancer
+d'une distance $l_0$ suivant la loi de libre parcourt :
 \begin{equation*}
 	f_{\psi}(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \psi(x_1,\mu)
 \end{equation*}
+Une fois la particule arrêtée, soit elle est encore dans le domaine et on la
+compte, soit elle est sortie du domaine et on s'en occupe plus.
 
+% Une fois la particule arrêtée et si elle est encore dans le domaine $[0,1]$, on
+% regarde si elle s'est arrêté à cause d'une
+% absorption ou d'une collision en effectuant un test de Bernoulli de probabilité
+% $\frac{\Sigma_S}{\Sigma_t}$. Pour simuler cette loi, on tire un nombre aléatoire
+% $b$ dans $[0,1]$ et si $b > \frac{\Sigma_S}{\Sigma_t}$, la particule est
+% absorbée et sinon elle reste dans la simulation et on recommence le processus en
+% tirant une nouvelle direction $\mu$.
+
+% \bigskip
+
+% On effectue l'algorithme pour un grand nombre de particule, ce qui nous permet
+% de calculer le flux neutronique sur chaque intervale $[x_i,x_{i+1}]$.
+% L'algorithme s'arrête soit au bout d'un nombre d'itération fixé, soit quand il
+% n'y a plus de particules, car elle sont toutes sorties ou ont été absorbées.
+
+% Pour simuler ce flux neutronique avec un solveur Monte-Carlo, on commence par
+% tirer une direction de départ $\mu_0$ avec une loi uniforme $\mathcal{U}[-1,1]$.
+
+% Le point de départ est $x_0 = 0$ puisque la seule source se trouve en ce point. Puis on tire la distance parcourue par ce neutron selon la loi du libre parcours établie précédemment.
+% Le neutron finit sa trajectoire au point $x_1$ avec toujours la direction $\mu_0$.
+% Ceci donne alors une distributions de neutrons avec une densité $f_{\psi}$ égale au libre parcours.
+
+% \begin{equation*}
+% 	f_{\psi}(x_1) = \frac{\st}{\mu}e^{-\frac{\st}{\mu}x_1} = \st \psi(x_1,\mu)
+% \end{equation*}
+\bigskip
 La probabilité pour un neutron de se trouver dans un intervalle $[a,b]$ est donc donnée par l'intégrale de $\pp$ sur cet interval à un facteur $\st$ près.
 En prenant un intervalle de longueur $dx$ négligeable devant $1$ (la taille de notre intervalle d'étude) on obtient
 
@@ -183,21 +215,21 @@ En prenant un intervalle de longueur $dx$ négligeable devant $1$ (la taille de 
 	\psi(x,\mu) = \lim\limits_{dx \rightarrow 0} \frac{\PP(x_1 \in [x-dx/2,x+dx/2] | \mu)}{\st dx}
 \end{equation}
 
-Pour approcher numériquement $\psi$, on commence par discrétiser l'intervale
-$[0,1]$ en sous-intervalles $[x_i,x_{i+1}]$, de longueur $h$. Puis on simule un grand nombre de particule
-Monte-Carlo, suivant le principe suivant :
-\begin{enumerate}
-	\item toutes les particules Monte-carlo ont pour position initiale $x=0$,
-	\item pour chaque particule, on tire une distance de libre parcours suivant la
-	      loi $f_\psi$ et on note la position d'arrivée de chaque particule,
-	\item on retient $C_0^i$ égal au nombre de particule dans
-	      l'intervalle $[x_i,x_{i+1}]$,
-	\item on relance les particules encore dans l'intervalle, puis on compte à
-	      nouveau le nombre de particule dans chaque intervalle, qu'on retiens dans
-	      $C_1^i$ et ainsi de suite\dots
-\end{enumerate}
-Finalement, la fréquence totale est $freq^i = \frac{1}{N} \sum_n C_n^i$.
-On peut ainsi approximer $\psi(x_{i+1/2},\mu)$ par $\frac{1}{\Sigma_t h} freq^i$.
+% Pour approcher numériquement $\psi$, on commence par discrétiser l'intervale
+% $[0,1]$ en sous-intervalles $[x_i,x_{i+1}]$, de longueur $h$. Puis on simule un grand nombre de particule
+% Monte-Carlo, suivant le principe suivant :
+% \begin{enumerate}
+% 	\item toutes les particules Monte-carlo ont pour position initiale $x=0$,
+% 	\item pour chaque particule, on tire une distance de libre parcours suivant la
+% 	      loi $f_\psi$ et on note la position d'arrivée de chaque particule,
+% 	\item on retient $C_0^i$ égal au nombre de particule dans
+% 	      l'intervalle $[x_i,x_{i+1}]$,
+% 	\item on relance les particules encore dans l'intervalle, puis on compte à
+% 	      nouveau le nombre de particule dans chaque intervalle, qu'on retiens dans
+% 	      $C_1^i$ et ainsi de suite\dots
+% \end{enumerate}
+% Finalement, la fréquence totale est $freq^i = \frac{1}{N} \sum_n C_n^i$.
+% On peut ainsi approximer $\psi(x_{i+1/2},\mu)$ par $\frac{1}{\Sigma_t h} freq^i$.
 
 % En approximant la probabilité par la fréquence lors d'un grand nombre de tirage, nous sommes bien capables de trouver $\psi(x,\mu)$ pour tout $x$.
 \medskip
@@ -223,6 +255,16 @@ solutions de manière visible et feront ici 25 intervalles.
 \vspace{0.2cm}
 Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
 on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vrai.
+
+Pour ce faire, on considère la variable aléatoire $X$ nous donnant le nombre de
+particules dans l'intervalle $I_i = [x_i,x_{i+1}]$, de probab
+
+\begin{equation*}
+	p_{i|\mu_0} = \int_{I_i} \frac{\psi(x,\mu_0)}{\int_0^1 \psi(y,\mu_0)dy}dx = 
+	\int_{I_i} \Sigma_S \psi(x,\mu_0)dx 
+\end{equation*}
+Or le nombre de particule dans l'intervale suit une loi binomiale à $N_x$
+répétitions et de probabilité $p_i$. Ainsi, l'esp
 
 Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré sur ce point sur lequel on approxime la solution par sa valeur en $x$. On peut considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de particules
 
@@ -258,21 +300,21 @@ Pour la représentation des intervalles de confiance, on remarque que pour $N=10
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
 \begin{figure}[ht!]
-    \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb10_2.png}
-        \caption{$10$ intervalles}
-        \label{fig:q4.nb10}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25.png}
-        \caption{$25$ intervalles}
-        \label{fig:q4.nb25}
-    \end{subfigure} 
-    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
-    \label{fig:q4.nb_points}
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb10_2.png}
+		\caption{$10$ intervalles}
+		\label{fig:q4.nb10}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.42]{Figures/q4_ic_n1e4_nb25.png}
+		\caption{$25$ intervalles}
+		\label{fig:q4.nb25}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psi(x,\mu=1)$}
+	\label{fig:q4.nb_points}
 \end{figure} s
 
 Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de la solution exacte. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages. C'est pour cette raison que la taille de l'intervalle de fluctuation dépend de la taille des intervalles $dx$.
@@ -327,21 +369,21 @@ Comme pour le cas de la source ponctuelle on regarde d'abord l'allure de la solu
 Pour $\mu<0$ le cas est symétrique par rapport au centre de l'intervalle.
 
 \begin{figure}[htp!]
-    \centering
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/Q5_fx_solution.png}
-        \caption{Allures de $\pp(x,\mu)$}
-        \label{fig:q5.allures}
-    \end{subfigure}
-    \begin{subfigure}{.49\textwidth}
-        \centering
-        \includegraphics[scale=0.45]{Figures/q5__ic_n1e5_nb25.png}
-        \caption{Simulation et intervalle de confiance }
-        \label{fig:q5.ic}
-    \end{subfigure}
-    \caption{Etude de la simulation de $\psi(x,\mu=1)$}
-    \label{fig:q5} 
+	\centering
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.45]{Figures/Q5_fx_solution.png}
+		\caption{Allures de $\pp(x,\mu)$}
+		\label{fig:q5.allures}
+	\end{subfigure}
+	\begin{subfigure}{.49\textwidth}
+		\centering
+		\includegraphics[scale=0.45]{Figures/q5__ic_n1e5_nb25.png}
+		\caption{Simulation et intervalle de confiance }
+		\label{fig:q5.ic}
+	\end{subfigure}
+	\caption{Etude de la simulation de $\psi(x,\mu=1)$}
+	\label{fig:q5}
 \end{figure}
 
 La solution est toujours nulle en $x=0$ comme imposé par la condition de flux entrant nul.
@@ -399,13 +441,13 @@ Le même raisonnement donne
 
 On est donc capable d'écrire la solution théorique dont on voit deux allures pour deux valeurs de $\mu$ différentes sur la figure (\ref{fig:q5.allures}).
 \begin{figure}[htp!]
-    \centering
-    \includegraphics[scale=0.5]{Figures/q6_sol_theorique.png}
-    \caption{$\pp(x,\mu)$ théorique dans le cas $\st$ non homogène}
-    \label{fig:q5.allures}
+	\centering
+	\includegraphics[scale=0.5]{Figures/q6_sol_theorique.png}
+	\caption{$\pp(x,\mu)$ théorique dans le cas $\st$ non homogène}
+	\label{fig:q5.allures}
 \end{figure}
 
-Pour calculer la solution avec une méthode Monte-Carlo il faut mettre en oeuvre la méthode de Woodcokc qui permet de prendre en compte les variations de $\st$. 
+Pour calculer la solution avec une méthode Monte-Carlo il faut mettre en oeuvre la méthode de Woodcokc qui permet de prendre en compte les variations de $\st$.
 
 
 
@@ -462,7 +504,23 @@ On peut donc calculer tous les flux collisionnés. Comme la solution de l'équat
 on a
 $$\ppt(x) = \sum_{k=1}^\infty \epst^k + \ppt^0$$
 
-Dans la pratique on procède par \textit{batch} de particules. On choisit un nombre $N$ de particules au départ. On détermine le flux non collisionné issu, puis le flux une fois collisionné des particules encore dans l'intervalle et on ajoute cette contribution à celle du flux non collisionné. Tant qu'il reste des particules (non absorbées ou sorties) on continue les itérations et on ajoute les contributions à ce qui précède. Une fois qu'il n'y a plus de particules on a calculé $\ppt(x)$.
+Dans la pratique on procède par \textit{batch} de particules. On choisit un
+nombre $N$ de particules au départ. On détermine le flux non collisionné issu,
+puis le flux une fois collisionné des particules encore dans l'intervalle et on
+ajoute cette contribution à celle du flux non collisionné.
+
+\medskip
+
+Pour ce faire, pour chaque particule, on calcule une nouvelle position. Une fois la particule arrêtée et si elle est encore dans le domaine $[0,1]$, on
+regarde si elle s'est arrêté à cause d'une absorption ou d'une collision en
+effectuant un test de Bernoulli de probabilité $\frac{\Sigma_S}{\Sigma_t}$. Pour
+simuler cette loi, on tire un nombre aléatoire $b$ dans $[0,1]$ et si $b >
+	\frac{\Sigma_S}{\Sigma_t}$, la particule est absorbée et sinon elle reste dans
+la simulation.
+
+\medskip
+
+Tant qu'il reste des particules (non absorbées ou sorties) on continue les itérations et on ajoute les contributions à ce qui précède. Une fois qu'il n'y a plus de particules on a calculé $\ppt(x)$.
 
 En intégrant sur un petit intervalle autour de $x$ on obtient une formule explicite pour calculer $\ppt$ avec une simulation Monte-Carlo
 \begin{equation}
@@ -553,8 +611,8 @@ Pour avoir le bon nombre de relations ($2N$) comme le nombre de degrés de liber
 On peut donc transformer l'équation (\ref{eq:vfinis.1}) en une équation contenant uniquement $\pp$. Comme le sens de propagation change en fonction de $\mu$, on veut une expression de $\pp_i$ en fonction de son antécédent, que ce soit $\pp_{i-1}$ ou $\pp_{i+1}$. On note $\pp_i^+$ le terme qu'on cherche à calculer et $\pp_i^-$ le terme précédent selon le sens de propagation.
 
 \begin{equation}
-    \label{eq:phiplus}
-    \pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
+	\label{eq:phiplus}
+	\pp_i^+ = \frac{2 dx \tilde{Q}^i+(2|\mu| - dx \st^i)\pp_i^-}{2|\mu| + dx \st^i}
 \end{equation}
 
 On en déduit ensuite $\ppt_i$ grâce à la relation de fermeture.
@@ -592,7 +650,7 @@ On peut utiliser exactement la même méthode pour trouver la solution dans le c
 On peut faire les mêmes analyses que dans le cas de la source ponctuelle.
 
 \subsubsection{Matériau non homogène}
-On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. La solution théorique est toujours la même mais cette fois-ci nous n'avons plus besoin de modifier le solveur pour prendre en compte les variations de $\st$ puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$. 
+On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. La solution théorique est toujours la même mais cette fois-ci nous n'avons plus besoin de modifier le solveur pour prendre en compte les variations de $\st$ puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$.
 
 Il faut bien attention à fournir au solveur une liste de $\st^i$ de la taille du nombre de mailles et à couper le domaine de façon à conserver $\st^i$ constant par maille. Comme ici $\st$ change de valeur en $0.3$ et $0.7$, il suffit de prendre un nombre de mailles multiple de 10 en $x$ pour être certain d'éviter tout problème avec la définition des $\st^i$.
 
@@ -607,19 +665,19 @@ On met en place la méthode des ordonnées discrète qui est une méthode de col
 
 On a alors $\forall 0 \leqslant k \leqslant N_\mu-1$
 \begin{equation}
-    \label{eq:semi.discrete.mu}
-    \mu_k \frac{\partial \pp_k}{\partial x} (x) + \st \pp_k(x) = \frac{\Ssss(x)}{2} \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l(x) + S(x)
+	\label{eq:semi.discrete.mu}
+	\mu_k \frac{\partial \pp_k}{\partial x} (x) + \st \pp_k(x) = \frac{\Ssss(x)}{2} \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l(x) + S(x)
 \end{equation}
 
 Pour découpler les différents termes d'angles on utilise l'itération sur les sources qui donne le problème : $\forall n \geqslant 1, \forall 0 \leqslant k \leqslant N_\mu-1$
 \begin{equation}
-    \label{eq:semi.discret.IS}
-    \mu_k \frac{\partial \pp_k^n}{\partial x} (x) + \st \pp_k^n(x) = \frac{\Ssss(x)}{2} \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) + S(x)
+	\label{eq:semi.discret.IS}
+	\mu_k \frac{\partial \pp_k^n}{\partial x} (x) + \st \pp_k^n(x) = \frac{\Ssss(x)}{2} \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) + S(x)
 \end{equation}
 
-Il faut donc à chaque étape résoudre un problème spatial comme précédemment avec pour source $Q(x) = S(x) + \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) $. On utilise donc le solveur précédent, englobé dans une double boucle, en $n$ pour l'itération sur les sources et en $k$ pour tous les angles. 
+Il faut donc à chaque étape résoudre un problème spatial comme précédemment avec pour source $Q(x) = S(x) + \sum _{l=0}^{N_\mu-1} \frac{d\mu}{2} \pp_l^{n-1}(x) $. On utilise donc le solveur précédent, englobé dans une double boucle, en $n$ pour l'itération sur les sources et en $k$ pour tous les angles.
 
-On a démontrer que la différence entre deux itérations en $n$, $e^n =\pp^n-\pp^{n-1} $ converge vers 0 en norme $\mathcal{L}^1$ en l'injectant dans l'équation. Donc $\pp^n$ est une suite de Cauchy dans $\mathcal{L}^1$ qui est un Banach : elle converge. On utilise donc un critère de Cauchy pour arrêter l'algorithme d'itération sur les sources. On se fixe une erreur maximale $\eta$ et on continue les itérations en $n$ tant que $||\phi^{n}-\phi^{n-1}||>\eta$. 
+On a démontrer que la différence entre deux itérations en $n$, $e^n =\pp^n-\pp^{n-1} $ converge vers 0 en norme $\mathcal{L}^1$ en l'injectant dans l'équation. Donc $\pp^n$ est une suite de Cauchy dans $\mathcal{L}^1$ qui est un Banach : elle converge. On utilise donc un critère de Cauchy pour arrêter l'algorithme d'itération sur les sources. On se fixe une erreur maximale $\eta$ et on continue les itérations en $n$ tant que $||\phi^{n}-\phi^{n-1}||>\eta$.
 
 
 
@@ -651,7 +709,9 @@ On moyenne ($\epsilon^{1}$) en $\mu$ et on utilise le résultat précédent, et 
 \begin{align*}
 	\frac{-1}{3 \sigma_t}  \frac{d^2 \ppteps^0}{d x^2} + \sa \ppteps^0                    & = 1 \\
 	\frac{1}{2} \int_{-1}^1 \mu \frac{\partial \ppeps^2}{\partial x} d\mu + \sa \ppteps^1 & = 0
-\end{align*}
+\end{align*}Problem p;
+buildLinearSystem(p, m, alpha, f);
+bu
 
 Cette dernière équation fait apparaître une intégrale avec $\ppeps^2$ que l'on fait aussi apparaître dans $\frac{\mu}{\sigma_t} \frac{\partial (\epsilon^{1})}{\partial x}$. En joignant les deux on obtient
 \begin{equation*}
@@ -668,7 +728,7 @@ On peut maintenant regarder la solution de ce problème pour $\sigma_a=0$ et $\s
 \begin{equation}
 	\frac{-1}{3} \ppt_0(x)'' = 1
 \end{equation}
-soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -3x^2+bx+c$. Pour déterminer les coefficients on utilise la symétrie de la solution par rapport à la droite $x=\frac{1}{2}$ qui donne $b=3$. L'ordonnée à l'origine est donnée par les conditions aux limites de flux entrant nul.
+soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3}{2}x^2+bx+c$. Pour déterminer les coefficients on utilise la symétrie de la solution par rapport à la droite $x=\frac{1}{2}$ qui donne $b=3$. L'ordonnée à l'origine est donnée par les conditions aux limites de flux entrant nul.
 
 On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
 
@@ -689,7 +749,7 @@ Pour accélérer le code dans la limite de diffusion on utilise la méthode
 d'accélération par diffusion synthétique.
 
 Cette méthode consiste à utiliser une approximation de l'équation
-(\ref{eq.transport}) par une équation de diffusion de la forme :
+(\ref{eq.transport}) dans le cas de la limite de diffusion par une équation de diffusion de la forme :
 \begin{equation}
 	\label{eq:diffusion_dsa}
 	-\mathrm{div} \left( \frac{1}{3\Sigma_t}\nabla \tilde \varphi \right) + \Sigma_a \tilde \varphi = Q
@@ -737,9 +797,10 @@ Cela nous amène à résoudre un système linéaire $\mathbb{A} F = L$ où
 
 \bigskip
 La résolution du système linéaire est effectuée par une méthode de décomposition
-de Cholesky. Le choix de cette méthode n'est pas anodin : la matrice
-$\mathbb{A}$ ne change pas au cours des itérations. Ainsi, la résolution de ce
-système est effectuée en $\mathcal{O} (n^2)$ opérations.
+de Cholesky, de sorte que la matrice EF ne soit décomposée qu'une seule fois
+pour toute au début l'algorithme. Ainsi, même si le calcul de la décomposition
+de Cholesky est effectuée en $\mathcal{O} (N_x^3)$ opérations, la résolution de ce
+système est effectuée en $\mathcal{O} (N_x^2)$ opérations pendant l'algorithme.
 
 
 

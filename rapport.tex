@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,draft]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
@@ -843,26 +843,17 @@ soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3
 	\ppt_0(x) = \frac{3}{2}x(1-x)
 \end{equation}
 
-On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
+On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables.
 
-<<<<<<< HEAD
-\vspace{0.1cm}
-\begin{tabular}{c|c|c|c|c}
-	$\bm{\epsilon}$              & 1& 0.1 & 0.01&0.001  \\
-	\textbf{Nombre d'itérations} & 71 & 505 & 24243 & ?\\
-	\textbf{Temps d'exécution} &0.09s &1.18s & 1m& >20m
-\end{tabular}
-\vspace{0.2cm}
-=======
 \begin{table}[h]
 	\centering
-	\begin{tabular}{cccc}\toprule
-		$\bm{\epsilon}$              & 1  & 0.1 & 0.01  \\ \midrule
-		\textbf{Nombre d'itérations} & 32 & 505 & 25243 \\\bottomrule
+	\begin{tabular}{ccccc}\toprule
+		$\bm{\epsilon}$              & 1  & 0.1 & 0.01  &0.001\\ \midrule
+		\textbf{Nombre d'itérations} & 32 & 505 & 25243 &?\\\bottomrule
+		\textbf{Temps d'exécution} &0.09s &1.18s & 1m& >20m
 	\end{tabular}
 \end{table}
 
->>>>>>> feb7c4d9803590e0943fa0fb5f782f52d56903f6
 
 Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue, tout comme le temps d'exécution. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique. Nous avons laissé tourner le code 20 minutes pour $\epsilon=0.001$ avant de couper l'exécution et nous n'avions toujours pas convergé. 
 
@@ -873,11 +864,12 @@ De même que dans les questions précédentes $N_x$ et $N_\mu$ améliorent la pr
 	\centering
 	\includegraphics[scale=0.6]{Figures/q14_diffepsilon.png}
 	\caption{Solution pour différents $\epsilon$}
-	\label{fig:q12.Nmu}
+	\label{fig:q12.eps}
 \end{figure}
 
-On a vu que sans accélération il est difficile de demande
+On a vu que sans accélération il est difficile de demander $\epsilon$ plus petit que $0.01$ mais sur la figure (\ref{fig:q12.eps}) on voit que ceci ne permet pas d'approcher le cas de la limite de diffusion avec une erreur $\mathcal{L}^2$ acceptable, on voit même l'erreur à l'oeil nu. 
 
+Tout ceci justifie amplement la mise en place de l'accélération par diffusion synthétique. 
 
 
 
@@ -939,6 +931,19 @@ de Cholesky, de sorte que la matrice EF ne soit décomposée qu'une seule fois
 pour toute au début l'algorithme. Ainsi, même si le calcul de la décomposition
 de Cholesky est effectuée en $\mathcal{O} (N_x^3)$ opérations, la résolution de ce
 système est effectuée en $\mathcal{O} (N_x^2)$ opérations pendant l'algorithme.
+
+\vspace{0.2cm}
+On peut regarder les résultats de simulation et vérifier d'une part que la solution est la même qu'avant la mise en place de l'accélération par diffusion synthétique et d'autre part que celle-ci permet de prendre des $\epsilon$ plus petits. 
+
+C'est ce que montre la figure (\ref{fig:q16.eps}), on a pu caluler $\epsilon=0.0001$ et la solution est confondue avec la limite de diffusion. 
+
+
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[scale=0.65]{Figures/q16_diffepsilon.png}
+	\caption{Solution pour différents $\epsilon$}
+	\label{fig:q16.eps}
+\end{figure}
 
 \bigskip
 

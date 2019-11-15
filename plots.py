@@ -41,23 +41,23 @@ mu=1
 # MC.pop()
 # MC = np.asarray(MC).astype(np.float)
 
-deter = open("Data/phi_q15_"+str(n_deter)+"_"+str(Nmu)+"_0.100000.txt", "r")
+deter = open("Data/phi_fast_"+str(n_deter)+"_"+str(Nmu)+"_epsilon0.100000.txt", "r")
 # deter = open("Data/phi_q11_"+str(n_deter)+".txt", "r")
 # deter = open("Data/phi_13_"+str(n_deter)+"_1.000000.txt", "r")
-deter = deter.read().split(',')
-deter.pop()
+deter = deter.readlines()#.split(',')
+# deter.pop()
 deter = np.asarray(deter).astype(np.float)
 
-deter_ref = open("Data/phi_q15_"+str(n_deter)+"_"+str(Nmu)+"_0.010000.txt", "r")
+deter_ref = open("Data/phi_fast_"+str(n_deter)+"_"+str(Nmu)+"_epsilon0.010000.txt", "r")
 # deter = open("Data/phi_q11_"+str(n_deter)+".txt", "r")
 # deter = open("Data/phi_13_"+str(n_deter)+"_1.000000.txt", "r")
-deter_ref = deter_ref.read().split(',')
-deter_ref.pop()
+deter_ref = deter_ref.readlines()#.split(',')
+# deter_ref.pop()
 deter_ref = np.asarray(deter_ref).astype(np.float)
 
-# deter_ref2 = open("Data/phi_fast_"+str(n_deter)+"_"+str(Nmu)+"_epsilon0.000100.txt", "r")
-# deter_ref2 = deter_ref2.readlines()#.split(',')
-# deter_ref2 = np.asarray(deter_ref2).astype(np.float)
+deter_ref2 = open("Data/phi_fast_"+str(n_deter)+"_"+str(Nmu)+"_epsilon0.000100.txt", "r")
+deter_ref2 = deter_ref2.readlines()#.split(',')
+deter_ref2 = np.asarray(deter_ref2).astype(np.float)
 
 
 
@@ -92,7 +92,7 @@ x_double = np.concatenate((np.array([0]),np.repeat(np.linspace(1/n_deter,1-1/n_d
 # plt.subplot(1,2,1)
 plt.plot(x_double,np.repeat(deter,2), label='$\epsilon=0.1$ : erreur L2=0.13')
 plt.plot(x_double,np.repeat(deter_ref,2), label='$\epsilon=0.01$ : erreur L2=0.013',linewidth=2)
-# plt.plot(x_double,np.repeat(deter_ref2,2),'k', label='$\epsilon=0.0001$', linewidth=2)
+plt.plot(x_double,np.repeat(deter_ref2,2),'k', label='$\epsilon=0.0001$ : erreur l2$ = 5.10^{-3}$', linewidth=2)
 plt.plot(x,phi_exact, 'r--', label='Limite de diffusion')
 # plt.legend()
 # plt.ylabel("$\phi$")
@@ -132,7 +132,7 @@ plt.show()
 
 errl2 = np.sum(((deter-phi_exact)**2)*dx)
 print(np.sqrt(errl2)/np.sqrt(np.sum(phi_exact**phi_exact*dx)))
-errl2 = np.sum(((phi_exact-deter_ref)**2)*dx)
+errl2 = np.sum(((phi_exact-deter_ref2)**2)*dx)
 print(np.sqrt(errl2)/np.sqrt(np.sum(phi_exact**phi_exact*dx)))
 
 Ns = np.array([2,10,100,500,1000])

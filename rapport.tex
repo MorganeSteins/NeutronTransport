@@ -256,15 +256,17 @@ solutions de manière visible et feront ici 25 intervalles.
 Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
 on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vrai.
 
-Pour ce faire, on considère la variable aléatoire $X$ nous donnant le nombre de
-particules dans l'intervalle $I_i = [x_i,x_{i+1}]$, de probab
-
+Pour ce faire, on considère la variable aléatoire $X$ nous donnant le nombre de 
+particules dans l'intervalle $I_i = [x_i,x_{i+1}]$. Cette variable aléatoire
+suit une loi binomiale de paramètre $N$ le nombre total de particules et
+$p_{i|\mu_0}$ la probabilité d'un succès, qui est donné par :
 \begin{equation*}
 	p_{i|\mu_0} = \int_{I_i} \frac{\psi(x,\mu_0)}{\int_0^1 \psi(y,\mu_0)dy}dx = 
 	\int_{I_i} \Sigma_S \psi(x,\mu_0)dx 
 \end{equation*}
-Or le nombre de particule dans l'intervale suit une loi binomiale à $N_x$
-répétitions et de probabilité $p_i$. Ainsi, l'esp
+
+Ainsi, l'espérance et la variance de $X$ sont $\mathcal{E} ( X ) = N
+p_{i|\mu_0}$ et $\mathcal{V}\mathrm{ar} (X) = N p_{i|\mu_0} (1-p_{i|\mu_0})$.
 
 Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré sur ce point sur lequel on approxime la solution par sa valeur en $x$. On peut considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de particules
 
@@ -668,7 +670,10 @@ On peut faire les mêmes analyses que dans le cas de la source ponctuelle. On af
 \end{figure}
 
 \subsubsection{Matériau non homogène}
-On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}. La solution théorique est toujours la même mais cette fois-ci nous n'avons plus besoin de modifier le solveur pour prendre en compte les variations de $\st$ puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$.
+On reprend le cas du matériau non homogène de la partie \ref{sec:nonhomog.MC}.
+La solution théorique est toujours la même mais cette fois-ci nous n'avons plus
+besoin de modifier le solveur pour prendre en compte les variations de $\st$
+puisque l'équation (\ref{eq:phiplus}) est déjà écrite avec $\st^i$. 
 
 Il faut bien attention à fournir au solveur une liste de $\st^i$ de la taille du nombre de mailles et à couper le domaine de façon à conserver $\st^i$ constant par maille. Comme ici $\st$ change de valeur en $0.3$ et $0.7$, il suffit de prendre un nombre de mailles multiple de 10 en $x$ pour être certain d'éviter tout problème avec la définition des $\st^i$.
 
@@ -679,7 +684,14 @@ Voici les résultats obtenus
 \subsection{Matériau diffusant}
 On se place maintenant dans le cas d'un matériau diffusant. Nous ne pouvons plus maintenant nous placer à $\mu$ fixé et regarder $\pp(x,\mu)$ mais seulement la valeur moyennée en angle $\ppt(x)$. Il faut donc discrétiser l'espace $[-1;1]$ des angles possibles et sommer les contributions de chaque arc de cercle pour obtenir $\ppt(x)$.
 
-On met en place la méthode des ordonnées discrète qui est une méthode de collocation : on choisit un nombre fini de directions $N_\mu$ pour lesquelles l'équation (\ref{eq.transport}) sera vérifiée. L'intégrale en angle est alors approchée par une formule de quadrature. Nous choisissons ici pour méthode de quadrature la méthode des rectangles qui nous permet de répartir les $\mu_k$ de manière homogène sur tout l'intervalle $[-1;1]$. On a alors $\mu_k = (k + 1/2)d\mu - 1$ où $d\mu = \frac{2}{N_\mu}$ et $k \in \{0,\dots ,N_{\mu}-1\}$. Le poids associé à chaque $\mu_k$ est le même : $d\mu$.
+On met en place la méthode des ordonnées discrète qui est une méthode de
+collocation : on choisit un nombre fini de directions $N_\mu$ pour lesquelles
+l'équation (\ref{eq.transport}) sera vérifiée. L'intégrale en angle est alors
+approchée par une formule de quadrature. Nous choisissons ici pour méthode de
+quadrature la méthode des rectangles qui nous permet de répartir les $\mu_k$ de
+manière homogène sur tout l'intervalle $[-1;1]$. On a alors $\mu_k = (k +
+1/2)d\mu - 1$ où $d\mu = \frac{2}{N_\mu}$ et $k \in \{0,\dots ,N_{\mu}-1\}$. Le
+poids associé à chaque $\mu_k$ est le même : $d\mu$. 
 
 On a alors $\forall 0 \leqslant k \leqslant N_\mu-1$
 \begin{equation}

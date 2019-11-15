@@ -261,7 +261,7 @@ solutions de manière visible et feront ici 25 intervalles.
 
 \vspace{0.2cm}
 Enfin, il faut une estimation de la fiabilité de nos résultats. Pour ce faire,
-on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vrai.
+on va procéder par intervalle de fluctuation à 95\%. L'intervalle de fluctuation à 95\% donne l'intervalle de valeurs dans lequel 95\% de nos mesures doivent être, en postulant que la théorie (notre code est juste) est vraie.
 
 Pour ce faire, on considère la variable aléatoire $X$ nous donnant le nombre de
 particules dans l'intervalle $I_i = [x_i,x_{i+1}]$. Cette variable aléatoire
@@ -289,19 +289,6 @@ Cette estimation nous donne un intervalle asymptotique de confiance :
 	I_c^i = \left[\psi - 1.96 \sqrt{\frac{\mathbb{V}\mathrm{ar}(X)}{N\Delta x}} , \psi + 1.96 \sqrt{\frac{\mathbb{V}\mathrm{ar}(X)}{N\Delta x}} \right]
 \end{equation*}
 
-% Pour ce faire on prend un point $x$ et l'intervalle $[x-dx/2;x+dx/2]$ centré
-% sur ce point sur lequel on approxime la solution par sa valeur en $x$. On peut
-% considérer la variable aléatoire de Bernoulli de probabilité $p$ : suis-je
-% dans l'intervalle ou non ? On a $p= dx \ppt(x)$. Après $N$ tirages de
-% particules 
-
-% La variance de notre résultat est donné par l'estimateur $Var_i\frac{freq^i
-% 		(1-freq^i)}{N}$. Par ailleurs, on connaît la solution exacte de notre problème,
-% donc on va centrer l'intervalle autour de la solution exacte. Cela nous donne un
-% intervalle de confiance de la forme :
-% \begin{equation*}
-% 	I_c^i = [\psi - 1.96 \sqrt{Var_i},\psi + 1.96 \sqrt{Var_i}].
-% \end{equation*}
 
 \begin{figure}[ht!]
 	\centering
@@ -333,6 +320,7 @@ vers l'espérance de la valeur ponctuelle de $\pp$.
 
 \vspace{0.1cm}
 Il est intéressant de regarder à $N$ fixé comment évolue la précision de notre simulation en fonction du nombre d'intervalles.
+
 \begin{figure}[ht!]
 	\centering
 	\begin{subfigure}{.49\textwidth}
@@ -349,7 +337,7 @@ Il est intéressant de regarder à $N$ fixé comment évolue la précision de no
 	\end{subfigure}
 	\caption{Etude de la simulation de $\psi(x,\mu=1)$}
 	\label{fig:q4.nb_points}
-\end{figure} s
+\end{figure}
 
 Sur la figure (\ref{fig:q4.nb_points}) on remarque que pour $25$ intervalles les points sont beaucoup plus loin de la solution exacte. En effet pour un même nombre de tirages il y a plus d'intervalles donc moins de particules par intervalle. Ceci montre que si on veut une estimation plus précise spatialement (i.e. réduire la taille des intervalles), il faut augmenter le nombre de tirages. C'est pour cette raison que la taille de l'intervalle de fluctuation dépend de la taille des intervalles $dx$.
 
@@ -565,7 +553,7 @@ L'indice $k+1$ vient du fait que l'on note $x_k$ la position de départ de l'it�
 
 \vspace{0.2cm}
 \subsubsection{Résultats}
-Contrairement aux cas précédents on ne connaît pas la solution analytique, mais on sait que la solution doit être symétrique par rapport à $x=1/2$. Il serait possible de tester que notre code fonctionne bien en prenant une solution manufacturée. Il faut alors déterminer la source à l'origine de ce flux neutronique puis tirer les particules de départ selon la densité de cette source et enfin comparer les résultats. Nous avons cependant manqué de temps pour ce rapport préliminaire pour mettre en oeuvre cette méthode.
+Contrairement aux cas précédents on ne connaît pas la solution analytique, mais on sait que la solution doit être symétrique par rapport à $x=1/2$. Il serait possible de tester que notre code fonctionne bien en prenant une solution manufacturée. Il faudrait alors déterminer la source à l'origine de ce flux neutronique puis tirer les particules de départ selon la densité de cette source et enfin comparer les résultats. 
 
 \begin{figure}[htp!]
 	\centering
@@ -575,6 +563,8 @@ Contrairement aux cas précédents on ne connaît pas la solution analytique, ma
 \end{figure}
 La figure (\ref{fig:q8}) montre la simulation pour $N=10^7$ tirages et $100$ intervalles.
 Elle est bien symétrique et régulière (sans sursaut lié à un point aberrant).
+
+Il est important de noter que pour $N=10^7$ particules le temps de calcul est déjà de plusieurs secondes. Augmenter le nombre d'intervalles et donc $N$ pour conserver un intervalle de confiance de même largeur ferait donc rapidement exploser les temps de calcul. 
 
 \subsubsection{Conclusion Monte-Carlo}
 La méthode Monte-Carlo permet de calculer $\pp$ et $\ppt$ dans plusieurs cas 1D.
@@ -785,7 +775,7 @@ pour Monte-Carlo et 0.2 secondes pour le code déterministe.
 \vspace{0.2cm}
 Pour étudier l'impact des paramètres du calcul déterministe on peut se donner un cas très raffiné ($N_x$ et $N_\mu$ très grands), prendre cette simulation comme référence et regarder l'erreur commise par rapport à cette référence pour des paramètres bien plus petits. Pour faire varier $N_x$ cela demande d'interpoler notre solution moins raffinée sur le maillage plus raffiné. Comme nous avons déjà regardé l'impact de $N_x$ sur les simulations nous préférons nous concentrer sur $N_\mu$.
 
-On prend $N_\mu=10^4$ de référence et on regarde pour des $N_\mu$ au moins $10$ fois plus petits. On remarque d'abord que le nombre d'itérations reste globalement le même. On a ensuite une convergence de cette pseudo-erreur comme visible sur la figure (\ref{fig:q12.Nmu}). Il nous est difficile d'expliquer la pente de $\frac{3}{2}$.
+On prend $N_\mu=10^4$ de référence et on regarde pour des $N_\mu$ au moins $10$ fois plus petits. On remarque d'abord que le nombre d'itérations reste globalement le même. On a ensuite une convergence de cette pseudo-erreur comme visible sur la figure (\ref{fig:q12.Nmu}). Il nous est difficile d'expliquer la pente de $\frac{3}{2}$ mais le fait que l'erreur diminue rapidement quand $N_\mu$ augmente est le comportement attendu.
 
 \begin{figure}[ht!]
 	\centering
@@ -847,7 +837,7 @@ soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3
 	\ppt_0(x) = \frac{3}{2}x(1-x)
 \end{equation}
 
-On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables.
+On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution la plus précise possible dans des temps de calcul raisonnables.
 
 \begin{table}[h]
 	\centering
@@ -969,8 +959,8 @@ C'est ce que montre la figure (\ref{fig:q16.eps}), on a pu calculer $\epsilon=0.
 \bigskip
 
 L'accélération synthétique permet d'accélérer\footnote{heureusement} grandement
-le calcul dns le cas de la limite de diffusion comme cela peut être vu dans le
-tableau ci-dessus.
+le calcul dans le cas de la limite de diffusion comme cela peut être vu dans le
+tableau ci-dessous.
 
 \begin{table}[h]
 	\centering

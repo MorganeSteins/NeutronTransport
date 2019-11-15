@@ -19,6 +19,7 @@
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{placeins}
 
 \newcommand{\pp}{\varphi}
 \newcommand{\ppt}{\tilde{\varphi}}
@@ -939,9 +940,9 @@ C'est ce que montre la figure (\ref{fig:q16.eps}), on a pu caluler $\epsilon=0.0
 
 L'accélération synthétique permet d'accélérer\footnote{heureusement} grandement
 le calcul dans le cas de la limite de diffusion comme cela peut être vu dans le
-tableau (\ref{tab:comp_dsa}).
+tableau ci-dessous.
 
-\begin{table}[hb]
+\begin{table}[h]
 	\centering
 	\begin{tabular}{cccc}\toprule
 		$\bm{\epsilon}$ & 1 (sans absorption) & 0.1 & 0.01  \\\midrule
@@ -949,8 +950,25 @@ tableau (\ref{tab:comp_dsa}).
 		Avec DSA        & 24                  & 27  & 23    \\\bottomrule
 	\end{tabular}
 	\caption{Nombre d'itération avec et sans accélération. Les paramètres de simulations sont $\nu = 10^{-7}$, $N_x = 1000$ points, et $N_\mu = 100$ arcs de cercles.}
-	\label{tab:comp_dsa}
 \end{table}
 
+\FloatBarrier
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%% CONCLUSION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Conclusion}
+
+Nous avons pu comparer au cours de ce projet deux méthodes très différentes :
+une méthode Monte-Carlo et une méthode déterministe. 
+
+Chacune des deux méthodes a des avantages et des inconvénients. La méthode
+Monte-Carlo permet par exemple de simuler le problème sans discrétisation en
+angle et se généralise bien en 3D mais la méthode converge relativement
+lentement. 
+
+Tandis que la méthode
+déterministe plus rapide dans notre cas et converge mieux mais doit malgré tout être accélérée
+artificiellement et nécessite de discrétiser en angle, ce qui peut rapidement
+devenir problématique en 3D. 
 
 \end{document}

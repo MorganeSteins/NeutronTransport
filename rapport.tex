@@ -721,13 +721,13 @@ Dans ce cas-ci nous n'avons pas la solution alytique de l'équation. Une méthod
 \vspace{0.2cm}
 Pour étudier l'impact des paramètres du calcul déterministe on peut se donner un cas très raffiné ($N_x$ et $N_\mu$ très grands), prendre cette simulation comme référence et regarder l'erreur commise par rapport à cette référence pour des paramètres bien plus petits. Pour faire varier $N_x$ cela demande d'interpoler notre solution moins raffinée sur le maillage plus raffiné. Comme nous avons déjà regardé l'impact de $N_x$ sur les simulations nous préférons nous concentrer sur $N_\mu$. 
 
-On prend $N_\mu=10^4$ de référence 
+On prend $N_\mu=10^4$ de référence et on regarde pour des $N_\mu$ au moins $10$ fois plus petits. On remarque d'abord que le nombre d'itérations reste globalement le même. On a ensuite une convergence de cette pseudo-erreur comme visisble sur la figure (\ref{fig:q12.Nmu}). Il nous est difficile d'expliquer la pente de $\frac{3}{2}$. 
 
-\begin{figure}
+\begin{figure}[ht!]
 	\centering
-	\includegraphics[scale=0.42]{Figures/q12_comp.png}
-	\caption{Cas purement diffusant : solutions Monte-Carlo et deterministe}
-	\label{fig:q12.MC.deter}
+	\includegraphics[scale=0.42]{Figures/q12_errmu.png}
+	\caption{Erreur en fonction de $N_\mu$ par rapport à la solution à $N_\mu=10^4$}
+	\label{fig:q12.Nmu}
 \end{figure}
 
 

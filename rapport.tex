@@ -730,6 +730,14 @@ On a démontrer que la différence entre deux itérations en $n$, $e^n =\pp^n-\p
 \vspace{0.2cm}
 Dans ce cas-ci nous n'avons pas la solution alytique de l'équation. Une méthode de vérification est toutefois de comparer qualitativement avec la solution obtenue dans le cas Monte-Carlo. Parler de convergence d'une solution vers l'autre alors qu'elles sont toutes les deux approchées n'est pas envisagé. La figure (\ref{fig:q12.MC.deter}) montre les résultats par simulation Monte-Carlo et déterministe. Nous avons fixé $\eta=10^{-9}$ et l'algorithme avait convergé en $46$ itérations. La courbe déterministe est bien plus lisse que la courbe M0nte-Carlo et obtenue en un temps bien inférieur :  3 secondes pour Monte-Carlo et 0.2 secondes pour le code déterministe.
 
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.42]{Figures/q12_comp.png}
+	\caption{Cas purement diffusant : solutions Monte-Carlo et deterministe}
+	\label{fig:q12.MC.deter}
+\end{figure}
+
+
 \vspace{0.2cm}
 Pour étudier l'impact des paramètres du calcul déterministe on peut se donner un cas très raffiné ($N_x$ et $N_\mu$ très grands), prendre cette simulation comme référence et regarder l'erreur commise par rapport à cette référence pour des paramètres bien plus petits. Pour faire varier $N_x$ cela demande d'interpoler notre solution moins raffinée sur le maillage plus raffiné. Comme nous avons déjà regardé l'impact de $N_x$ sur les simulations nous préférons nous concentrer sur $N_\mu$. 
 
@@ -798,15 +806,26 @@ soit $\ppt_0(x)$ un polynôme d'ordre 2 en $x$ de la forme $\ppt_0(x) = -\frac{3
 On regarde la solution obtenue pour plusieurs $\epsilon$ ainsi que le nombre d'itérations nécessaires pour converger à $\nu=10^{-7}$ près avec $N_x=1000$ points en $x$ et $N_\mu=100$ arcs de cercles. Nous avons choisit ce paramètre de manière à avoir une solution le plus précise possible dans des temps de calcul raisonnables. Voici les résultats dans le tableau ci-dessous
 
 \vspace{0.1cm}
-\begin{tabular}{cccc}
-	$\bm{\epsilon}$              & 1                                 & 0.1 & 0.01  \\
-	\textbf{Nombre d'itérations} & 1 itération : cas sans scattering & 368 & 19875
+\begin{tabular}{c|c|c|c|c}
+	$\bm{\epsilon}$              & 1& 0.1 & 0.01&0.001  \\
+	\textbf{Nombre d'itérations} & 71 & 505 & 24243 & ?\\
+	\textbf{Temps d'exécution} &0.09s &1.18s & 1m& >20m
 \end{tabular}
 \vspace{0.2cm}
 
-Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique.
+Le nombre d'itérations nécessaires pour arriver à la précision souhaitée augmente très rapidement avec $\epsilon$ qui diminue, tout comme le temps d'exécution. On voit donc bien l'intérêt de mettre en place une méthode d'accélération comme par exemple l'accélération par diffusion synthétique. Nous avons laissé tourner le code 20 minutes pour $\epsilon=0.001$ avant de couper l'exécution et nous n'avions toujours pas convergé. 
 
-Avant de passer à l'accélération regardons l'impact des paramètres $N_x$ et $N_\mu$ sur l'erreur.
+Avant de passer à l'accélération regardons l'impact des paramètres $N_x$ et $N_\mu$. Comme le nombre de boucle augmente linéairement avec $N_\mu$ et $N_x$, multiplier l'un ou l'autre par 10 multiplie d'autant le nombre d'opérations et donc le temps de calcul. Comme le nombre d'itérations nécéssaires avec $\epsilon$ faible augmente très vite aussi, on se retrouve vite avec de grands temps de calcul en comparaison avec avant. 
+
+De même que dans les questions précédentes $N_x$ et $N_\mu$ améliorent la précision, mais comme il n'y a pas de solution analytique on ne peut pas calculer l'erreur commise. On peut toutefois regarder la convergence de la solution obtenue vers la solution théorique en limite de diffusion quand on diminue $\epsilon$.
+\begin{figure}[ht!]
+	\centering
+	\includegraphics[scale=0.6]{Figures/q14_diffepsilon.png}
+	\caption{Solution pour différents $\epsilon$}
+	\label{fig:q12.Nmu}
+\end{figure}
+
+On a vu que sans accélération il est difficile de demande
 
 
 

@@ -30,9 +30,6 @@ int main(int argc, char *argv[])
     Q.setConstant(1 * epsilon);
     sigmaT.setConstant(1. / epsilon);
     sigmaS = sigmaT - sa * epsilon * Eigen::VectorXd::Ones(Nx + 1);
-    // sigmaS = sigmaT;
-
-    // cout << sigmaT;
 
     double nu = 1e-10;
     Eigen::VectorXd phi = Fast_IS(Nx, Nmu, nu, 10000, Q, sigmaT, sigmaS);

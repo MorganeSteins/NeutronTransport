@@ -29,6 +29,7 @@ point deplacement_x(point p)
     return p2;
 }
 
+
 //tirage d'une variable aléatoire pour la continuation de la marche 0 arret, 1 continuer
 int do_I_stop(double sigmaS, double sigmaA)
 {

@@ -64,7 +64,6 @@ vector<double> IS(int Nx, int Nmu, double epsilon, int iter_max, vector<double> 
         Q[i] = S[i];
         Q2[i] = 0;
     }
-
     double err = 1.; // erreur que l'on initialise grande
     double norm_Q = 1.;
     int n_iter = 0; //compteur itération

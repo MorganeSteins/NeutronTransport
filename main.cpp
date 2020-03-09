@@ -5,16 +5,17 @@
 #include <algorithm>
 #include "points.hpp"
 #include "aleat_tools.hpp"
-#include "MC.hpp"
+// #include "MC.hpp"
 #include "Mc_iter.hpp"
-#include "matplotlibcpp.h"
-#include "deterministe.hpp"
+// #include "matplotlibcpp.h"
+// #include "deterministe.hpp"
+#include "cases.hpp"
 
 #include <chrono>
 #include <unistd.h>
 
 using namespace std;
-namespace plt = matplotlibcpp;
+// namespace plt = matplotlibcpp;
 
 int main()
 {
@@ -36,6 +37,12 @@ int main()
 
     // //calcul de la densité en nb_points intervalles et sauvée dans un fichier txt pour les plots
     int nb_points = 25;
+
+    cout << "\n ----TEST poly---- \n";
+    double data1 = density_no_scattering_MC<source_uniforme> (mu, x , N);
+    double data2 = density_no_scattering_homog_unif_MC_iter( mu,x, N) ;
+    cout<<"Résultat "<<data1<<" et autre "<<data2<<"\n" ;
+
     // N = 1e4;
     // cout<<"N = "<<N<<" et on étudie "<<nb_points<<" intervalles."<<endl<<endl;
     // cout << " ----TEST 1---- \n";
@@ -91,47 +98,16 @@ int main()
     // end = chrono::steady_clock::now();
     // cout << "Elapsed time " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms \n";
     // cout << "Error comparison " << liste2[0] - liste1[0] << "\n\n";
-    int Nx = 25;
-    int Nmu = 100 ;
-    double epsilon = 1;
-    double dx = 1. / Nx;
-    vector<double> Q(Nx,0.);
-    vector<double> sigmaT(Nx);
-    vector<double> sigmaS(Nx);
-    double sa = 0;
-    for (int i = 0; i < Nx; i++)
-    {
-        //Q[i] = 1*epsilon;
-        sigmaS[i] = 0.5;
-        if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
-        else {sigmaT[i]=1;}
-    }
 
-
-    double eta = 1e-7;
-    int max_iter_IS = 1000000;
-
-
-    cout << "\n ----TEST 4---- \n";
-    auto start = chrono::steady_clock::now();
-    vector<double> liste1 = IS_iteration(Nx, mu, 1./mu,Q,sigmaT);
-    auto end = chrono::steady_clock::now();
-    cout << "Elapsed time " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms \n";
-
-    start = chrono::steady_clock::now();
-    vector<double> liste2 = density_tilda_segment_scattering_woodcock_point_MC_iter( N,  nb_points,  max_iter) ;
-    end = chrono::steady_clock::now();
-    cout << "Elapsed time " << chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms \n";
-    cout << "Error comparison " << liste2[0] - liste1[0] << "\n\n";
     
     
     // vector<double> x_plot(nb_points) ;
     // for (int i=0;i<N;i++) x_plot[i] = i ;
 
-    plt::plot(liste1) ;
-    plt::plot(liste2) ;
-    plt::legend() ; 
-    plt::show();
+    // plt::plot(liste1) ;
+    // plt::plot(liste2) ;
+    // plt::legend() ; 
+    // plt::show();
 
     // // QUESTION 5
     // // Calcul de la densité au point (x,mu)

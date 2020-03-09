@@ -21,6 +21,12 @@ double parcours_x(point p)
     return -(p.get_mu() / p.sigmaT) * log(1 - y);
 }
 
+point parcours_x_p(point p)
+{
+    double y = new_x(); // loi uniforme sur (0,1)
+    return point(-(p.get_mu() / p.sigmaT) * log(1 - y), p.get_mu());
+}
+
 //nouveau point p après déplacement
 point deplacement_x(point p)
 {

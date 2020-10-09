@@ -1,0 +1,50 @@
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <fstream>
+#include <algorithm>
+#include <time.h>
+#include "src/deterministe/deterministe.hpp"
+
+#include "eigen/Eigen/IterativeLinearSolvers"
+#include "eigen/Eigen/Sparse"
+
+int main(int argc, char *argv[])
+{
+    //Reading inputs
+    int Nx, Nmu;
+    if (argc != 3)
+    {
+        printf("You need to input 2 variables:Nx and Nmu (EVEN NUMBER!!), we are using default value 5 and 2 \n");
+        Nx = 5;
+        Nmu = 2;
+    }
+    else
+    {
+        Nx = atof(argv[1]);
+        Nmu = atof(argv[2]);
+    }
+
+    // Initialize parameters
+    double epsilon = 0.0001, sa = 0;
+    double dx = 1. / Nx;
+    Eigen::VectorXd Q(Nx), sigmaT(Nx + 1), sigmaS(Nx + 1);
+    Q.setConstant(1 * epsilon);
+    sigmaT.setConstant(1. / epsilon);
+    sigmaS = sigmaT - sa * epsilon * Eigen::VectorXd::Ones(Nx + 1);
+    double nu = 1e-10;
+
+    // Compute Source iteration
+    Eigen::VectorXd phi = Fast_IS(Nx, Nmu, nu, 10000, Q, sigmaT, sigmaS);
+
+    // Saves output
+    string save_filename = "Data/phi_fast_" + to_string(Nx) + "_" + to_string(Nmu) + "_epsilon" + to_string(epsilon) + ".txt";
+    ofstream fichier(save_filename, ios::out | ios::trunc);
+    fichier << phi;
+    fichier.close();
+
+    // User message
+    cout << save_filename << endl;
+
+    return 0;
+}

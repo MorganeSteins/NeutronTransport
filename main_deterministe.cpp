@@ -4,10 +4,11 @@
 #include <fstream>
 #include <algorithm>
 #include <time.h>
-#include "deterministe.hpp"
+#include "src/deterministe/deterministe.hpp"
 
 int main(int argc, char *argv[])
 {
+    //Reading inputs
     int Nx, Nmu;
     if (argc != 3)
     {
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
         Nmu = atof(argv[2]);
     }
 
+    // Initialize parameters
     double epsilon = 1;
     double dx = 1. / Nx;
     vector<double> Q(Nx);
@@ -30,25 +32,28 @@ int main(int argc, char *argv[])
     double sa = 0;
     for (int i = 0; i < Nx; i++)
     {
-        Q[i] = 1*epsilon;
+        Q[i] = 1 * epsilon;
         sigmaT[i] = 1 / epsilon;
-        sigmaS[i] = sigmaT[i]-sa*epsilon;
-        // if (i*dx>=0.3 && i*dx<0.7) {sigmaT[i]=3;}
-        // else {sigmaT[i]=1;}
+        sigmaS[i] = sigmaT[i] - sa * epsilon;
     }
 
     double mu = 1.;
     double eta = 1e-7;
     int max_iter = 1000000;
 
-    // vector<double> phi = IS_iteration(Nx,mu,1./mu,Q,sigmaT);
+    // Compute Source iteration
     vector<double> phi = IS(Nx, Nmu, eta, max_iter, Q, sigmaT, sigmaS);
-    ofstream fichier("Data/phi_q15_" + to_string(Nx) + "_" + to_string(Nmu) +  "_" + to_string(epsilon) +".txt", ios::out | ios::trunc);
+
+    // Saves output
+    string save_filename = "Data/phi_q15_" + to_string(Nx) + "_" + to_string(Nmu) + "_" + to_string(epsilon) + ".txt";
+    ofstream fichier(save_filename, ios::out | ios::trunc);
     for (int i = 0; i < phi.size(); i++)
     {
         fichier << phi[i] << ",";
     }
     fichier.close();
-    cout<<"Saved in Data/phi_q15_" + to_string(Nx) + "_" + to_string(Nmu) + "_" + to_string(epsilon) + ".txt"<<endl;
+
+    // User message
+    cout << save_filename << endl;
     return 0;
 }
